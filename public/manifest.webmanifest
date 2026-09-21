@@ -1,0 +1,29 @@
+{
+  "name": "Lumen — a Bíblia do seu jeito",
+  "short_name": "Lumen",
+  "description": "Leia, marque e comente a Bíblia num catálogo feito para durar o dia inteiro.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08080b",
+  "theme_color": "#08080b",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Buscar", "url": "/busca" },
+    { "name": "Minha biblioteca", "url": "/biblioteca" }
+  ]
+}

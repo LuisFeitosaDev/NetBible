@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+.env*
+!.env.example
+
+.DS_Store
+Thumbs.db
+
+# Baixados por `npm run bible`; os arquivos gerados em public/biblia são versionados.
+/sources/
