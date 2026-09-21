@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Play, Check, Plus, Highlighter, MessageSquareText } from "lucide-react";
 import { BookArt, bookSynopsis } from "@/components/BookCard";
+import { AboutBook } from "@/components/AboutBook";
 import { useBible } from "@/lib/store";
 import { db, toggleFavorite } from "@/lib/db";
 import { GROUP_THEME } from "@/lib/catalog";
@@ -41,7 +42,7 @@ export default function BookPage() {
   return (
     <div className="-mt-16">
       <section className="relative flex min-h-[58vh] items-end overflow-hidden pt-16">
-        <BookArt book={book} focus="right" className="absolute inset-0" />
+        <BookArt book={book} focus="right" shape="wide" className="absolute inset-0" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/55 to-transparent" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-ink-950/80 via-ink-950/15 to-transparent" />
 
@@ -116,6 +117,10 @@ export default function BookPage() {
           </div>
         </div>
       </section>
+
+      <div className="pt-10">
+        <AboutBook book={book} />
+      </div>
 
       <section className="mx-auto max-w-[1500px] px-4 py-10 md:px-8">
         <h2 className="font-display text-lg font-bold md:text-xl">Capítulos</h2>

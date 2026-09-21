@@ -8,8 +8,30 @@ de versículos e comentários pessoais. Web app / PWA, instalável no celular, f
 ```bash
 npm install
 npm run bible   # baixa e gera os JSON da Bíblia (só na primeira vez)
+npm run capas   # baixa as gravuras e gera as capas (só na primeira vez)
 npm run dev     # http://localhost:3210
 ```
+
+## Capas
+
+Gravuras de Gustave Doré (1832–1883), domínio público, baixadas do Wikimedia Commons por
+[scripts/build-covers.mjs](scripts/build-covers.mjs) e tratadas com `sharp`: preto e branco,
+faixa tonal rebaixada e tom quente, para a arte não estourar contra o tema escuro.
+
+```
+public/capas/poster/<slug>.webp   440x660   cards das prateleiras
+public/capas/wide/<slug>.webp    1280x720   fundo da página do livro
+public/capas/creditos.json                  autor, licença e link de cada imagem
+src/lib/covers.generated.ts                 lista de quem tem capa (gerada, não edite)
+```
+
+**37 dos 66 livros têm gravura.** Os outros usam a capa em gradiente, que continua no
+código e é o fallback automático. O mapa livro → gravura é o objeto `COVERS` no script.
+
+Sete livros ficaram de fora por rate limit do Commons e valeria uma nova tentativa:
+`jo`, `at`, `rm`, `1ts`, `2tm`, `hb`, `1jo`. Rode `npm run capas` de novo em outro momento;
+os downloads já feitos ficam em cache em `sources/capas/`, então só os que faltam vão à rede.
+Se algum nome de arquivo tiver mudado no Commons, o script avisa e segue.
 
 ### Atenção: a pasta está dentro do OneDrive
 
@@ -95,6 +117,7 @@ src/
     NoteSheet.tsx               editor de comentário
   lib/
     bible.ts                    tipos e carregamento do texto
+    about.ts                    ficha dos 66 livros: autor, data, público, contexto
     catalog.ts                  camada editorial: cores, sinopses, coleções
     db.ts                       IndexedDB (Dexie)
     store.tsx                   índice + tradução escolhida

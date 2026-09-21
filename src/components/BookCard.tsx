@@ -6,23 +6,32 @@ import { Play } from "lucide-react";
 import type { BookMeta } from "@/lib/bible";
 import { citationLabel } from "@/lib/bible";
 import { GROUP_THEME, SYNOPSIS } from "@/lib/catalog";
+import { hasCover, posterUrl, wideUrl } from "@/lib/covers.generated";
 import { db } from "@/lib/db";
 
-/** Capa gerada por código: gradiente do grupo + a sigla do livro em marca d'água. */
+/**
+ * Capa do livro: gravura de Doré quando existe, gradiente do grupo quando não.
+ * O gradiente fica sempre no fundo — é o placeholder enquanto a imagem carrega
+ * e o resultado final nos livros sem arte.
+ */
 export function BookArt({
   book,
   className = "",
   /** "corner" para os cards; "right" quando a arte é fundo de página e o texto fica à esquerda. */
   focus = "corner",
+  /** "poster" é 2:3 (cards); "wide" é 16:9 (fundo de página). */
+  shape = "poster",
   children,
 }: {
   book: BookMeta;
   className?: string;
   focus?: "corner" | "right";
+  shape?: "poster" | "wide";
   children?: React.ReactNode;
 }) {
   const theme = GROUP_THEME[book.group];
   const origin = focus === "right" ? "78% 18%" : "18% 8%";
+  const art = hasCover(book.slug);
   // Sem `relative` aqui: quem chama define o posicionamento (os cards usam
   // relative, o fundo de página usa absolute) e no Tailwind v4 a ordem das
   // classes não decide quem vence.
@@ -33,13 +42,34 @@ export function BookArt({
         backgroundImage: `radial-gradient(120% 90% at ${origin}, ${theme.from}f2 0%, ${theme.to} 62%, #08080b 100%)`,
       }}
     >
-      {/* Marca d'água tipográfica: fica na metade de cima para não brigar com o gradiente do rodapé. */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -right-2 top-0 select-none font-display text-[5.25rem] font-black leading-[0.85] tracking-tighter text-white/15"
-      >
-        {citationLabel(book)}
-      </span>
+      {art ? (
+        <img
+          src={shape === "wide" ? wideUrl(book.slug) : posterUrl(book.slug)}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        // Sem gravura, a sigla vira o elemento gráfico da capa.
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-2 top-0 select-none font-display text-[5.25rem] font-black leading-[0.85] tracking-tighter text-white/15"
+        >
+          {citationLabel(book)}
+        </span>
+      )}
+
+      {/* A gravura é quase monocromática; o tom do grupo volta por cima dela. */}
+      {art && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 mix-blend-soft-light"
+          style={{ backgroundColor: theme.from, opacity: 0.38 }}
+        />
+      )}
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.16] mix-blend-overlay"
@@ -108,6 +138,7 @@ export function ResumeCard({ book }: { book: BookMeta }) {
     >
       <BookArt
         book={book}
+        shape="wide"
         className="relative aspect-video rounded-xl ring-1 ring-white/10 transition-all duration-300 group-hover:-translate-y-1 group-hover:ring-white/35"
       >
         <div className="absolute inset-0 grid place-items-center">

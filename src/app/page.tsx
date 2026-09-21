@@ -98,6 +98,9 @@ export default function HomePage() {
             {index.versions.map((v) => `${v.short} — ${v.name} (${v.note})`).join(" · ")}
           </p>
           <p className="mt-2">
+            Capas: gravuras de Gustave Doré (1832–1883), domínio público, via Wikimedia Commons.
+          </p>
+          <p className="mt-2">
             Suas marcações e notas ficam só neste dispositivo. Faça backup em Ajustes.
           </p>
         </footer>

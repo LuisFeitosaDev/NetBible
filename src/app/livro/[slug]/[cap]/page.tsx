@@ -13,6 +13,7 @@ import {
   Minus,
   Plus,
   Pencil,
+  Info,
 } from "lucide-react";
 import {
   compactVerses,
@@ -35,6 +36,7 @@ import type { HighlightColor } from "@/lib/catalog";
 import { VerseActions } from "@/components/VerseActions";
 import { NoteSheet, type NoteTarget } from "@/components/NoteSheet";
 import { VersionSwitch } from "@/components/VersionSwitch";
+import { AboutSheet } from "@/components/AboutBook";
 
 const TEXT_SIZES = ["text-[15px]", "text-[17px]", "text-[19px]", "text-[21px]", "text-[24px]"];
 
@@ -51,6 +53,7 @@ export default function ReaderPage() {
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const [sizeStep, setSizeStep] = useState(1);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [focusVerse, setFocusVerse] = useState<number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -238,6 +241,13 @@ export default function ReaderPage() {
           </button>
 
           <div className="ml-auto flex items-center gap-1">
+            <button
+              onClick={() => setAboutOpen(true)}
+              aria-label={`Sobre ${book.name}`}
+              className="grid h-8 w-8 place-items-center rounded-full text-ink-300 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <Info size={16} />
+            </button>
             <button
               onClick={() => changeSize(-1)}
               disabled={sizeStep === 0}
@@ -427,6 +437,8 @@ export default function ReaderPage() {
           onClose={() => setSelected([])}
         />
       )}
+
+      {aboutOpen && <AboutSheet book={book} onClose={() => setAboutOpen(false)} />}
 
       {noteTarget && (
         <NoteSheet
