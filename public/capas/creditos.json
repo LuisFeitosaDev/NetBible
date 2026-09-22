@@ -161,11 +161,29 @@
   "artist": "Gustave Doré",
   "license": "Public domain"
  },
+ "os": {
+  "titulo": "Prophet Hosea in Augsburg Cathedral",
+  "artista": "Hans Bernhard (Schnobby)",
+  "licenca": "CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Prophet_Hosea_in_Augsburg_Cathedral.jpg"
+ },
+ "jl": {
+  "titulo": "Joël (Joel 1 1) • invenit James Tissot • pinxit Charles Hoffbauer • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Jo%C3%ABl_(Joel_1_1)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Charles_Hoffbauer_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg"
+ },
  "am": {
   "titulo": "136.The Prophet Amos",
   "page": "https://commons.wikimedia.org/wiki/File:136.The_Prophet_Amos.jpg",
   "artist": "Gustave Doré",
   "license": "Public domain"
+ },
+ "ob": {
+  "titulo": "Abdias (Obadiah 1 1) • invenit James Tissot • pinxit Charles Hoffbauer • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Abdias_(Obadiah_1_1)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Charles_Hoffbauer_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg"
  },
  "jn": {
   "titulo": "137.Jonah Is Spewed Forth by the Whale",
@@ -179,11 +197,41 @@
   "artist": "Gustave Doré",
   "license": "Public domain"
  },
+ "na": {
+  "titulo": "Nahum (Nahum 1 9) • invenit James Tissot • pinxit Charles Hoffbauer • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Nahum_(Nahum_1_9)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Charles_Hoffbauer_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg"
+ },
+ "hc": {
+  "titulo": "Habacuc (Habakkuk 1 12) • invenit James Tissot • pinxit Charles Hoffbauer • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Habacuc_(Habakkuk_1_12)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Charles_Hoffbauer_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg"
+ },
+ "sf": {
+  "titulo": "Sophonie (Zephaniah 1 1) • invenit James Tissot • pinxit Charles Hoffbauer • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Sophonie_(Zephaniah_1_1)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Charles_Hoffbauer_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg"
+ },
+ "ag": {
+  "titulo": "Aggée (Haggai 1 3-4) • invenit James Tissot • pinxit Charles Hoffbauer • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Agg%C3%A9e_(Haggai_1_3-4)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Charles_Hoffbauer_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg"
+ },
  "zc": {
   "titulo": "140.Zechariah's Vision of Four Chariots",
   "page": "https://commons.wikimedia.org/wiki/File:140.Zechariah%27s_Vision_of_Four_Chariots.jpg",
   "artist": "Gustave Doré",
   "license": "Public domain"
+ },
+ "ml": {
+  "titulo": "Malachie (Malachi 3 1) • invenit James Tissot • pinxit Charles Hoffbauer • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Malachie_(Malachi_3_1)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Charles_Hoffbauer_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg"
  },
  "mt": {
   "titulo": "Dore Bible Sermon on the Mount",
@@ -203,6 +251,108 @@
   "artist": "Gustave Doré",
   "license": "Public domain"
  },
+ "jo": {
+  "titulo": "Marriage at Cana engraving by Gustave Doré",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Marriage_at_Cana_engraving_by_Gustave_Dor%C3%A9.jpg"
+ },
+ "at": {
+  "titulo": "Santa Maria della Salute (Venice) - Discesa dello Spirito Santo di Tiziano (1555)",
+  "artista": "Didier Descouens",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Santa_Maria_della_Salute_(Venice)_-_Discesa_dello_Spirito_Santo_di_Tiziano_(1555).jpg"
+ },
+ "rm": {
+  "titulo": "Saint Paul, Rembrandt van Rijn (and Workshop?), c. 1657",
+  "artista": "Rembrandt",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Saint_Paul,_Rembrandt_van_Rijn_(and_Workshop%3F),_c._1657.jpg"
+ },
+ "1co": {
+  "titulo": "Saint Paul preaching in Athens, after Raphael MET DP872698",
+  "artista": "Marcantonio Raimondi / After Raphael",
+  "licenca": "CC0",
+  "page": "https://commons.wikimedia.org/wiki/File:Saint_Paul_preaching_in_Athens,_after_Raphael_MET_DP872698.jpg"
+ },
+ "2co": {
+  "titulo": "Valentin de Boulogne - Saint Paul Writing His Epistles - BF.1991.4 - Museum of Fine Arts",
+  "artista": "Valentin de Boulogne",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Valentin_de_Boulogne_-_Saint_Paul_Writing_His_Epistles_-_BF.1991.4_-_Museum_of_Fine_Arts.jpg"
+ },
+ "gl": {
+  "titulo": "Conversion on the Way to Damascus-Caravaggio (c.1600-1)",
+  "artista": "Caravaggio",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Conversion_on_the_Way_to_Damascus-Caravaggio_(c.1600-1).jpg"
+ },
+ "ef": {
+  "titulo": "El Greco - St. Paul - Google Art Project",
+  "artista": "El Greco",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_St._Paul_-_Google_Art_Project.jpg"
+ },
+ "fp": {
+  "titulo": "1627 Rembrandt Paulus im Gefängnis Staatsgalerie Stuttgart anagoria",
+  "artista": "Rembrandt",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:1627_Rembrandt_Paulus_im_Gef%C3%A4ngnis_Staatsgalerie_Stuttgart_anagoria.JPG"
+ },
+ "cl": {
+  "titulo": "CHRIST PANTOCRATOR-SINAI(6th Century)",
+  "artista": "Unknown authorUnknown author",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:CHRIST_PANTOCRATOR-SINAI(6th_Century).jpg"
+ },
+ "1ts": {
+  "titulo": "DoreStPaulPreachingtotheThessalonians",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:DoreStPaulPreachingtotheThessalonians.jpg"
+ },
+ "2ts": {
+  "titulo": "V&A - Raphael, St Paul Preaching in Athens (1515)",
+  "artista": "Raphael",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:V%26A_-_Raphael,_St_Paul_Preaching_in_Athens_(1515).jpg"
+ },
+ "1tm": {
+  "titulo": "Pompeo Batoni (1708-1787) - Saint Paul - 266911 - National Trust",
+  "artista": "Pompeo Batoni",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Pompeo_Batoni_(1708-1787)_-_Saint_Paul_-_266911_-_National_Trust.jpg"
+ },
+ "2tm": {
+  "titulo": "Madonna dell'Orto (Venice) - Choir - The beheading of St. Paul",
+  "artista": "Didier Descouens",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Madonna_dell%27Orto_(Venice)_-_Choir_-_The_beheading_of_St._Paul.jpg"
+ },
+ "tt": {
+  "titulo": "Laurent de La Hyre's Saint Paul Shipwrecked on Malta",
+  "artista": "Laurent de La Hyre",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Laurent_de_La_Hyre%27s_Saint_Paul_Shipwrecked_on_Malta.jpg"
+ },
+ "fm": {
+  "titulo": "Probably Valentin de Boulogne - Saint Paul Writing His Epistles - Google Art Project",
+  "artista": "Attributed to Valentin de Boulogne",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Probably_Valentin_de_Boulogne_-_Saint_Paul_Writing_His_Epistles_-_Google_Art_Project.jpg"
+ },
+ "hb": {
+  "titulo": "Melchizedek and Abraham - MNK XII-A-276 (334018)",
+  "artista": "Unknown authorUnknown author",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Melchizedek_and_Abraham_-_MNK_XII-A-276_(334018).jpg"
+ },
+ "tg": {
+  "titulo": "Steinigung des Jakobus",
+  "artista": "Thomas Hummel",
+  "licenca": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Steinigung_des_Jakobus.jpg"
+ },
  "1pe": {
   "titulo": "The Christian Martyrs by G.Dore (1871)",
   "page": "https://commons.wikimedia.org/wiki/File:The_Christian_Martyrs_by_G.Dore_(1871).jpg",
@@ -214,6 +364,30 @@
   "page": "https://commons.wikimedia.org/wiki/File:Gustave_Dore_-_The_Transfiguration.jpg",
   "artist": "Gustave Doré",
   "license": "Public domain"
+ },
+ "1jo": {
+  "titulo": "El Greco - Saint John the Evangelist, Schorr collection",
+  "artista": "El Greco",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_Saint_John_the_Evangelist,_Schorr_collection.jpg"
+ },
+ "2jo": {
+  "titulo": "Zampieri St John Evangelist",
+  "artista": "Domenichino",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Zampieri_St_John_Evangelist.jpg"
+ },
+ "3jo": {
+  "titulo": "El Greco Hl. Johannes Ev. und Hl. Franziskus ca. 1600 Uffizien Florenz-01",
+  "artista": "El Greco",
+  "licenca": "CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_Hl._Johannes_Ev._und_Hl._Franziskus_ca._1600_Uffizien_Florenz-01.jpg"
+ },
+ "jd": {
+  "titulo": "(Albi) Saint Jude Thaddée 1620 - Georges de La Tour Inv.166",
+  "artista": "Didier Descouens",
+  "licenca": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:(Albi)_Saint_Jude_Thadd%C3%A9e_1620_-_Georges_de_La_Tour_Inv.166.jpg"
  },
  "ap": {
   "titulo": "Gustave Dore - Death on the Pale Horse",

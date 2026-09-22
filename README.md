@@ -14,28 +14,58 @@ npm run dev     # http://localhost:3210
 
 ## Capas
 
-Gravuras de Gustave Doré (1832–1883), domínio público, baixadas do Wikimedia Commons por
-[scripts/build-covers.mjs](scripts/build-covers.mjs) e tratadas com `sharp`: preto e branco,
-faixa tonal rebaixada e tom quente, para a arte não estourar contra o tema escuro.
+**Os 66 livros têm arte.** Obras em domínio público baixadas do Wikimedia Commons por
+[scripts/build-covers.mjs](scripts/build-covers.mjs) e tratadas com `sharp`.
 
 ```
-public/capas/poster/<slug>.webp   440x660   cards das prateleiras
-public/capas/wide/<slug>.webp    1280x720   fundo da página do livro
-public/capas/creditos.json                  autor, licença e link de cada imagem
-src/lib/covers.generated.ts                 lista de quem tem capa (gerada, não edite)
+public/capas/poster/<slug>.webp    440x660   cards das prateleiras
+public/capas/wide/<slug>.webp     1600x700   capa grande da página do livro
+public/capas/creditos.json                   artista, licença e link de cada imagem
+src/lib/covers.generated.ts                  lista de quem tem capa (gerada, não edite)
+sources/capas/                               originais em cache, para não rebaixar
 ```
 
-**37 dos 66 livros têm gravura.** Os outros usam a capa em gradiente, que continua no
-código e é o fallback automático. O mapa livro → gravura é o objeto `COVERS` no script.
+Fontes, por bloco:
 
-Sete livros ficaram de fora por rate limit do Commons e valeria uma nova tentativa:
-`jo`, `at`, `rm`, `1ts`, `2tm`, `hb`, `1jo`. Rode `npm run capas` de novo em outro momento;
-os downloads já feitos ficam em cache em `sources/capas/`, então só os que faltam vão à rede.
-Se algum nome de arquivo tiver mudado no Commons, o script avisa e segue.
+| Trecho | Acervo |
+| --- | --- |
+| Antigo Testamento | gravuras de Gustave Doré (Doré Bible Gallery) |
+| Profetas menores | aquarelas de James Tissot, versão finalizada por Charles Hoffbauer |
+| Evangelhos e Atos | Doré e Ticiano |
+| Cartas de Paulo | Rembrandt, Caravaggio, El Greco, Rafael, Valentin de Boulogne, Batoni |
+| Cartas gerais | El Greco, Domenichino, Georges de La Tour, ícone de Cristo Pantocrator do Sinai |
+
+O mapa livro → obra é o objeto `COVERS` no script. **Cada livro tem uma lista de
+candidatos**, não um arquivo só: se o primeiro falhar, por rename no Commons ou por limite
+de taxa, o script cai para o próximo em vez de deixar o livro sem capa. Livro que esgotar
+os candidatos volta para o gradiente, que continua no código como fallback.
+
+### Como o enquadramento é decidido
+
+O acervo mistura gravura clara em papel branco com óleo escuro do Rembrandt, e as
+proporções vão de quase quadrado a muito alto. O script trata isso em três etapas:
+
+1. **`trim`** remove a margem de papel e a moldura de museu, que jogavam o assunto para
+   fora do centro no corte.
+2. **Tom adaptativo**: mede o brilho médio da obra e corrige cada uma para a mesma
+   luminância alvo, depois aplica o tom quente. Um ajuste fixo estourava a gravura ou
+   apagava a pintura a óleo.
+3. **Enquadramento por formato**:
+   - *card* usa sangria cheia sempre, como capa de catálogo. Obra mais alta que o quadro
+     corta pelo topo, para a figura em pé manter a cabeça; mais larga, corta pela região
+     de maior interesse;
+   - *capa grande* mostra a obra inteira, deslocada para a direita porque o título e os
+     botões ocupam a esquerda, sobre uma cópia dela mesma borrada e escurecida. O formato
+     é panorâmico e a arte guarda margem vertical, para o corte do `object-cover` no herói
+     não comer o topo e a base da pintura.
+
+Para trocar a obra de um livro, edite `COVERS`, apague o cache daquele slug em
+`sources/capas/` e rode `npm run capas`. Sem apagar o cache o script reaproveita o
+download antigo e só reprocessa.
 
 ### Atenção: a pasta está dentro do OneDrive
 
-O projeto vive em `OneDrive\...\Área de Trabalho\Bíblia`. O OneDrive tenta sincronizar
+O projeto vive em `OneDrive\...\Área de Trabalho\NetBible`. O OneDrive tenta sincronizar
 `.next/`, e quando o Next reescreve centenas de arquivos de build de uma vez o sync trava
 os arquivos no meio do caminho — o servidor de dev quebra com `EBUSY: resource busy or
 locked` ou `Cannot find module './921.js'`.

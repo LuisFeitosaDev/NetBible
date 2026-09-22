@@ -98,7 +98,9 @@ export default function HomePage() {
             {index.versions.map((v) => `${v.short} — ${v.name} (${v.note})`).join(" · ")}
           </p>
           <p className="mt-2">
-            Capas: gravuras de Gustave Doré (1832–1883), domínio público, via Wikimedia Commons.
+            Capas: obras em domínio público de Gustave Doré, James Tissot, Rembrandt,
+            Caravaggio, El Greco, Rafael e outros, via Wikimedia Commons. O crédito de
+            cada livro está em <code>/capas/creditos.json</code>.
           </p>
           <p className="mt-2">
             Suas marcações e notas ficam só neste dispositivo. Faça backup em Ajustes.
