@@ -1,14 +1,16 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Download, Upload, ShieldCheck, Info } from "lucide-react";
 import { useBible } from "@/lib/store";
 import { db, exportAll, importAll, type Backup } from "@/lib/db";
+import { ContaCard } from "@/components/ContaCard";
+import { VersionSwitch } from "@/components/VersionSwitch";
 import type { VersionId } from "@/lib/bible";
 
 export default function SettingsPage() {
-  const { index, version, setVersion, parallel, setParallel } = useBible();
+  const { index, version, parallel, setParallel, parallelVersion } = useBible();
   const fileInput = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -28,7 +30,7 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `lumen-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `genipse-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     setStatus(`Backup gerado com ${backup.marks.length} marcações e ${backup.notes.length} comentários.`);
@@ -48,28 +50,30 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-2xl px-4 pt-8 md:px-6">
       <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">Ajustes</h1>
 
+      <Section title="Sua conta">
+        <ContaCard />
+      </Section>
+
       <Section title="Leitura">
-        <Row label="Tradução padrão" hint="Usada em todo o app">
-          <div className="flex gap-2">
-            {(index?.versions ?? []).map((v) => (
-              <button
-                key={v.id}
-                onClick={() => setVersion(v.id as VersionId)}
-                className={`rounded-lg px-3.5 py-2 text-sm font-bold transition-colors ${
-                  version === v.id
-                    ? "bg-gold-400 text-ink-950"
-                    : "bg-white/8 text-ink-300 hover:bg-white/14"
-                }`}
-              >
-                {v.short}
-              </button>
-            ))}
-          </div>
+        <Row
+          label="Tradução padrão"
+          hint={index?.versions.find((v) => v.id === version)?.name}
+        >
+          <VersionSwitch />
         </Row>
 
-        <Row label="Leitura paralela" hint="Mostra as duas traduções lado a lado">
+        <Row label="Leitura paralela" hint="Mostra duas traduções lado a lado">
           <Toggle checked={parallel} onChange={setParallel} />
         </Row>
+
+        {parallel && (
+          <Row
+            label="Tradução da coluna paralela"
+            hint={index?.versions.find((v) => v.id === parallelVersion)?.name}
+          >
+            <VersionSwitch alvo="paralela" />
+          </Row>
+        )}
       </Section>
 
       <Section title="Seus dados">

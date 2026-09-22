@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, Loader2, CornerDownLeft } from "lucide-react";
 import { loadBook, type BookMeta, type VersionId } from "@/lib/bible";
 import { useBible } from "@/lib/store";
+import { GROUP_THEME } from "@/lib/catalog";
 
 type Hit = { book: BookMeta; chapter: number; verse: number; text: string };
 
@@ -160,7 +161,9 @@ export default function SearchPage() {
         </p>
       )}
 
-      <div className="mt-3 space-y-2 pb-16">
+      {/* Só existe quando há resultado: vazio, o padding deixava um vão enorme
+          entre a busca e o índice dos livros. */}
+      <div className={hits?.length ? "mt-3 space-y-2 pb-16" : ""}>
         {(hits ?? []).map((hit) => (
           <Link
             key={`${hit.book.slug}-${hit.chapter}-${hit.verse}`}
@@ -177,17 +180,69 @@ export default function SearchPage() {
         ))}
       </div>
 
-      {query.trim().length < 3 && (
-        <div className="py-20 text-center">
-          <p className="font-display text-lg font-bold text-ink-300">
-            Busque em toda a Bíblia
-          </p>
-          <p className="mx-auto mt-2 max-w-sm text-sm text-ink-400">
-            Digite pelo menos três letras. A primeira busca baixa o texto completo — depois
-            fica instantânea e funciona offline.
-          </p>
-        </div>
-      )}
+      {query.trim().length < 3 && <IndiceDaBiblia />}
+    </div>
+  );
+}
+
+/**
+ * Com a busca vazia, a tela vira o índice da Bíblia: os 66 livros na ordem
+ * canônica, agrupados. Na maior parte das vezes a pessoa não quer procurar uma
+ * palavra, quer só abrir um livro.
+ */
+function IndiceDaBiblia() {
+  const { index } = useBible();
+  if (!index) return null;
+
+  return (
+    <div className="pb-16">
+      <p className="mt-6 text-[13px] leading-relaxed text-ink-400">
+        Digite três letras para procurar uma palavra em toda a Bíblia, ou uma referência
+        como <span className="font-mono text-gold-400">jo 3:16</span>. Abaixo, os 66 livros
+        na ordem.
+      </p>
+
+      {(["VT", "NT"] as const).map((testamento) => (
+        <section key={testamento} className="mt-7">
+          <h2 className="mb-3 font-display text-xs font-bold uppercase tracking-[0.16em] text-gold-400">
+            {testamento === "VT" ? "Antigo Testamento" : "Novo Testamento"}
+          </h2>
+
+          {index.groups
+            .filter((g) => g.testament === testamento)
+            .map((grupo) => {
+              const livros = index.books.filter((b) => b.group === grupo.id);
+              if (!livros.length) return null;
+              const tema = GROUP_THEME[grupo.id];
+              return (
+                <div key={grupo.id} className="mb-5">
+                  <p
+                    className="mb-2 text-[11px] font-bold uppercase tracking-wider"
+                    style={{ color: tema.accent }}
+                  >
+                    {grupo.label}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {livros.map((livro) => (
+                      <Link
+                        key={livro.slug}
+                        href={`/livro/${livro.slug}`}
+                        className="group flex items-center justify-between gap-2 rounded-xl border border-white/6 bg-ink-900 px-3 py-2.5 transition-colors hover:border-white/25 hover:bg-ink-850"
+                      >
+                        <span className="min-w-0 truncate text-[14px] font-medium">
+                          {livro.name}
+                        </span>
+                        <span className="shrink-0 text-[11px] text-ink-500">
+                          {livro.verses.length}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+        </section>
+      ))}
     </div>
   );
 }

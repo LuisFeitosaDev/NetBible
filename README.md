@@ -1,16 +1,132 @@
-# Lumen
+# Genipse Bible
 
-Uma Bíblia em formato de catálogo — prateleiras, capas, "continue lendo" — com marcação
-de versículos e comentários pessoais. Web app / PWA, instalável no celular, funciona offline.
+Uma Bíblia em formato de catálogo: prateleiras, capas, "continue lendo", com marcação de
+versículos, comentários pessoais e estudo bíblico em grupo. Web app / PWA, instalável no
+celular, funciona offline.
 
 ## Rodando
 
 ```bash
 npm install
-npm run bible   # baixa e gera os JSON da Bíblia (só na primeira vez)
+npm run bible   # baixa e gera os JSON das traduções (só na primeira vez)
 npm run capas   # baixa as gravuras e gera as capas (só na primeira vez)
 npm run dev     # http://localhost:3210
 ```
+
+Para Grupos e conta, copie `.env.example` para `.env.local` e preencha as chaves do
+Supabase. Veja a seção Grupos.
+
+## Traduções
+
+Seis, geradas por [scripts/build-bible.mjs](scripts/build-bible.mjs).
+
+| Sigla | Tradução | Situação |
+| --- | --- | --- |
+| ARA | Almeida Revista e Atualizada | Domínio público |
+| NVI | Nova Versão Internacional | © Biblica, uso pessoal |
+| ACF | Almeida Corrigida Fiel | © Sociedade Bíblica Trinitariana, uso pessoal |
+| BLIVRE | Bíblia Livre | CC BY 3.0 Brasil |
+| KJV | King James Version | Domínio público |
+| WEB | World English Bible | Domínio público |
+
+A primeira da lista é a canônica: define a ordem dos livros, os nomes em português e a
+quantidade de capítulos que as outras precisam respeitar. O script **falha** se alguma
+divergir em capítulos, e só **avisa** quando a contagem de versículos difere, porque isso
+é normal entre traduções.
+
+Cada tradução declara a fonte de onde vem, e o script tem um adaptador por tipo de fonte
+(`bodruk` para o JSON único do GitHub, `getbible` para a API do getbible.net). Acrescentar
+uma tradução nova é acrescentar uma entrada em `VERSIONS`.
+
+> **NVT, NTLH e NAA não entraram.** Não existe fonte pública legítima para elas: são
+> traduções modernas sob direito autoral fechado (Mundo Cristão e Sociedade Bíblica do
+> Brasil), sem API aberta nem dataset licenciado. O que circula em repositórios são cópias
+> não autorizadas. Para incluí-las seria preciso licença junto às editoras.
+
+## Grupos (estudo colaborativo)
+
+A única parte do app que precisa de servidor. Um líder cria o grupo, o sistema gera um
+código curto (`GENESIS-7K42`), os participantes entram com esse código, e o líder conduz o
+estudo liberando uma etapa por vez enquanto as respostas aparecem ao vivo.
+
+### Ligando o Supabase
+
+1. Crie um projeto em supabase.com (plano free serve).
+2. **SQL Editor** → rode [`supabase/schema.sql`](supabase/schema.sql), depois
+   [`supabase/schema-conta.sql`](supabase/schema-conta.sql). Os dois são idempotentes.
+3. **Authentication → Sign In / Providers** → ligue **Anonymous sign-ins**.
+4. Copie `.env.example` para `.env.local` e preencha a URL e a chave pública
+   (**Project Settings → API**).
+5. Reinicie o `npm run dev`.
+
+> Só as chaves públicas (`anon` / `sb_publishable_`) entram no `.env.local`. A
+> `service_role` e a `sb_secret_` ignoram o RLS e nunca devem ficar em variável
+> `NEXT_PUBLIC_`, porque tudo com esse prefixo é servido ao navegador.
+
+## Conta e sincronização
+
+Marcações, notas, progresso e favoritos seguem a conta, não o aparelho.
+
+O IndexedDB continua sendo onde o app escreve primeiro: é o que mantém tudo instantâneo e
+funcionando offline. [`src/lib/sync.ts`](src/lib/sync.ts) empurra para o Supabase e puxa o
+que mudou em outro dispositivo, resolvendo conflito pelo carimbo mais recente.
+
+Três detalhes que essa camada resolve:
+
+- **Apagar sincroniza.** Uma tabela de lápides (`removidos`) registra o que foi apagado.
+  Sem isso, tirar uma marcação no celular não tiraria no computador, porque a
+  sincronização só veria linhas que existem.
+- **Anônimo vira conta sem perder nada.** Criar conta usa `updateUser` para vincular o
+  e-mail à sessão anônima atual, em vez de criar um usuário novo. O id continua o mesmo,
+  então marcações, notas e grupos vêm junto.
+- **Trocar de conta não mistura dados.** A janela de sincronização reinicia quando o id do
+  perfil muda neste navegador.
+
+Progresso de leitura é o único campo que mescla em vez de sobrescrever: capítulo lido não
+"desle" só porque outro aparelho estava desatualizado.
+
+Sem as chaves, a aba mostra esse passo a passo em vez de quebrar, e o resto do app segue
+funcionando offline.
+
+### Por que login anônimo
+
+O participante entra só com o código: sem e-mail, sem senha, sem fricção. Mesmo assim
+existe um JWT de verdade por dispositivo, que é o que sustenta as policies de RLS. Sem
+isso, qualquer pessoa com a chave `anon` poderia se passar por outra.
+
+### O que o RLS garante
+
+| Dado | Quem enxerga |
+| --- | --- |
+| Grupo, membros, estudos | Só quem é membro do grupo |
+| Prévia por código (nome, líder, nº de participantes) | Qualquer um com o código, via RPC, sem expor o resto |
+| Respostas | Todo o grupo, porque a discussão coletiva depende disso |
+| **Reflexão individual** | **Só o autor**, salvo se marcar "compartilhar" |
+| Liberar etapa, criar estudo, montar equipes | Só o líder |
+
+### Estrutura
+
+```
+supabase/schema.sql              tabelas, funções, RLS e publicação de realtime
+src/lib/grupos/metodos.ts        os métodos de estudo: etapas, perguntas e adaptação
+src/lib/grupos/api.ts            acesso a dados e assinaturas de realtime
+src/lib/grupos/supabase.ts       cliente (e a flag de "não configurado")
+src/app/grupos/                  lista, grupo, assistente de criação e o estudo
+src/components/grupos/           portão de entrada, painel do líder, texto bíblico
+```
+
+### Como as perguntas se adaptam sem IA
+
+`montarEtapas()` em [metodos.ts](src/lib/grupos/metodos.ts) faz duas coisas: corta as
+perguntas acima do nível escolhido e distribui o orçamento de perguntas da duração em
+rodadas, pegando primeiro a pergunta mais importante de cada etapa. Assim 15 minutos não
+viram três perguntas todas na mesma etapa. O público troca a formulação da pergunta, não a
+profundidade.
+
+**Métodos prontos:** Estudo Indutivo e Problema → Bíblia → Aplicação. Os outros nove
+aparecem na escolha marcados como "em breve"; para implementar, basta acrescentar o
+template em `METODOS` com `disponivel: true`. O runtime do estudo não sabe nada sobre
+método, só executa o que o template descreve.
 
 ## Capas
 

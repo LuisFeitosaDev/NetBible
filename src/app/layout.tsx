@@ -5,17 +5,29 @@ import { BibleProvider } from "@/lib/store";
 import { TopNav } from "@/components/TopNav";
 import { MobileNav } from "@/components/MobileNav";
 import { ServiceWorker } from "@/components/ServiceWorker";
+import { Boot } from "@/components/Boot";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Lumen — a Bíblia do seu jeito",
+  title: "Genipse Bible",
   description:
-    "Leia, marque e comente a Bíblia num catálogo feito para durar o dia inteiro.",
+    "Leia, marque e comente a Bíblia, e estude em grupo com quem você quiser.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Lumen" },
+  icons: {
+    icon: [
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Genipse Bible",
+  },
 };
 
 export const viewport: Viewport = {
@@ -32,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="min-h-dvh pb-24 md:pb-10">{children}</main>
           <MobileNav />
           <ServiceWorker />
+          <Boot />
         </BibleProvider>
       </body>
     </html>

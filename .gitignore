@@ -7,6 +7,7 @@ next-env.d.ts
 
 .env*
 !.env.example
+# .env.local guarda as chaves do Supabase e nunca vai para o repositório.
 
 .DS_Store
 Thumbs.db

@@ -19,6 +19,9 @@ type BibleContextValue = {
   setVersion: (v: VersionId) => void;
   parallel: boolean;
   setParallel: (v: boolean) => void;
+  /** Qual tradução aparece ao lado na leitura paralela. */
+  parallelVersion: VersionId;
+  setParallelVersion: (v: VersionId) => void;
 };
 
 const BibleContext = createContext<BibleContextValue | null>(null);
@@ -27,21 +30,35 @@ export function BibleProvider({ children }: { children: ReactNode }) {
   const [index, setIndex] = useState<BibleIndex | null>(null);
   const [version, setVersionState] = useState<VersionId>("ara");
   const [parallel, setParallelState] = useState(false);
+  const [parallelVersion, setParallelVersionState] = useState<VersionId>("nvi");
 
   useEffect(() => {
     loadIndex().then(setIndex).catch(console.error);
     getPref<VersionId>("version", "ara").then(setVersionState);
     getPref<boolean>("parallel", false).then(setParallelState);
+    getPref<VersionId>("parallelVersion", "nvi").then(setParallelVersionState);
   }, []);
 
   const setVersion = useCallback((v: VersionId) => {
     setVersionState(v);
     void setPref("version", v);
+    // Nunca deixar as duas colunas iguais na leitura paralela.
+    setParallelVersionState((atual) => {
+      if (atual !== v) return atual;
+      const alternativa = v === "ara" ? "nvi" : "ara";
+      void setPref("parallelVersion", alternativa);
+      return alternativa;
+    });
   }, []);
 
   const setParallel = useCallback((v: boolean) => {
     setParallelState(v);
     void setPref("parallel", v);
+  }, []);
+
+  const setParallelVersion = useCallback((v: VersionId) => {
+    setParallelVersionState(v);
+    void setPref("parallelVersion", v);
   }, []);
 
   const bySlug = useMemo(
@@ -50,8 +67,26 @@ export function BibleProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ index, bySlug, version, setVersion, parallel, setParallel }),
-    [index, bySlug, version, setVersion, parallel, setParallel],
+    () => ({
+      index,
+      bySlug,
+      version,
+      setVersion,
+      parallel,
+      setParallel,
+      parallelVersion,
+      setParallelVersion,
+    }),
+    [
+      index,
+      bySlug,
+      version,
+      setVersion,
+      parallel,
+      setParallel,
+      parallelVersion,
+      setParallelVersion,
+    ],
   );
 
   return <BibleContext.Provider value={value}>{children}</BibleContext.Provider>;

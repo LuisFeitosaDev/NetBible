@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Library, Settings2 } from "lucide-react";
+import { Home, Search, Library, Settings2, Users } from "lucide-react";
 
 const ITEMS = [
   { href: "/", label: "Início", icon: Home },
+  { href: "/grupos", label: "Grupos", icon: Users },
   { href: "/busca", label: "Buscar", icon: Search },
   { href: "/biblioteca", label: "Biblioteca", icon: Library },
   { href: "/ajustes", label: "Ajustes", icon: Settings2 },

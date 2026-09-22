@@ -30,6 +30,27 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // O índice lista as traduções disponíveis e muda quando alguma entra ou sai.
+  // Cache-first aqui prenderia o app à lista antiga para sempre, então ele é o
+  // único arquivo de /biblia/ que tenta a rede antes.
+  if (url.pathname === "/biblia/index.json") {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(BIBLE_CACHE);
+        try {
+          const response = await fetch(request, { cache: "no-store" });
+          if (response.ok) cache.put(request, response.clone());
+          return response;
+        } catch {
+          const hit = await cache.match(request);
+          if (hit) return hit;
+          throw new Error("offline sem índice em cache");
+        }
+      })(),
+    );
+    return;
+  }
+
   if (url.pathname.startsWith("/biblia/")) {
     event.respondWith(
       caches.open(BIBLE_CACHE).then(async (cache) => {

@@ -44,7 +44,7 @@ export default function ReaderPage() {
   const { slug, cap } = useParams<{ slug: string; cap: string }>();
   const chapter = Number(cap);
   const router = useRouter();
-  const { index, bySlug, version, parallel, setParallel } = useBible();
+  const { index, bySlug, version, parallel, setParallel, parallelVersion } = useBible();
   const book = bySlug.get(slug);
 
   const [content, setContent] = useState<BookContent | null>(null);
@@ -57,7 +57,7 @@ export default function ReaderPage() {
   const [focusVerse, setFocusVerse] = useState<number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
-  const otherVersion: VersionId = version === "ara" ? "nvi" : "ara";
+  const otherVersion: VersionId = parallelVersion;
 
   const marks = useLiveQuery(
     () => db.marks.where("[slug+chapter]").equals([slug, chapter]).toArray(),
@@ -274,8 +274,14 @@ export default function ReaderPage() {
             >
               <Columns2 size={16} />
             </button>
-            <div className="ml-1">
+            <div className="ml-1 flex items-center gap-1">
               <VersionSwitch />
+              {parallel && (
+                <>
+                  <span className="text-xs text-ink-600">/</span>
+                  <VersionSwitch alvo="paralela" />
+                </>
+              )}
             </div>
           </div>
         </div>

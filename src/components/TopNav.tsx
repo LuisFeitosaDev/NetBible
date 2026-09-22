@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Search, Library, Home, Settings2 } from "lucide-react";
+import { Search, Library, Home, Settings2, Users } from "lucide-react";
 import { VersionSwitch } from "./VersionSwitch";
 
 const LINKS = [
   { href: "/", label: "Início", icon: Home },
+  { href: "/grupos", label: "Grupos", icon: Users },
   { href: "/busca", label: "Buscar", icon: Search },
-  { href: "/biblioteca", label: "Minha biblioteca", icon: Library },
+  { href: "/biblioteca", label: "Biblioteca", icon: Library },
   { href: "/ajustes", label: "Ajustes", icon: Settings2 },
 ];
 
@@ -36,12 +37,21 @@ export function TopNav() {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-[1500px] items-center gap-6 px-4 md:px-8">
-        <Link href="/" className="group flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-gold-300 to-gold-600 text-sm font-black text-ink-950">
-            L
-          </span>
-          <span className="font-display text-xl font-extrabold tracking-tight">
-            Lumen
+        <Link href="/" className="group flex items-center gap-2.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/icon.png"
+            alt=""
+            aria-hidden
+            className="h-8 w-8 rounded-lg"
+          />
+          <span className="leading-none">
+            <span className="block font-display text-lg font-extrabold tracking-tight">
+              Genipse
+            </span>
+            <span className="block text-[9px] font-bold uppercase tracking-[0.28em] text-gold-400">
+              Bible
+            </span>
           </span>
         </Link>
 

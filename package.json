@@ -1,5 +1,5 @@
 {
-  "name": "lumen",
+  "name": "genipse-bible",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
     "capas": "node scripts/build-covers.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.0",
     "dexie": "^4.0.11",
     "dexie-react-hooks": "^1.1.7",
     "lucide-react": "^0.475.0",

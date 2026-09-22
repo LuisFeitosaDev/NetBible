@@ -1,12 +1,13 @@
 import type { GroupId } from "./catalog";
 
-export type VersionId = "ara" | "nvi";
+export type VersionId = "ara" | "nvi" | "acf" | "blivre" | "kjv" | "web";
 
 export type BibleVersion = {
   id: VersionId;
   name: string;
   short: string;
   note: string;
+  idioma: "pt" | "en";
 };
 
 export type BookMeta = {
