@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start -p 3210",
     "lint": "next lint",
-    "capas": "node scripts/build-covers.mjs"
+    "capas": "node scripts/build-covers.mjs",
+    "teste": "node scripts/teste-fluxo.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.0",
