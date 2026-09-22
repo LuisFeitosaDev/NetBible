@@ -35,6 +35,20 @@ const NOME_LOCAL = "lumen.nome";
 
 function erro(e: unknown): never {
   const msg = e instanceof Error ? e.message : String(e);
+
+  /*
+   * Coluna faltando quase sempre significa migração não aplicada. O erro cru do
+   * Postgres ("column estudos.assunto does not exist") não diz o que fazer, e
+   * quem está criando um estudo não tem como adivinhar.
+   */
+  const coluna = msg.match(/column ([\w.]+) does not exist/i);
+  if (coluna) {
+    throw new Error(
+      `Falta aplicar uma migração no banco (coluna ${coluna[1]}). ` +
+        "Rode supabase/schema-metodos.sql no SQL Editor do Supabase.",
+    );
+  }
+
   throw new Error(msg);
 }
 

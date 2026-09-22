@@ -37,6 +37,7 @@ import { VerseActions } from "@/components/VerseActions";
 import { NoteSheet, type NoteTarget } from "@/components/NoteSheet";
 import { VersionSwitch } from "@/components/VersionSwitch";
 import { AboutSheet } from "@/components/AboutBook";
+import { AmbienteLeitura } from "@/components/AmbienteLeitura";
 
 const TEXT_SIZES = ["text-[15px]", "text-[17px]", "text-[19px]", "text-[21px]", "text-[24px]"];
 
@@ -221,8 +222,10 @@ export default function ReaderPage() {
 
   return (
     <div className="pb-40">
-      {/* Barra do leitor */}
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-ink-950/90 backdrop-blur-xl">
+      <AmbienteLeitura book={book} />
+
+      {/* Barra do leitor. Fundo semitransparente para o halo passar por trás. */}
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0b0a0e]/75 backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-3">
           <Link
             href={`/livro/${slug}`}
@@ -321,7 +324,9 @@ export default function ReaderPage() {
           </span>
         </h1>
 
-        <div className={`font-reading ${TEXT_SIZES[sizeStep]} leading-[1.85]`}>
+        <div
+          className={`font-reading ${TEXT_SIZES[sizeStep]} leading-[1.85] text-leitura`}
+        >
           {verses.map((text, i) => {
             const n = i + 1;
             const mark = markByVerse.get(n);

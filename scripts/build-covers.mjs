@@ -282,9 +282,33 @@ async function frame(
   // trim pode falhar em imagem sem borda uniforme; nesse caso seguimos sem ele.
   let base = buffer;
   try {
-    base = await sharp(buffer).trim({ threshold: 18 }).toBuffer();
+    base = await sharp(buffer).trim({ threshold: 28 }).toBuffer();
   } catch {
     /* sem borda para cortar */
+  }
+
+  /*
+   * Raspa a borda depois do trim.
+   *
+   * O papel das reproduções não termina numa linha limpa: sobra de 1 a 3 pixels
+   * claros que o trim não remove, porque a transição é gradual. No card isso
+   * vira uma rebarba branca no topo, bem visível contra o fundo escuro.
+   */
+  try {
+    const m = await sharp(base).metadata();
+    const raspa = Math.max(2, Math.round(Math.min(m.width, m.height) * 0.012));
+    if (m.width > raspa * 4 && m.height > raspa * 4) {
+      base = await sharp(base)
+        .extract({
+          left: raspa,
+          top: raspa,
+          width: m.width - raspa * 2,
+          height: m.height - raspa * 2,
+        })
+        .toBuffer();
+    }
+  } catch {
+    /* imagem pequena demais para raspar */
   }
 
   const factor = await toneFactor(base);

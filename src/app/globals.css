@@ -11,6 +11,10 @@
   --color-ink-300: #b4b4c6;
   --color-ink-100: #ececf2;
 
+  /* Off-white levemente quente, só para a coluna de leitura: o branco azulado
+     da interface cansa a vista em texto longo. */
+  --color-leitura: #ece7dc;
+
   --color-gold-300: #ffd98a;
   --color-gold-400: #f5c45e;
   --color-gold-500: #e8a83a;
