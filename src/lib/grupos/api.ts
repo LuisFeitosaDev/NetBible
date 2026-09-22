@@ -1,7 +1,19 @@
 "use client";
 
 import { sb } from "./supabase";
-import { montarEtapas, metodoPorId, type Nivel, type Publico } from "./metodos";
+import {
+  ehDinamico,
+  montarEtapas,
+  montarPorAssunto,
+  metodoPorId,
+  type EtapaMontada,
+  type MetodoId,
+  type Nivel,
+  type Publico,
+} from "./metodos";
+import { gerarComIA } from "./ia";
+import type { Assunto } from "./conteudo/tipos";
+import type { BookMeta } from "@/lib/bible";
 import type {
   Equipe,
   Estudo,
@@ -173,6 +185,10 @@ export type NovoEstudo = {
   titulo: string;
   referencia: Referencia | null;
   tema: string | null;
+  /** Assunto dos métodos dinâmicos (tema, personagem, doutrina, questão...). */
+  assunto?: Assunto | null;
+  /** Necessário no estudo de livro, para calcular o plano de encontros. */
+  livro?: BookMeta | null;
   publico: Publico;
   nivel: Nivel;
   duracaoMin: number;
@@ -194,6 +210,41 @@ export async function criarEstudo(entrada: NovoEstudo): Promise<Estudo> {
   const template = metodoPorId(entrada.metodo);
   if (!template?.disponivel) throw new Error("Método indisponível.");
 
+  /*
+   * Modo híbrido. Método fixo usa o template; método dinâmico tenta a
+   * curadoria e, se não houver conteúdo revisado para o que o líder pediu,
+   * pede à IA. `origem` registra qual caminho foi usado, para a interface
+   * poder avisar quando o material não passou por revisão humana.
+   */
+  let montadas: EtapaMontada[];
+  let origem: Estudo["origem"] = "curado";
+
+  if (ehDinamico(entrada.metodo) && entrada.assunto) {
+    const curado = montarPorAssunto(
+      entrada.metodo as MetodoId,
+      entrada.assunto,
+      entrada.livro ?? undefined,
+    );
+    if (curado) {
+      montadas = curado;
+    } else {
+      montadas = await gerarComIA({
+        metodo: entrada.metodo,
+        assunto: entrada.assunto,
+        publico: entrada.publico,
+        nivel: entrada.nivel,
+        duracaoMin: entrada.duracaoMin,
+      });
+      origem = "ia";
+    }
+  } else {
+    montadas = montarEtapas(template, {
+      publico: entrada.publico,
+      nivel: entrada.nivel,
+      duracaoMin: entrada.duracaoMin,
+    });
+  }
+
   const { data: estudoBruto, error: e1 } = await c
     .from("estudos")
     .insert({
@@ -202,6 +253,8 @@ export async function criarEstudo(entrada: NovoEstudo): Promise<Estudo> {
       titulo: entrada.titulo,
       referencia: entrada.referencia,
       tema: entrada.tema,
+      assunto: entrada.assunto ?? null,
+      origem,
       publico: entrada.publico,
       nivel: entrada.nivel,
       duracao_min: entrada.duracaoMin,
@@ -214,12 +267,6 @@ export async function criarEstudo(entrada: NovoEstudo): Promise<Estudo> {
   if (e1) erro(e1);
   const estudo = estudoBruto as Estudo;
 
-  const montadas = montarEtapas(template, {
-    publico: entrada.publico,
-    nivel: entrada.nivel,
-    duracaoMin: entrada.duracaoMin,
-  });
-
   const { data: etapasBrutas, error: e2 } = await c
     .from("etapas")
     .insert(
@@ -230,6 +277,7 @@ export async function criarEstudo(entrada: NovoEstudo): Promise<Estudo> {
         titulo: etapa.titulo,
         icone: etapa.icone,
         descricao: etapa.descricao,
+        material: etapa.material ?? null,
         // A primeira etapa já nasce liberada: o estudo começa pela leitura.
         liberada: i === 0,
         liberada_em: i === 0 ? new Date().toISOString() : null,

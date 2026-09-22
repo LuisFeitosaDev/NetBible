@@ -3,22 +3,36 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Loader2, Lock, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BadgeCheck,
+  Check,
+  Loader2,
+  Lock,
+  Sparkles,
+} from "lucide-react";
 import { Gate } from "@/components/grupos/Gate";
 import { useBible } from "@/lib/store";
 import { criarEstudo, grupoPorCodigo } from "@/lib/grupos/api";
 import {
   contarPerguntas,
   DURACOES,
+  ehDinamico,
   METODOS,
   metodoPorId,
   montarEtapas,
+  montarPorAssunto,
   NIVEIS,
   PUBLICOS,
+  type Assunto,
   type MetodoTemplate,
   type Nivel,
   type Publico,
 } from "@/lib/grupos/metodos";
+import { SUGESTOES } from "@/lib/grupos/conteudo/construtores";
+import { COMPARACOES_SUGERIDAS } from "@/lib/grupos/conteudo/personagens";
+import { encontrosSugeridos, planejarEncontros } from "@/lib/grupos/conteudo/livro";
 import type { Formato, Referencia } from "@/lib/grupos/tipos";
 
 export default function NovoEstudoPage() {
@@ -42,6 +56,12 @@ function Assistente() {
   const [vFim, setVFim] = useState<number | "">("");
   const [questao, setQuestao] = useState("");
   const [tema, setTema] = useState("");
+  // Assunto dos métodos dinâmicos.
+  const [assuntoLivre, setAssuntoLivre] = useState("");
+  const [comparaA, setComparaA] = useState("");
+  const [comparaB, setComparaB] = useState("");
+  const [encontros, setEncontros] = useState(6);
+  const [encontroAtual, setEncontroAtual] = useState(1);
 
   const [publico, setPublico] = useState<Publico>("jovens");
   const [nivel, setNivel] = useState<Nivel>("intermediario");
@@ -58,8 +78,17 @@ function Assistente() {
 
   const metodo = metodoId ? metodoPorId(metodoId) : null;
   const livro = index?.books.find((b) => b.slug === slug);
-  const precisaPassagem = metodo?.requer.includes("passagem") ?? false;
-  const precisaQuestao = metodo?.requer.includes("questao") ?? false;
+  const exige = (r: string) => metodo?.requer.includes(r as never) ?? false;
+  const precisaPassagem = exige("passagem");
+  const precisaQuestao = exige("questao") && metodoId !== "debate";
+  const precisaLivro = exige("livro");
+  const precisaTema = exige("tema");
+  const precisaDoutrina = exige("doutrina");
+  const precisaPersonagem = exige("personagem");
+  const ehComparacao = metodoId === "comparacao";
+  const ehDebate = metodoId === "debate";
+
+  const plano = livro && precisaLivro ? planejarEncontros(livro, encontros) : [];
 
   const referencia: Referencia | null = livro
     ? {
@@ -71,7 +100,45 @@ function Assistente() {
       }
     : null;
 
+  /** O que o líder escolheu, no formato que o construtor entende. */
+  const assunto: Assunto | null = useMemo(() => {
+    if (ehComparacao) {
+      return comparaA.trim() && comparaB.trim()
+        ? { tipo: "comparacao", a: comparaA.trim(), b: comparaB.trim() }
+        : null;
+    }
+    if (precisaLivro) {
+      return livro ? { tipo: "livro", slug: livro.slug, encontros, indice: encontroAtual } : null;
+    }
+    const valor = assuntoLivre.trim();
+    if (!valor) return null;
+    if (precisaTema) return { tipo: "tema", valor };
+    if (precisaDoutrina) return { tipo: "doutrina", valor };
+    if (precisaPersonagem) return { tipo: "personagem", valor };
+    if (ehDebate) return { tipo: "questao", valor };
+    return null;
+  }, [
+    ehComparacao,
+    comparaA,
+    comparaB,
+    precisaLivro,
+    livro,
+    encontros,
+    encontroAtual,
+    assuntoLivre,
+    precisaTema,
+    precisaDoutrina,
+    precisaPersonagem,
+    ehDebate,
+  ]);
+
   const titulo = useMemo(() => {
+    if (ehComparacao && assunto?.tipo === "comparacao") return `${assunto.a} × ${assunto.b}`;
+    if (precisaLivro && livro) {
+      const e = plano[Math.min(encontroAtual, plano.length) - 1];
+      return e ? `${livro.name}: encontro ${e.indice} (${e.rotulo})` : livro.name;
+    }
+    if (assuntoLivre.trim()) return assuntoLivre.trim();
     if (precisaQuestao && questao.trim()) return questao.trim();
     if (referencia) {
       const faixa =
@@ -81,17 +148,59 @@ function Assistente() {
       return `${referencia.nome} ${referencia.capitulo}${faixa}`;
     }
     return metodo?.nome ?? "Estudo";
-  }, [precisaQuestao, questao, referencia, metodo]);
+  }, [
+    ehComparacao,
+    assunto,
+    precisaLivro,
+    livro,
+    plano,
+    encontroAtual,
+    assuntoLivre,
+    precisaQuestao,
+    questao,
+    referencia,
+    metodo,
+  ]);
+
+  const precisaAssunto =
+    precisaTema || precisaDoutrina || precisaPersonagem || precisaLivro || ehComparacao || ehDebate;
 
   const conteudoOk =
-    (!precisaPassagem || Boolean(livro)) && (!precisaQuestao || questao.trim().length > 4);
+    (!precisaPassagem || Boolean(livro)) &&
+    (!precisaQuestao || questao.trim().length > 4) &&
+    (!precisaAssunto || Boolean(assunto));
 
-  const previa = metodo?.disponivel
-    ? montarEtapas(metodo, { publico, nivel, duracaoMin: duracao })
-    : [];
-  const totalPerguntas = metodo?.disponivel
-    ? contarPerguntas(metodo, { publico, nivel, duracaoMin: duracao })
-    : 0;
+  /** Lista de sugestões do método atual, para o líder não encarar campo vazio. */
+  const sugestoes = precisaTema
+    ? SUGESTOES.temas
+    : precisaDoutrina
+      ? SUGESTOES.doutrinas
+      : precisaPersonagem || ehComparacao
+        ? SUGESTOES.personagens
+        : ehDebate
+          ? SUGESTOES.debates
+          : [];
+
+  /*
+   * Prévia. Em método dinâmico ela mostra o que a curadoria produz; quando não
+   * há conteúdo curado, a prévia fica vazia e a tela avisa que quem vai montar
+   * é a IA, no momento de criar.
+   */
+  const previa = !metodo?.disponivel
+    ? []
+    : ehDinamico(metodo.id) && assunto
+      ? (montarPorAssunto(metodo.id, assunto, livro) ?? [])
+      : ehDinamico(metodo.id)
+        ? []
+        : montarEtapas(metodo, { publico, nivel, duracaoMin: duracao });
+
+  const viaIA = Boolean(metodo && ehDinamico(metodo.id) && assunto && previa.length === 0);
+
+  const totalPerguntas = previa.length
+    ? previa.reduce((s, e) => s + e.perguntas.length, 0)
+    : metodo?.disponivel && !ehDinamico(metodo.id)
+      ? contarPerguntas(metodo, { publico, nivel, duracaoMin: duracao })
+      : 0;
 
   const criar = async () => {
     if (!grupoId || !metodo) return;
@@ -104,6 +213,8 @@ function Assistente() {
         titulo,
         referencia,
         tema: tema.trim() || null,
+        assunto,
+        livro,
         publico,
         nivel,
         duracaoMin: duracao,
@@ -165,6 +276,128 @@ function Assistente() {
 
         {passo === 1 && metodo && (
           <div className="space-y-5">
+            {/* Assunto livre com sugestões: tema, doutrina, personagem, questão. */}
+            {(precisaTema || precisaDoutrina || precisaPersonagem || ehDebate) && (
+              <CampoComSugestoes
+                rotulo={
+                  precisaTema
+                    ? "Qual tema o grupo vai estudar?"
+                    : precisaDoutrina
+                      ? "Qual doutrina?"
+                      : precisaPersonagem
+                        ? "Qual personagem?"
+                        : "Qual questão o grupo vai debater?"
+                }
+                valor={assuntoLivre}
+                aoMudar={setAssuntoLivre}
+                sugestoes={sugestoes}
+                placeholder={sugestoes[0] ?? ""}
+              />
+            )}
+
+            {ehComparacao && (
+              <div className="space-y-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <CampoComSugestoes
+                    rotulo="Primeiro personagem"
+                    valor={comparaA}
+                    aoMudar={setComparaA}
+                    sugestoes={sugestoes}
+                    placeholder="Pedro"
+                  />
+                  <CampoComSugestoes
+                    rotulo="Segundo personagem"
+                    valor={comparaB}
+                    aoMudar={setComparaB}
+                    sugestoes={sugestoes}
+                    placeholder="Judas Iscariotes"
+                  />
+                </div>
+                <div>
+                  <p className="mb-1.5 text-[12px] text-ink-500">Pares que rendem:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {COMPARACOES_SUGERIDAS.map((par) => (
+                      <button
+                        key={par.a + par.b}
+                        onClick={() => {
+                          setComparaA(par.a);
+                          setComparaB(par.b);
+                        }}
+                        title={par.eixo}
+                        className="rounded-full bg-white/[0.06] px-3 py-1.5 text-[12px] font-medium text-ink-300 transition-colors hover:bg-white/14 hover:text-white"
+                      >
+                        {par.a} × {par.b}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {precisaLivro && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[13px] font-semibold text-ink-300">
+                    Qual livro?
+                  </label>
+                  <select
+                    value={slug}
+                    onChange={(e) => {
+                      setSlug(e.target.value);
+                      setEncontroAtual(1);
+                    }}
+                    className="mt-1.5 w-full rounded-xl border border-white/10 bg-ink-850 px-3 py-3 text-[15px] outline-none focus:border-gold-500/60"
+                  >
+                    <option value="">Escolha o livro</option>
+                    {(index?.books ?? []).map((b) => (
+                      <option key={b.slug} value={b.slug}>
+                        {b.name} ({b.verses.length} cap.)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {livro && (
+                  <>
+                    <Campo titulo="Em quantos encontros?">
+                      <Chips
+                        opcoes={encontrosSugeridos(livro).map((n) => ({
+                          id: String(n),
+                          label: `${n}`,
+                        }))}
+                        valor={String(encontros)}
+                        aoEscolher={(v) => {
+                          setEncontros(Number(v));
+                          setEncontroAtual(1);
+                        }}
+                      />
+                    </Campo>
+
+                    <Campo
+                      titulo="Qual encontro é este?"
+                      nota="Crie um estudo por encontro. O plano completo fica visível para o grupo."
+                    >
+                      <div className="flex flex-wrap gap-2">
+                        {plano.map((e) => (
+                          <button
+                            key={e.indice}
+                            onClick={() => setEncontroAtual(e.indice)}
+                            className={`rounded-lg px-3 py-2 text-[12px] font-semibold transition-colors ${
+                              encontroAtual === e.indice
+                                ? "bg-gold-400 text-ink-950"
+                                : "bg-white/[0.06] text-ink-300 hover:bg-white/12"
+                            }`}
+                          >
+                            {e.indice}. {e.rotulo}
+                          </button>
+                        ))}
+                      </div>
+                    </Campo>
+                  </>
+                )}
+              </div>
+            )}
+
             {precisaQuestao && (
               <div>
                 <label className="block text-[13px] font-semibold text-ink-300">
@@ -339,6 +572,17 @@ function Assistente() {
                 {formato === "individual" ? "Individual" : `${qtdEquipes} equipes`}
               </p>
 
+              {viaIA && (
+                <div className="mt-4 flex gap-2.5 rounded-xl border border-gold-500/25 bg-gold-500/8 p-3.5">
+                  <Sparkles size={16} className="mt-0.5 shrink-0 text-gold-400" />
+                  <p className="text-[13px] leading-relaxed text-ink-300">
+                    Não existe conteúdo revisado para este assunto, então as etapas serão
+                    geradas na hora por IA. O estudo fica marcado como gerado, e vale o
+                    líder conferir os textos antes do encontro.
+                  </p>
+                </div>
+              )}
+
               <ol className="mt-5 space-y-2.5">
                 {previa.map((etapa, i) => (
                   <li key={etapa.chave} className="flex gap-3">
@@ -435,6 +679,74 @@ function PassoMetodo({
           {selecionado === m.id && <Check size={18} className="shrink-0 text-gold-400" />}
         </button>
       ))}
+    </div>
+  );
+}
+
+/**
+ * Campo de texto livre com atalhos para o conteúdo curado.
+ *
+ * O líder pode digitar qualquer coisa, mas as sugestões deixam claro o que já
+ * tem material revisado. O que sai da lista cai na geração por IA.
+ */
+function CampoComSugestoes({
+  rotulo,
+  valor,
+  aoMudar,
+  sugestoes,
+  placeholder,
+}: {
+  rotulo: string;
+  valor: string;
+  aoMudar: (v: string) => void;
+  sugestoes: string[];
+  placeholder?: string;
+}) {
+  const curado = sugestoes.some(
+    (s) => s.toLowerCase() === valor.trim().toLowerCase(),
+  );
+
+  return (
+    <div>
+      <label className="block text-[13px] font-semibold text-ink-300">{rotulo}</label>
+      <input
+        value={valor}
+        onChange={(e) => aoMudar(e.target.value)}
+        placeholder={placeholder}
+        className="mt-1.5 w-full rounded-xl border border-white/10 bg-ink-850 px-4 py-3 text-[15px] outline-none placeholder:text-ink-600 focus:border-gold-500/60"
+      />
+
+      {valor.trim() && (
+        <p className="mt-1.5 flex items-center gap-1.5 text-[12px]">
+          {curado ? (
+            <>
+              <BadgeCheck size={13} className="text-emerald-400" />
+              <span className="text-emerald-400">Conteúdo revisado disponível</span>
+            </>
+          ) : (
+            <>
+              <Sparkles size={13} className="text-gold-400" />
+              <span className="text-ink-400">Fora da lista, será gerado por IA</span>
+            </>
+          )}
+        </p>
+      )}
+
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
+        {sugestoes.map((s) => (
+          <button
+            key={s}
+            onClick={() => aoMudar(s)}
+            className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
+              valor.trim().toLowerCase() === s.toLowerCase()
+                ? "bg-gold-400 text-ink-950"
+                : "bg-white/[0.06] text-ink-300 hover:bg-white/14 hover:text-white"
+            }`}
+          >
+            {s.length > 42 ? s.slice(0, 40) + "..." : s}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

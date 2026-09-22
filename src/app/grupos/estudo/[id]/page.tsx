@@ -18,6 +18,7 @@ import {
 import { Gate } from "@/components/grupos/Gate";
 import { PainelLider } from "@/components/grupos/PainelLider";
 import { TextoBiblico } from "@/components/grupos/TextoBiblico";
+import { MaterialEtapa } from "@/components/grupos/MaterialEtapa";
 import {
   alternarReacao,
   carregarEstudo,
@@ -238,6 +239,8 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
                 Esta etapa ainda não foi liberada.
               </Aviso>
             )}
+
+            {liberada && <MaterialEtapa material={etapaAtual.material} />}
 
             {liberada && estudo.referencia && (
               <div className="mt-4">

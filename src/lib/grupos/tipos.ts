@@ -1,4 +1,5 @@
 import type { MetodoId, Nivel, Publico } from "./metodos";
+import type { Assunto, Material } from "./conteudo/tipos";
 
 export type Perfil = { id: string; nome: string; criado_em: string };
 
@@ -39,6 +40,10 @@ export type Estudo = {
   titulo: string;
   referencia: Referencia | null;
   tema: string | null;
+  /** O que o líder escolheu nos métodos que partem de um assunto. */
+  assunto: Assunto | null;
+  /** De onde veio o conteúdo das etapas. */
+  origem: "curado" | "ia" | "misto";
   publico: Publico;
   nivel: Nivel;
   duracao_min: number;
@@ -61,6 +66,8 @@ export type Etapa = {
   descricao: string | null;
   liberada: boolean;
   liberada_em: string | null;
+  /** Textos com contexto, visões divergentes e notas de apoio da etapa. */
+  material: Material | null;
 };
 
 export type Equipe = { id: string; estudo_id: string; nome: string; cor: string };

@@ -1,3 +1,14 @@
+import type { BookMeta } from "@/lib/bible";
+import {
+  construirComparacao,
+  construirDebate,
+  construirDoutrinario,
+  construirPersonagem,
+  construirTematico,
+} from "./conteudo/construtores";
+import { montarEstudoDeLivro, planejarEncontros } from "./conteudo/livro";
+import type { Assunto, EtapaMontada } from "./conteudo/tipos";
+
 /**
  * Templates dos métodos de estudo.
  *
@@ -373,6 +384,17 @@ const PROBLEMA: MetodoTemplate = {
 // Métodos ainda não implementados: aparecem na escolha, marcados como em breve.
 // ---------------------------------------------------------------------------
 
+/**
+ * Método que monta as etapas a partir do que o líder escolheu, e não de uma
+ * lista fixa. `etapas` fica vazio: quem constrói é `montarPorAssunto`.
+ */
+const dinamico = (
+  id: MetodoId,
+  nome: string,
+  resumo: string,
+  requer: Requisito[],
+): MetodoTemplate => ({ id, nome, resumo, requer, etapas: [], disponivel: true });
+
 const emBreve = (
   id: MetodoId,
   nome: string,
@@ -383,16 +405,58 @@ const emBreve = (
 export const METODOS: MetodoTemplate[] = [
   INDUTIVO,
   PROBLEMA,
-  emBreve("tematico", "Estudo Temático", "Um tema, vários textos, sempre com contexto.", ["tema"]),
-  emBreve("livro", "Estudo de Livro", "Encontros sequenciais cobrindo um livro inteiro.", ["livro"]),
-  emBreve("personagem", "Estudo de Personagem", "A trajetória de alguém, sem virar herói nem vilão.", ["personagem"]),
-  emBreve("comparacao", "Comparação de Personagens", "Dois personagens lado a lado, sem ranking moral.", ["personagem"]),
-  emBreve("doutrinario", "Estudo Doutrinário", "Uma doutrina, com as divergências à mostra.", ["doutrina"]),
-  emBreve("debate", "Debate Bíblico", "Uma questão, vários textos, nenhum vencedor.", ["questao"]),
+  dinamico(
+    "tematico",
+    "Estudo Temático",
+    "Um tema, vários textos, cada um com o seu contexto. Serve para atravessar a Bíblia atrás de um assunto sem arrancar versículo do lugar.",
+    ["tema"],
+  ),
+  dinamico(
+    "livro",
+    "Estudo de Livro",
+    "Encontros sequenciais cobrindo um livro inteiro, com o panorama de autor, época e destinatários em cada um.",
+    ["livro"],
+  ),
+  dinamico(
+    "personagem",
+    "Estudo de Personagem",
+    "A trajetória de alguém pelos próprios textos, com virtudes e erros lado a lado. Ninguém vira herói nem vilão.",
+    ["personagem"],
+  ),
+  dinamico(
+    "comparacao",
+    "Comparação de Personagens",
+    "Dois personagens em circunstâncias parecidas e escolhas diferentes, sem ranking moral.",
+    ["personagem"],
+  ),
+  dinamico(
+    "doutrinario",
+    "Estudo Doutrinário",
+    "Uma doutrina com os textos, o que é consenso e onde cristãos divergem, com as leituras lado a lado.",
+    ["doutrina"],
+  ),
+  dinamico(
+    "debate",
+    "Debate Bíblico",
+    "Uma questão em aberto, cada posição com o seu melhor argumento e o seu texto mais difícil. Não é competição.",
+    ["questao"],
+  ),
   emBreve("perguntas", "Estudo por Perguntas", "O grupo traz as perguntas, o texto responde.", ["passagem"]),
   emBreve("pequenos-grupos", "Estudo em Pequenos Grupos", "Formato de célula, com equipes.", ["passagem"]),
   emBreve("personalizado", "Estudo Personalizado", "Você escreve as etapas e as perguntas.", []),
 ];
+
+/** Métodos cujas etapas dependem do assunto escolhido pelo líder. */
+export const METODOS_DINAMICOS: MetodoId[] = [
+  "tematico",
+  "livro",
+  "personagem",
+  "comparacao",
+  "doutrinario",
+  "debate",
+];
+
+export const ehDinamico = (id: string) => METODOS_DINAMICOS.includes(id as MetodoId);
 
 export const metodoPorId = (id: string) => METODOS.find((m) => m.id === id);
 
@@ -418,13 +482,7 @@ export function textoDaPergunta(pergunta: PerguntaTemplate, publico: Publico) {
   return pergunta.variantes?.[publico] ?? pergunta.texto;
 }
 
-export type EtapaMontada = {
-  chave: string;
-  titulo: string;
-  icone: string;
-  descricao: string;
-  perguntas: { texto: string; ajuda?: string }[];
-};
+export type { EtapaMontada, Assunto } from "./conteudo/tipos";
 
 /**
  * Monta as etapas concretas de um estudo a partir do template.
@@ -477,6 +535,43 @@ export function montarEtapas(
       ajuda: p.ajuda,
     })),
   }));
+}
+
+/**
+ * Monta as etapas de um método dinâmico a partir do assunto escolhido.
+ *
+ * Devolve `null` quando não existe curadoria para aquele assunto. Quem chama
+ * trata esse `null` pedindo a geração para a IA, e é esse arranjo que sustenta
+ * o modo híbrido: o revisado ganha sempre, e o gerado cobre o resto.
+ */
+export function montarPorAssunto(
+  metodo: MetodoId,
+  assunto: Assunto,
+  livro?: BookMeta,
+): EtapaMontada[] | null {
+  switch (metodo) {
+    case "tematico":
+      return assunto.tipo === "tema" ? construirTematico(assunto.valor) : null;
+    case "personagem":
+      return assunto.tipo === "personagem" ? construirPersonagem(assunto.valor) : null;
+    case "comparacao":
+      return assunto.tipo === "comparacao"
+        ? construirComparacao(assunto.a, assunto.b)
+        : null;
+    case "doutrinario":
+      return assunto.tipo === "doutrina" ? construirDoutrinario(assunto.valor) : null;
+    case "debate":
+      return assunto.tipo === "questao" ? construirDebate(assunto.valor) : null;
+    case "livro": {
+      // Estudo de livro nunca cai na IA: a ficha dos 66 livros já cobre tudo.
+      if (assunto.tipo !== "livro" || !livro) return null;
+      const plano = planejarEncontros(livro, assunto.encontros);
+      const encontro = plano[Math.min(assunto.indice ?? 1, plano.length) - 1] ?? plano[0];
+      return montarEstudoDeLivro(livro, encontro);
+    }
+    default:
+      return null;
+  }
 }
 
 /** Quantas perguntas o estudo terá, para a prévia do assistente de criação. */
