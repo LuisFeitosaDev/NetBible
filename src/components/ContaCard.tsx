@@ -12,6 +12,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import { criarConta, entrar, recuperarSenha, sair, useConta } from "@/lib/conta";
+import { BotaoGoogle } from "@/components/grupos/BotaoGoogle";
 import { ouvirSync, sincronizar, type EstadoSync } from "@/lib/sync";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
 import { nomeSalvo } from "@/lib/grupos/api";
@@ -125,7 +126,19 @@ export function ContaCard() {
         no celular e no computador.
       </p>
 
-      <div className="mt-4 flex gap-1 rounded-xl border border-white/8 bg-ink-850 p-1">
+      <div className="mt-4">
+        <BotaoGoogle rotulo="Continuar com Google" destino="/ajustes" aoFalhar={setErro} />
+      </div>
+
+      <div className="my-4 flex items-center gap-3">
+        <span className="h-px flex-1 bg-white/10" />
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-600">
+          ou
+        </span>
+        <span className="h-px flex-1 bg-white/10" />
+      </div>
+
+      <div className="flex gap-1 rounded-xl border border-white/8 bg-ink-850 p-1">
         {(
           [
             ["criar", "Criar conta"],

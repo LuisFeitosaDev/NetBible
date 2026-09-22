@@ -14,6 +14,8 @@ import {
   BookOpenCheck,
 } from "lucide-react";
 import { Gate } from "@/components/grupos/Gate";
+import { BotaoGoogle } from "@/components/grupos/BotaoGoogle";
+import { useConta } from "@/lib/conta";
 import { criarGrupo, entrarNoGrupo, meusGrupos, previaGrupo } from "@/lib/grupos/api";
 import type { Grupo, PreviaGrupo } from "@/lib/grupos/tipos";
 
@@ -162,6 +164,7 @@ function Folha({ titulo, onFechar, children }: { titulo: string; onFechar: () =>
 
 function CriarGrupo({ onFechar }: { onFechar: () => void }) {
   const router = useRouter();
+  const { anonimo, carregando } = useConta();
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [salvando, setSalvando] = useState(false);
@@ -179,6 +182,44 @@ function CriarGrupo({ onFechar }: { onFechar: () => void }) {
       setSalvando(false);
     }
   };
+
+  /*
+   * Criar grupo exige conta. O líder é dono do grupo: prender isso a um
+   * aparelho significa perder o grupo junto com o celular, e sem e-mail não há
+   * como devolver o acesso para ninguém.
+   */
+  if (!carregando && anonimo) {
+    return (
+      <Folha titulo="Criar grupo precisa de conta" onFechar={onFechar}>
+        <p className="text-[14px] leading-relaxed text-ink-300">
+          Você entrou só com um nome, que fica guardado neste aparelho. Como líder, você é
+          dono do grupo: se trocar de celular ou limpar o navegador, perde o acesso e não
+          há como devolver.
+        </p>
+        <p className="mt-2.5 text-[13px] leading-relaxed text-ink-400">
+          Vincular uma conta leva um toque, e o que você já marcou e anotou vem junto.
+        </p>
+
+        <div className="mt-5">
+          <BotaoGoogle rotulo="Criar conta com Google" destino="/grupos" aoFalhar={setFalha} />
+        </div>
+
+        {falha && <p className="mt-3 text-[13px] leading-relaxed text-red-400">{falha}</p>}
+
+        <Link
+          href="/ajustes"
+          className="mt-3 block rounded-xl border border-white/12 py-2.5 text-center font-display text-sm font-bold transition-colors hover:bg-white/8"
+        >
+          Prefiro e-mail e senha
+        </Link>
+
+        <p className="mt-4 text-[12px] leading-relaxed text-ink-500">
+          Para só participar de um grupo, não precisa de nada disso: basta o código do
+          líder.
+        </p>
+      </Folha>
+    );
+  }
 
   return (
     <Folha titulo="Novo grupo" onFechar={onFechar}>

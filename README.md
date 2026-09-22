@@ -63,6 +63,62 @@ estudo liberando uma etapa por vez enquanto as respostas aparecem ao vivo.
 > `service_role` e a `sb_secret_` ignoram o RLS e nunca devem ficar em variável
 > `NEXT_PUBLIC_`, porque tudo com esse prefixo é servido ao navegador.
 
+## Login com Google
+
+O código está pronto; falta credencial, que é feita fora do projeto.
+
+**1. Google Cloud Console** → *APIs & Services* → *Credentials* → *Create
+credentials* → *OAuth client ID* → tipo **Web application**.
+
+Em **Authorized redirect URIs**, cole exatamente o callback do Supabase:
+
+```
+https://SEU-PROJETO.supabase.co/auth/v1/callback
+```
+
+**2. Supabase** → *Authentication* → *Sign In / Providers* → **Google** → ligue e
+cole o *Client ID* e o *Client Secret* gerados acima.
+
+**3. Supabase** → *Authentication* → *URL Configuration*:
+
+- **Site URL**: o domínio de produção.
+- **Redirect URLs**: acrescente `http://localhost:3210/**` e
+  `https://SEU-DOMINIO/**`, senão o retorno do login é recusado.
+
+**4. Opcional, mas recomendado:** ligue **Enable manual linking** em
+*Authentication → Sign In / Providers*. É isso que permite transformar uma
+sessão anônima em conta Google **sem perder** as marcações e os grupos criados
+antes. Sem essa opção o app continua funcionando, mas o login cria um usuário
+novo e o que estava no anônimo fica para trás.
+
+### Como o vínculo funciona
+
+[`entrarComGoogle`](src/lib/conta.ts) verifica se já existe sessão anônima. Se
+existe, chama `linkIdentity` em vez de um login novo: o id do usuário continua o
+mesmo, então marcações, notas e grupos vêm junto. Se o manual linking estiver
+desligado, cai para `signInWithOAuth` e avisa no console.
+
+O retorno cai em [`/auth/callback`](src/app/auth/callback/page.tsx), que espera a
+sessão aparecer, cria o perfil com o nome que o Google mandou e sincroniza antes
+de devolver a pessoa para onde ela estava.
+
+### Criar grupo exige conta
+
+Participar de um grupo continua exigindo só o código e um nome. **Criar** exige
+conta (Google ou e-mail), porque o líder é dono do grupo: preso a um aparelho,
+trocar de celular significaria perder o grupo sem nenhuma forma de recuperar.
+
+## E-mails
+
+Os modelos ficam em [`supabase/emails/`](supabase/emails/), gerados por
+`npm run emails` a partir de [scripts/build-emails.mjs](scripts/build-emails.mjs).
+São seis, um por modelo do painel, com a marca do app. Instruções de onde colar
+cada um estão no [README da pasta](supabase/emails/README.md).
+
+> O SMTP embutido do Supabase manda pouquíssimo e só para a equipe do projeto.
+> Antes de abrir para usuários reais, configure um SMTP próprio, ou desligue
+> *Confirm email* e use só o login com Google, que não depende de e-mail.
+
 ## Conta e sincronização
 
 Marcações, notas, progresso e favoritos seguem a conta, não o aparelho.

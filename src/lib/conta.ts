@@ -88,6 +88,76 @@ export async function criarConta(
   }
 }
 
+/**
+ * Entra com Google.
+ *
+ * Se já existe uma sessão anônima, usamos `linkIdentity` em vez de um login
+ * novo: assim o id do usuário continua o mesmo e marcações, notas e grupos
+ * criados antes do cadastro vêm junto. Se o projeto estiver com "manual
+ * linking" desligado, caímos no login normal, que cria um usuário novo.
+ */
+export async function entrarComGoogle(destino?: string): Promise<ResultadoConta> {
+  try {
+    const c = sb();
+    const proximo = destino ?? window.location.pathname;
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(proximo)}`;
+    const options = {
+      redirectTo,
+      // `consent` garante o refresh token e deixa a pessoa trocar de conta.
+      queryParams: { prompt: "select_account" },
+    };
+
+    const { data } = await c.auth.getUser();
+    if (data.user && !data.user.email) {
+      const vinculo = await c.auth.linkIdentity({ provider: "google", options });
+      if (!vinculo.error) return { ok: true, precisaConfirmar: false };
+      console.warn("linkIdentity indisponível, usando login normal:", vinculo.error.message);
+    }
+
+    const { error } = await c.auth.signInWithOAuth({ provider: "google", options });
+    if (error) return { ok: false, erro: traduzirGoogle(error.message) };
+    return { ok: true, precisaConfirmar: false };
+  } catch (e) {
+    return { ok: false, erro: e instanceof Error ? traduzirGoogle(e.message) : "Falhou." };
+  }
+}
+
+function traduzirGoogle(mensagem: string) {
+  if (/provider is not enabled/i.test(mensagem)) {
+    return "O login com Google não está ligado no Supabase. Ative em Authentication → Sign In / Providers → Google.";
+  }
+  return traduzir(mensagem);
+}
+
+/**
+ * Depois de voltar do Google, garante que o perfil existe e pega o nome que o
+ * provedor mandou, para a pessoa não ter que digitar de novo.
+ */
+export async function garantirPerfilDoProvedor(): Promise<string | null> {
+  const c = sb();
+  const { data } = await c.auth.getUser();
+  const usuario = data.user;
+  if (!usuario) return null;
+
+  const { data: existente } = await c
+    .from("profiles")
+    .select("nome")
+    .eq("id", usuario.id)
+    .maybeSingle();
+  if (existente?.nome) return existente.nome;
+
+  const meta = usuario.user_metadata ?? {};
+  const bruto =
+    (meta.full_name as string) ||
+    (meta.name as string) ||
+    usuario.email?.split("@")[0] ||
+    "Participante";
+  // O banco limita a 40 caracteres.
+  const nome = bruto.trim().slice(0, 40);
+  await salvarPerfil(nome);
+  return nome;
+}
+
 export async function entrar(email: string, senha: string): Promise<ResultadoConta> {
   try {
     const c = sb();

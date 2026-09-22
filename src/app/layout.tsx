@@ -16,10 +16,14 @@ export const metadata: Metadata = {
   description:
     "Leia, marque e comente a Bíblia, e estude em grupo com quem você quiser.",
   manifest: "/manifest.webmanifest",
+  // Aba do navegador usa a marca monocromática: o G branco em fundo preto
+  // continua legível a 16px, onde o degradê dourado vira uma mancha.
+  // O ícone de app (home screen, PWA) segue dourado, no manifest.
   icons: {
     icon: [
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
     ],
     apple: "/icon.png",
   },
