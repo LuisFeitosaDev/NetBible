@@ -70,20 +70,30 @@ O código está pronto; falta credencial, que é feita fora do projeto.
 **1. Google Cloud Console** → *APIs & Services* → *Credentials* → *Create
 credentials* → *OAuth client ID* → tipo **Web application**.
 
-Em **Authorized redirect URIs**, cole exatamente o callback do Supabase:
+Em **Authorized redirect URIs**, vai o callback do **Supabase**, não o do app:
 
 ```
-https://SEU-PROJETO.supabase.co/auth/v1/callback
+https://tpkshrvoyasqfmurqzok.supabase.co/auth/v1/callback
 ```
+
+> Essa é a confusão mais comum: o Google nunca fala direto com o Vercel. Ele
+> devolve para o Supabase, e o Supabase é que devolve para o app.
 
 **2. Supabase** → *Authentication* → *Sign In / Providers* → **Google** → ligue e
-cole o *Client ID* e o *Client Secret* gerados acima.
+cole o *Client ID* **e** o *Client Secret*. Ligar o botão sem preencher o secret
+deixa o provedor num meio-termo que responde `missing OAuth secret`.
 
 **3. Supabase** → *Authentication* → *URL Configuration*:
 
-- **Site URL**: o domínio de produção.
-- **Redirect URLs**: acrescente `http://localhost:3210/**` e
-  `https://SEU-DOMINIO/**`, senão o retorno do login é recusado.
+| Campo | Valor |
+| --- | --- |
+| **Site URL** | `https://net-bible.vercel.app` (sem barra no fim) |
+| **Redirect URLs** | `https://net-bible.vercel.app/**` |
+| | `http://localhost:3210/**` |
+| | `https://net-bible-*.vercel.app/**` (previews do Vercel) |
+
+O `/**` no fim é obrigatório: sem ele o Supabase recusa o retorno em
+`/auth/callback`, porque compara a URL inteira.
 
 **4. Opcional, mas recomendado:** ligue **Enable manual linking** em
 *Authentication → Sign In / Providers*. É isso que permite transformar uma

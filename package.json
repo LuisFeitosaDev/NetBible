@@ -11,7 +11,8 @@
     "capas": "node scripts/build-covers.mjs",
     "teste": "node scripts/teste-fluxo.mjs",
     "marca": "node scripts/build-marca.mjs",
-    "emails": "node scripts/build-emails.mjs"
+    "emails": "node scripts/build-emails.mjs",
+    "teste:auth": "node scripts/teste-auth.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.0",
