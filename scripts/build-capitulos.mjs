@@ -5,7 +5,7 @@
  * num formato panorâmico, porque no leitor a imagem é uma faixa acima do texto
  * e não um pôster.
  *
- *   public/capas/capitulo/<slug>-<n>.webp   1200x520
+ *   public/capas/capitulo/<slug>-<n>.avif   1000x434 (e .webp, reserva)
  *   src/lib/capitulos.generated.ts          lista de quem tem arte
  *
  * Piloto com Rute. Acrescentar um livro é acrescentar entradas em ARTE.
@@ -24,11 +24,26 @@ const OUT = join(ROOT, "public", "capas", "capitulo");
 const API = "https://commons.wikimedia.org/w/api.php";
 const UA = "GenipseBible/1.0 (projeto pessoal; arte de domínio público)";
 
-const FAIXA = { width: 1200, height: 520 };
+/*
+ * 1000x434, e não 1200x520.
+ *
+ * A faixa aparece na largura da coluna de leitura, no máximo 672px de CSS.
+ * Mesmo num celular 3x, 1000px de origem já passa do que a tela resolve, e o
+ * que sobra é só peso. Baixar a qualidade não adianta quase nada aqui: a trama
+ * de linhas da gravura é detalhe fino, o compressor não tem o que jogar fora.
+ * Quem derruba o arquivo é a dimensão.
+ */
+const FAIXA = { width: 1000, height: 434 };
 
 /**
  * "<slug>-<capítulo>" -> candidatos no Commons, em ordem de preferência.
  * Mesma estrutura de `build-covers.mjs`: se o primeiro falhar, tenta o próximo.
+ *
+ * Uma entrada pode ser um array de nomes, e aí o corte é automático, ou um
+ * objeto `{ fontes, ancoraY }`. `ancoraY` é a fração da altura onde a faixa
+ * deve ficar centrada, usada quando o corte automático erra: ele procura a
+ * região de maior detalhe, e em prancha de figura inteira isso costuma ser o
+ * bordado da roupa, não o rosto. Ver `et-1` e `et-7`.
  */
 const ARTE = {
   "rt-1": ["068.Naomi and Her Daughters-in-Law.jpg"],
@@ -49,9 +64,14 @@ const ARTE = {
 
   // Jonas. Quatro capítulos, quatro cenas que a arte cobre inteiras: a
   // tempestade, o peixe, a pregação e a planta.
+  //
+  // Cuidado aqui: vários arquivos do Commons com nomes diferentes são a mesma
+  // prancha 137 de Doré. Usá-la em dois capítulos seguidos dava a impressão de
+  // que o app tinha repetido a imagem. O capítulo 1 é a tempestade, com o navio
+  // e a tripulação, que só a pintura holandesa cobre bem.
   "jn-1": [
-    "Jonah and the whale (89471723).jpg",
-    "Dore jonah.jpg",
+    "Jonah and the Whale RMG BHC0881.tiff",
+    "Richard Westall - Jonah Cast Into the Sea (Jonah 1-15) - B1986.12.3 - Yale Center for British Art.jpg",
   ],
   "jn-2": ["137.Jonah Is Spewed Forth by the Whale.jpg", "Dore jonah whale.jpg"],
   "jn-3": [
@@ -60,24 +80,40 @@ const ARTE = {
   ],
   // O capítulo da planta quase não tem gravura inglesa; os holandeses do século
   // XVII fizeram série inteira sobre ele ("wonderboom", a planta de Jonas).
+  //
+  // Esta já nasce em paisagem, com Jonas reclamando à esquerda sob a planta e
+  // Nínive inteira à direita. O corte para a faixa quase não tira nada, e é
+  // por isso que ela vem na frente das outras: as demais são tondos com letra
+  // em volta, que viram borrão quando achatados.
   "jn-4": [
+    "Jona onder de boom met kalebassen Geschiedenis van Jona (serietitel), RP-P-BI-6584.jpg",
     "Jona zit onder de wonderboom in de buurt van Nineve, RP-P-OB-45.390.jpg",
-    "Jona onder de wonderboom, RP-P-BI-7143.jpg",
-    "Jona zit onder de wonderboom Geschiedenis van Jona (serietitel), RP-P-1904-3288.jpg",
   ],
 
   // Ester. Doré cobre os capítulos 1 e 5; o 6 e o 7 vêm da pintura, onde o
   // triunfo de Mardoqueu e a denúncia de Hamã são temas clássicos.
-  "et-1": [
-    "114.Queen Vashti Refuses to Obey Ahasuerus' Command.jpg",
-    "Vashti refusing to come before the king.jpg",
-  ],
+  // Prancha de figura inteira: o automático foi parar na saia da rainha.
+  "et-1": {
+    fontes: [
+      "114.Queen Vashti Refuses to Obey Ahasuerus' Command.jpg",
+      "Vashti refusing to come before the king.jpg",
+    ],
+    ancoraY: 0.34,
+  },
   "et-5": ["115.Esther Before the King.jpg"],
   "et-6": [
+    "116.The Triumph of Mordecai.jpg",
     "Paolo Veronese - The Triumph of Mordecai - WGA24785.png",
     "Jean-François de Troy - The Triumph of Mordecai.jpg",
-    "Botticelli - The Triumph of Mordecai.jpeg",
   ],
+  // Mesma história: a toalha da mesa tem mais detalhe que os rostos.
+  "et-7": {
+    fontes: [
+      "117.Esther Accuses Haman.jpg",
+      "The Feast of Esther - Jan Lievens - Google Cultural Institute.jpg",
+    ],
+    ancoraY: 0.45,
+  },
 };
 
 const WARM = { r: 214, g: 176, b: 116 };
@@ -139,7 +175,7 @@ async function fator(buffer) {
 const tratar = (p, f) =>
   p.modulate({ saturation: 0 }).normalise().linear(f, 0).tint(WARM);
 
-async function faixa(buffer) {
+async function faixa(buffer, ancoraY) {
   let base = buffer;
   try {
     base = await sharp(buffer).trim({ threshold: 28 }).toBuffer();
@@ -189,11 +225,40 @@ async function faixa(buffer) {
   const f = await fator(base);
 
   /*
+   * Corte com âncora: a faixa sai de uma altura escolhida à mão.
+   *
+   * Usado quando o corte automático erra. Escala a prancha até a largura da
+   * faixa e fatia os 520px centrados em `ancoraY`, sem deixar sair da imagem.
+   */
+  if (ancoraY != null) {
+    const m = await sharp(base).metadata();
+    const altura = Math.round(m.height * (FAIXA.width / m.width));
+    if (altura >= FAIXA.height) {
+      const redim = await sharp(base).resize(FAIXA.width, altura).toBuffer();
+      const topo = Math.min(
+        Math.max(Math.round(altura * ancoraY - FAIXA.height / 2), 0),
+        altura - FAIXA.height,
+      );
+      return tratar(
+        sharp(redim).extract({
+          left: 0,
+          top: topo,
+          width: FAIXA.width,
+          height: FAIXA.height,
+        }),
+        f,
+      )
+        .png()
+        .toBuffer();
+    }
+  }
+
+  /*
    * Corte pela região de maior interesse.
    *
-   * Uma faixa 1200x520 tirada de uma gravura em retrato descarta a maior parte
-   * da altura. Cortar pelo topo devolve só céu, e pelo centro decapita as
-   * figuras; `attention` procura onde a imagem tem detalhe e acerta a cena.
+   * Uma faixa tirada de uma gravura em retrato descarta a maior parte da
+   * altura. Cortar pelo topo devolve só céu, e pelo centro decapita as figuras;
+   * `attention` procura onde a imagem tem detalhe e acerta a cena.
    */
   return tratar(
     sharp(base).resize(FAIXA.width, FAIXA.height, {
@@ -202,8 +267,26 @@ async function faixa(buffer) {
     }),
     f,
   )
-    .webp({ quality: 68, effort: 6 })
+    .png()
     .toBuffer();
+}
+
+/**
+ * Grava a mesma faixa em AVIF e em WebP.
+ *
+ * O AVIF sai perto da metade do WebP nestas gravuras, e é o que quase todo
+ * navegador atual recebe. O WebP fica como reserva para quem não abre AVIF,
+ * e é ele que o `<img>` carrega quando o `<picture>` não acha o primeiro.
+ */
+async function gravar(chave, banda) {
+  await writeFile(
+    join(OUT, `${chave}.avif`),
+    await sharp(banda).avif({ quality: 48, effort: 4 }).toBuffer(),
+  );
+  await writeFile(
+    join(OUT, `${chave}.webp`),
+    await sharp(banda).webp({ quality: 62, effort: 6 }).toBuffer(),
+  );
 }
 
 async function main() {
@@ -217,7 +300,11 @@ async function main() {
   const entradas = Object.entries(ARTE);
   console.log(`Gerando arte de ${entradas.length} capítulos...`);
 
-  for (const [chave, candidatos] of entradas) {
+  for (const [chave, entrada] of entradas) {
+    // Aceita tanto a lista simples quanto `{ fontes, ancoraY }`.
+    const candidatos = Array.isArray(entrada) ? entrada : entrada.fontes;
+    const ancoraY = Array.isArray(entrada) ? undefined : entrada.ancoraY;
+
     const bin = join(CACHE, `${chave}.bin`);
     let buffer;
 
@@ -258,7 +345,7 @@ async function main() {
     }
 
     try {
-      await writeFile(join(OUT, `${chave}.webp`), await faixa(buffer));
+      await gravar(chave, await faixa(buffer, ancoraY));
       prontos.push(chave);
       console.log(`  ok ${chave}`);
     } catch (e) {
@@ -279,8 +366,12 @@ async function main() {
       `export const CAPITULOS_COM_ARTE: ReadonlySet<string> = new Set(${JSON.stringify(prontos.sort())});\n\n` +
       `export const temArteDeCapitulo = (slug: string, capitulo: number) =>\n` +
       `  CAPITULOS_COM_ARTE.has(\`\${slug}-\${capitulo}\`);\n\n` +
+      `/** Reserva: o que o <img> carrega quando o navegador não abre AVIF. */\n` +
       `export const arteDoCapitulo = (slug: string, capitulo: number) =>\n` +
-      `  \`/capas/capitulo/\${slug}-\${capitulo}.webp\`;\n`,
+      `  \`/capas/capitulo/\${slug}-\${capitulo}.webp\`;\n\n` +
+      `/** Preferida: perto da metade do peso da reserva. */\n` +
+      `export const arteAvifDoCapitulo = (slug: string, capitulo: number) =>\n` +
+      `  \`/capas/capitulo/\${slug}-\${capitulo}.avif\`;\n`,
   );
 
   console.log(`\n${prontos.length} geradas, ${faltando.length} sem arte.`);

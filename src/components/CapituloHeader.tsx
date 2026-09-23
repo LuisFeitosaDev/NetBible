@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { ChevronDown, Quote } from "lucide-react";
 import { fichaDoCapitulo } from "@/lib/capitulos";
-import { arteDoCapitulo, temArteDeCapitulo } from "@/lib/capitulos.generated";
+import {
+  arteAvifDoCapitulo,
+  arteDoCapitulo,
+  temArteDeCapitulo,
+} from "@/lib/capitulos.generated";
 import { GROUP_THEME } from "@/lib/catalog";
 import type { BookMeta } from "@/lib/bible";
 
@@ -37,13 +41,23 @@ export function CapituloHeader({
     <header className="mb-8">
       {temArte && (
         <div className="relative -mx-4 mb-5 h-44 overflow-hidden sm:-mx-6 sm:h-52 sm:rounded-2xl">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={arteDoCapitulo(book.slug, capitulo)}
-            alt=""
-            aria-hidden
-            className="h-full w-full object-cover"
-          />
+          {/* AVIF quando o navegador abre, WebP quando não. A gravura tem
+              trama fina, que é justamente o que o AVIF comprime melhor: sai
+              perto da metade do peso. */}
+          <picture>
+            <source
+              srcSet={arteAvifDoCapitulo(book.slug, capitulo)}
+              type="image/avif"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={arteDoCapitulo(book.slug, capitulo)}
+              alt=""
+              aria-hidden
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          </picture>
           {/* Um toque do tom do grupo, só para ligar à identidade do livro.
               Mais que isso e o sépia da gravura vira outra cor. */}
           <div

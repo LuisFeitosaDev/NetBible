@@ -105,10 +105,11 @@
   backface-visibility: hidden;
 }
 
-/* Troca de rota: só opacidade no elemento. Qualquer transform ou filter aqui
-   viraria bloco de contenção e quebraria o fundo `fixed` e o cabeçalho
-   `sticky`. A "força" da transição vem do pseudo-elemento abaixo, que não
-   participa da contenção. */
+/* Troca de rota: só um clarear rápido, e nada mais.
+   Isto vale para o app inteiro, inclusive trocar de aba no menu, então tem que
+   ser discreto. A virada de página forte é exclusiva do leitor, acima.
+   Nenhum transform ou filter aqui: viraria bloco de contenção e quebraria o
+   fundo `fixed` e o cabeçalho `sticky`. */
 @keyframes rota-entra {
   from {
     opacity: 0;
@@ -118,52 +119,15 @@
   }
 }
 
-/* Cortina: um véu escuro com um fio dourado na frente varre a tela uma vez.
-   É o que anuncia a mudança sem mexer no layout. */
-@keyframes rota-cortina {
-  from {
-    transform: translate3d(-100%, 0, 0);
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-  }
-  to {
-    transform: translate3d(100%, 0, 0);
-    opacity: 0;
-  }
-}
-
 .rota-entra {
-  animation: rota-entra 0.34s ease-out;
-}
-
-.rota-entra::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(11, 10, 14, 0.82) 38%,
-    rgba(214, 176, 116, 0.5) 50%,
-    rgba(11, 10, 14, 0.82) 62%,
-    transparent 100%
-  );
-  animation: rota-cortina 0.62s cubic-bezier(0.5, 0, 0.3, 1) forwards;
+  animation: rota-entra 0.18s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vira-avanca,
   .vira-volta,
-  .rota-entra,
-  .rota-entra::before {
+  .rota-entra {
     animation: none;
-  }
-  .rota-entra::before {
-    display: none;
   }
 }
 

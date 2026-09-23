@@ -253,33 +253,47 @@ function LinhaDoLivro({ book }: { book: BookMeta }) {
   return (
     <Link
       href={`/livro/${book.slug}`}
-      className="group relative block h-[66px] overflow-hidden rounded-xl ring-1 ring-white/8 transition-all duration-300 hover:ring-white/30"
+      className="group relative block h-[66px] overflow-hidden rounded-xl bg-ink-900 ring-1 ring-white/8 transition-all duration-300 hover:ring-white/30"
     >
-      <BookArt book={book} shape="wide" focus="right" className="absolute inset-0" />
+      {/*
+        A arte é uma janela de largura fixa encostada na borda direita, igual em
+        todas as linhas.
 
-      {/* Véu da esquerda para a direita: sem ele a gravura briga com o nome. */}
+        Antes ela preenchia a linha inteira, e como cada gravura tem o claro e o
+        escuro em lugares diferentes, cada livro parecia ter uma imagem de um
+        tamanho. Com largura fixa e máscara, todas terminam no mesmo ponto e
+        somem para a esquerda do mesmo jeito.
+
+        O pôster 2:3, não a faixa 16:9: a faixa é montada com letterbox, e as
+        tarjas pretas dela apareceriam dentro da janela.
+      */}
       <div
         aria-hidden
-        className="absolute inset-0"
+        className="absolute inset-y-0 right-0 w-[170px] sm:w-[210px]"
         style={{
-          background:
-            "linear-gradient(90deg, rgba(11,10,14,0.96) 0%, rgba(11,10,14,0.9) 38%, rgba(11,10,14,0.5) 72%, rgba(11,10,14,0.28) 100%)",
+          maskImage: "linear-gradient(90deg, transparent 0%, #000 62%)",
+          WebkitMaskImage: "linear-gradient(90deg, transparent 0%, #000 62%)",
         }}
-      />
+      >
+        <BookArt book={book} focus="right" className="absolute inset-0" />
+        {/* A gravura vem clara demais para texto por cima; isto a assenta. */}
+        <div className="absolute inset-0 bg-ink-950/45" />
+      </div>
 
       <div className="relative flex h-full items-center gap-3 px-4">
         <span className="w-9 shrink-0 font-mono text-[10px] font-bold uppercase tracking-wider text-ink-500">
           {citationLabel(book)}
         </span>
-        <span className="min-w-0 flex-1 truncate font-display text-[16px] font-bold tracking-tight">
+        <span className="min-w-0 truncate font-display text-[16px] font-bold tracking-tight">
           {book.name}
         </span>
-        <span className="shrink-0 text-[11px] text-ink-400">
+        {/* Junto do nome, e não na ponta: na ponta ficaria em cima da gravura. */}
+        <span className="shrink-0 text-[11px] text-ink-500">
           {capitulos} {capitulos === 1 ? "cap" : "caps"}
         </span>
         <ChevronRight
           size={16}
-          className="shrink-0 text-ink-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-white"
+          className="ml-auto shrink-0 text-ink-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-white"
         />
       </div>
     </Link>
