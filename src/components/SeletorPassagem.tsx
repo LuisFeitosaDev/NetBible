@@ -95,30 +95,30 @@ export function SeletorPassagem({
   const grupoDoAlvo = index.groups.find((g) => g.id === alvo.group);
 
   return (
-    <div className="animate-fade border-t border-white/5 bg-ink-900/98 backdrop-blur-xl">
+    <div className="animate-fade border-t border-[color:var(--rl-borda-1)] bg-ink-900/98 backdrop-blur-xl">
       <div className="mx-auto grid max-w-3xl sm:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
         {/* Coluna dos livros */}
         <div
-          className={`${painel === "livros" ? "flex" : "hidden"} min-w-0 flex-col border-white/5 sm:flex sm:border-r`}
+          className={`${painel === "livros" ? "flex" : "hidden"} min-w-0 flex-col border-[color:var(--rl-borda-1)] sm:flex sm:border-r`}
         >
           <div className="flex items-center gap-2 px-3 pt-3">
             <div className="relative flex-1">
               <Search
                 size={14}
-                className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-500"
+                className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[color:var(--rl-texto-mudo)]"
               />
               <input
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 placeholder="Buscar livro"
                 aria-label="Buscar livro"
-                className="w-full rounded-lg border border-white/8 bg-white/[0.04] py-2 pl-8 pr-8 font-sans text-[13px] text-white placeholder:text-ink-500 focus:border-white/20 focus:outline-none"
+                className="w-full rounded-lg border border-[color:var(--rl-borda-2)] bg-[var(--rl-sutil-1)] py-2 pl-8 pr-8 font-sans text-[13px] text-[color:var(--rl-texto)] placeholder:text-[color:var(--rl-texto-mudo)] focus:border-[color:var(--rl-borda-3)] focus:outline-none"
               />
               {busca && (
                 <button
                   onClick={() => setBusca("")}
                   aria-label="Limpar busca"
-                  className="absolute right-1.5 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-ink-400 hover:bg-white/10 hover:text-white"
+                  className="absolute right-1.5 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-ink-400 hover:bg-[var(--rl-sutil-3)] hover:text-[color:var(--rl-texto)]"
                 >
                   <X size={13} />
                 </button>
@@ -128,7 +128,7 @@ export function SeletorPassagem({
             <button
               onClick={() => setPainel("capitulos")}
               aria-label="Voltar aos capítulos"
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-ink-300 hover:bg-white/10 hover:text-white sm:hidden"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-ink-300 hover:bg-[var(--rl-sutil-3)] hover:text-[color:var(--rl-texto)] sm:hidden"
             >
               <X size={17} />
             </button>
@@ -150,14 +150,14 @@ export function SeletorPassagem({
                   />
                 ))
               ) : (
-                <p className="px-3 py-6 text-center font-sans text-[13px] text-ink-500">
+                <p className="px-3 py-6 text-center font-sans text-[13px] text-[color:var(--rl-texto-mudo)]">
                   Nenhum livro com esse nome.
                 </p>
               )
             ) : (
               grupos.map((grupo) => (
                 <div key={grupo.id} className="mb-1">
-                  <p className="px-2.5 pb-1 pt-3 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+                  <p className="px-2.5 pb-1 pt-3 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--rl-texto-mudo)]">
                     {grupo.label}
                   </p>
                   {grupo.livros.map((livro) => (
@@ -182,17 +182,17 @@ export function SeletorPassagem({
           <div className="flex items-center gap-2 px-3 pt-3 sm:px-4">
             <button
               onClick={() => setPainel("livros")}
-              className="flex min-w-0 items-center gap-1.5 rounded-lg py-1 pr-2 text-left transition-colors hover:bg-white/8 sm:pointer-events-none sm:hover:bg-transparent"
+              className="flex min-w-0 items-center gap-1.5 rounded-lg py-1 pr-2 text-left transition-colors hover:bg-[var(--rl-sutil-2)] sm:pointer-events-none sm:hover:bg-transparent"
             >
               <ChevronLeft
                 size={16}
                 className="shrink-0 text-ink-400 sm:hidden"
               />
               <span className="min-w-0">
-                <span className="block truncate font-display text-sm font-bold text-white">
+                <span className="block truncate font-display text-sm font-bold text-[color:var(--rl-texto)]">
                   {alvo.name}
                 </span>
-                <span className="block truncate font-sans text-[11px] text-ink-500">
+                <span className="block truncate font-sans text-[11px] text-[color:var(--rl-texto-mudo)]">
                   {grupoDoAlvo?.label} · {alvo.verses.length}{" "}
                   {alvo.verses.length === 1 ? "capítulo" : "capítulos"}
                 </span>
@@ -203,7 +203,7 @@ export function SeletorPassagem({
                 ao lado, com a busca dentro dela. */}
             <button
               onClick={() => setPainel("livros")}
-              className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white/[0.06] px-2.5 py-1.5 font-sans text-[12px] font-semibold text-ink-200 transition-colors hover:bg-white/12 sm:hidden"
+              className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-[var(--rl-sutil-2)] px-2.5 py-1.5 font-sans text-[12px] font-semibold text-ink-100 transition-colors hover:bg-[var(--rl-sutil-3)] sm:hidden"
             >
               Todos os livros
             </button>
@@ -259,7 +259,7 @@ function LinhaLivro({
       onClick={aoClicar}
       data-alvo={aberto ? "sim" : undefined}
       className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-left transition-colors ${
-        aberto ? "bg-white/10" : "hover:bg-white/[0.06]"
+        aberto ? "bg-[var(--rl-sutil-3)]" : "hover:bg-[var(--rl-sutil-2)]"
       }`}
     >
       <span
@@ -269,7 +269,7 @@ function LinhaLivro({
       />
       <span
         className={`min-w-0 flex-1 truncate font-sans text-[13.5px] ${
-          aberto ? "font-bold text-white" : "font-medium text-ink-200"
+          aberto ? "font-bold text-[color:var(--rl-texto)]" : "font-medium text-ink-100"
         }`}
       >
         {livro.name}
@@ -280,7 +280,7 @@ function LinhaLivro({
           className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold-400"
         />
       )}
-      <span className="shrink-0 font-mono text-[10px] text-ink-500">
+      <span className="shrink-0 font-mono text-[10px] text-[color:var(--rl-texto-mudo)]">
         {livro.verses.length}
       </span>
     </button>

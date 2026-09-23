@@ -75,7 +75,7 @@ function Fact({
   value: string;
 }) {
   return (
-    <div className="flex gap-3 border-b border-white/5 py-3 first:pt-0 last:border-0 last:pb-0">
+    <div className="flex gap-3 border-b border-[color:var(--rl-borda-1)] py-3 first:pt-0 last:border-0 last:pb-0">
       <Icon size={15} className="mt-0.5 shrink-0 text-ink-400" />
       <div>
         <dt className="text-[11px] font-bold uppercase tracking-wider text-ink-400">
@@ -96,8 +96,8 @@ export function AboutSheet({ book, onClose }: { book: BookMeta; onClose: () => v
     <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center">
       <div className="absolute inset-0 animate-fade bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative max-h-[85vh] w-full max-w-lg animate-rise overflow-y-auto rounded-t-2xl border border-white/10 bg-ink-900 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:rounded-2xl sm:pb-5">
-        <h2 className="font-display text-2xl font-black tracking-tight">{book.name}</h2>
+      <div className="relative max-h-[85vh] w-full max-w-lg animate-rise overflow-y-auto rounded-t-2xl border border-[color:var(--rl-borda-2)] bg-ink-900 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:rounded-2xl sm:pb-5">
+        <h2 className="font-display text-2xl font-black tracking-tight text-[color:var(--rl-texto)]">{book.name}</h2>
 
         {about ? (
           <>
@@ -109,7 +109,7 @@ export function AboutSheet({ book, onClose }: { book: BookMeta; onClose: () => v
               {about.contexto}
             </p>
 
-            <dl className="mt-4 rounded-xl bg-white/[0.04] p-4">
+            <dl className="mt-4 rounded-xl bg-[var(--rl-sutil-1)] p-4">
               <Fact icon={PenLine} label="Autor" value={about.autor} />
               <Fact icon={Users} label="Para quem" value={about.publico} />
             </dl>
@@ -134,7 +134,7 @@ export function AboutSheet({ book, onClose }: { book: BookMeta; onClose: () => v
 
         <button
           onClick={onClose}
-          className="mt-6 w-full rounded-lg bg-white/10 py-3 font-display text-sm font-bold transition-colors hover:bg-white/18"
+          className="mt-6 w-full rounded-lg bg-[var(--rl-sutil-3)] py-3 font-display text-sm font-bold text-[color:var(--rl-texto)] transition-colors hover:bg-[var(--rl-borda-4)]"
         >
           Voltar à leitura
         </button>

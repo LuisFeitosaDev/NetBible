@@ -89,10 +89,10 @@ export function CapituloHeader({
           />
 
           <div className="absolute inset-x-0 bottom-0 px-4 pb-3 sm:px-5">
-            <p className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-ink-300">
+            <p className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-white/75">
               {book.name}
             </p>
-            <p className="font-display text-4xl font-black leading-none tracking-tight">
+            <p className="font-display text-4xl font-black leading-none tracking-tight text-white">
               {capitulo}
             </p>
           </div>
@@ -105,21 +105,21 @@ export function CapituloHeader({
           <span className="block font-display text-xs font-bold uppercase tracking-[0.2em] text-ink-400">
             {book.name}
           </span>
-          <span className="mt-1 block font-display text-5xl font-black tracking-tight">
+          <span className="mt-1 block font-display text-5xl font-black tracking-tight text-[color:var(--rl-texto)]">
             {capitulo}
           </span>
         </div>
       )}
 
       {ficha && (
-        <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-          <p className="font-sans text-[14px] leading-relaxed text-ink-200">
+        <div className="rounded-2xl border border-[color:var(--rl-borda-2)] bg-[var(--rl-sutil-1)] p-4">
+          <p className="font-sans text-[14px] leading-relaxed text-ink-100">
             {ficha.resumo}
           </p>
 
           <button
             onClick={() => setAberto((v) => !v)}
-            className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-ink-400 transition-colors hover:text-white"
+            className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-ink-400 transition-colors hover:text-[color:var(--rl-texto)]"
           >
             {aberto ? "Menos" : "Contexto e roteiro"}
             <ChevronDown
@@ -129,13 +129,13 @@ export function CapituloHeader({
           </button>
 
           {aberto && (
-            <div className="mt-3 space-y-4 border-t border-white/6 pt-3">
+            <div className="mt-3 space-y-4 border-t border-[color:var(--rl-borda-1)] pt-3">
               <p className="font-sans text-[13px] leading-relaxed text-ink-300">
                 {ficha.detalhe}
               </p>
 
               <div>
-                <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-ink-500">
+                <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-[color:var(--rl-texto-mudo)]">
                   O que acontece
                 </p>
                 <ol className="space-y-1.5">
@@ -158,7 +158,7 @@ export function CapituloHeader({
 
               <button
                 onClick={() => aoIrParaVersiculo(ficha.chave)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.06] px-3 py-2 font-sans text-[12px] font-semibold transition-colors hover:bg-white/12"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--rl-sutil-2)] px-3 py-2 font-sans text-[12px] font-semibold text-[color:var(--rl-texto)] transition-colors hover:bg-[var(--rl-sutil-3)]"
               >
                 <Quote size={12} className="text-gold-400" />
                 Versículo-chave: {capitulo}:{ficha.chave}

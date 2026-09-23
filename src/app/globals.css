@@ -192,3 +192,70 @@ body {
   background: var(--color-gold-500);
   color: #000;
 }
+
+/* ------------------------------------------------------ tema da leitura ---
+   Só a tela de leitura tem esta escolha: o resto do app (início, biblioteca,
+   grupos, conta) continua escuro sempre. Tem gente que não lê em fundo preto,
+   então o capítulo em si pode virar claro sem mexer em mais nada.
+
+   As variáveis `--rl-*` cobrem o que não é `ink-*` (branco puro, bordas
+   translúcidas em `white/N`, o fundo da barra) porque Tailwind não amarra
+   essas utilidades a uma variável que dê para sobrescrever por escopo.
+
+   Vivem em `:root`, com os valores escuros de sempre, e não só dentro do
+   leitor: `Fact`, de `AboutBook.tsx`, é usado tanto na página do livro (sempre
+   escura) quanto no painel "Sobre" de dentro do leitor (claro ou escuro), e
+   nos dois casos a variável precisa resolver para algo. Só o claro é que fica
+   escopado, em `[data-tema-leitura="claro"]`, porque é a única exceção. */
+:root {
+  --rl-canvas: #0b0a0e;
+  --rl-header: rgb(11 10 14 / 75%);
+  --rl-texto: #ffffff;
+  --rl-texto-mudo: #63637a;
+  --rl-sutil-1: rgb(255 255 255 / 4%);
+  --rl-sutil-2: rgb(255 255 255 / 6%);
+  --rl-sutil-3: rgb(255 255 255 / 12%);
+  --rl-borda-1: rgb(255 255 255 / 5%);
+  --rl-borda-2: rgb(255 255 255 / 9%);
+  --rl-borda-3: rgb(255 255 255 / 18%);
+  --rl-borda-4: rgb(255 255 255 / 28%);
+  --rl-selecao: rgb(255 255 255 / 15%);
+  --rl-selecao-anel: rgb(255 255 255 / 30%);
+}
+
+/* Claro: papel quente, não branco de tela nem preto invertido. O tom acompanha
+   o mesmo sépia do `--color-leitura` de sempre e das gravuras de capítulo.
+
+   Reaproveita a MESMA escala `--color-ink-*` que a interface toda usa, então
+   qualquer `text-ink-100/300/400/600` dentro do leitor já flipa sozinho, sem
+   precisar editar cada componente. `--color-ink-950` fica de fora de
+   propósito: em todo canto ele é texto escuro sobre um chip dourado
+   ("Capítulo 5" no botão de avançar, "ARA" no seletor de versão), nunca fundo
+   — invertê-lo apagaria esse texto quando o claro estiver ativo. */
+[data-tema-leitura="claro"] {
+  color-scheme: light;
+
+  --color-ink-900: #fffdf8;
+  --color-ink-850: #ede4d0;
+  --color-ink-800: #e1d5b8;
+  --color-ink-700: #cbb894;
+  --color-ink-600: #a89876;
+  --color-ink-400: #837557;
+  --color-ink-300: #5c5138;
+  --color-ink-100: #2c2415;
+  --color-leitura: #211a0d;
+
+  --rl-canvas: #f7f1e3;
+  --rl-header: rgb(247 241 227 / 86%);
+  --rl-texto: #17130a;
+  --rl-texto-mudo: #8f8265;
+  --rl-sutil-1: rgb(40 30 10 / 5%);
+  --rl-sutil-2: rgb(40 30 10 / 7%);
+  --rl-sutil-3: rgb(40 30 10 / 12%);
+  --rl-borda-1: rgb(40 30 10 / 9%);
+  --rl-borda-2: rgb(40 30 10 / 13%);
+  --rl-borda-3: rgb(40 30 10 / 20%);
+  --rl-borda-4: rgb(40 30 10 / 32%);
+  --rl-selecao: rgb(40 30 10 / 10%);
+  --rl-selecao-anel: rgb(40 30 10 / 24%);
+}

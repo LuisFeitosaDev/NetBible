@@ -59,10 +59,10 @@ export function NoteSheet({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-lg animate-rise rounded-t-2xl border border-white/10 bg-ink-900 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:rounded-2xl sm:pb-5">
+      <div className="relative w-full max-w-lg animate-rise rounded-t-2xl border border-[color:var(--rl-borda-2)] bg-ink-900 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:rounded-2xl sm:pb-5">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
-            <h2 className="font-display text-base font-bold">
+            <h2 className="font-display text-base font-bold text-[color:var(--rl-texto)]">
               {existing ? "Editar comentário" : "Novo comentário"}
             </h2>
             <p className="text-xs text-gold-400">{target.label}</p>
@@ -70,13 +70,13 @@ export function NoteSheet({
           <button
             onClick={onClose}
             aria-label="Fechar"
-            className="rounded-full p-1.5 text-ink-400 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-full p-1.5 text-ink-400 transition-colors hover:bg-[var(--rl-sutil-3)] hover:text-[color:var(--rl-texto)]"
           >
             <X size={18} />
           </button>
         </div>
 
-        <p className="mb-4 max-h-28 overflow-y-auto rounded-lg border-l-2 border-gold-500/60 bg-white/[0.04] p-3 font-reading text-sm leading-relaxed text-ink-300">
+        <p className="mb-4 max-h-28 overflow-y-auto rounded-lg border-l-2 border-gold-500/60 bg-[var(--rl-sutil-1)] p-3 font-reading text-sm leading-relaxed text-ink-300">
           {target.text}
         </p>
 
@@ -89,7 +89,7 @@ export function NoteSheet({
           }}
           rows={5}
           placeholder="O que esse versículo te disse hoje?"
-          className="w-full resize-none rounded-xl border border-white/10 bg-ink-850 p-3.5 text-[15px] leading-relaxed text-ink-100 outline-none transition-colors placeholder:text-ink-600 focus:border-gold-500/60"
+          className="w-full resize-none rounded-xl border border-[color:var(--rl-borda-2)] bg-ink-850 p-3.5 text-[15px] leading-relaxed text-ink-100 outline-none transition-colors placeholder:text-[color:var(--rl-texto-mudo)] focus:border-gold-500/60"
         />
 
         <div className="mt-4 flex items-center gap-2">
@@ -113,7 +113,7 @@ export function NoteSheet({
           </button>
         </div>
 
-        <p className="mt-3 text-center text-[11px] text-ink-600">
+        <p className="mt-3 text-center text-[11px] text-[color:var(--rl-texto-mudo)]">
           Ctrl + Enter salva
         </p>
       </div>

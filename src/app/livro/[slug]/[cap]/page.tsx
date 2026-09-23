@@ -30,6 +30,11 @@ import {
   touchReading,
 } from "@/lib/db";
 import { NOME_NA_BARRA, type HighlightColor } from "@/lib/catalog";
+import {
+  CHAVE_TEMA_LEITURA,
+  TEMA_LEITURA_PADRAO,
+  type TemaLeitura,
+} from "@/lib/temaLeitura";
 import { VerseActions } from "@/components/VerseActions";
 import { NoteSheet, type NoteTarget } from "@/components/NoteSheet";
 import { VersionSwitch } from "@/components/VersionSwitch";
@@ -61,6 +66,7 @@ export default function ReaderPage() {
   const [selected, setSelected] = useState<number[]>([]);
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const [sizeStep, setSizeStep] = useState(1);
+  const [temaLeitura, setTemaLeitura] = useState<TemaLeitura>(TEMA_LEITURA_PADRAO);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [controlesOpen, setControlesOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -107,6 +113,7 @@ export default function ReaderPage() {
 
   useEffect(() => {
     void getPref<number>("textSize", 1).then(setSizeStep);
+    void getPref<TemaLeitura>(CHAVE_TEMA_LEITURA, TEMA_LEITURA_PADRAO).then(setTemaLeitura);
   }, []);
 
   // ?v=14 vem do versículo do dia e da biblioteca: rola até ele e pisca.
@@ -232,6 +239,11 @@ export default function ReaderPage() {
     void setPref("textSize", next);
   };
 
+  const changeTema = (t: TemaLeitura) => {
+    setTemaLeitura(t);
+    void setPref(CHAVE_TEMA_LEITURA, t);
+  };
+
   if (!book || !content) {
     return (
       <div className="mx-auto max-w-2xl space-y-4 px-5 pt-28">
@@ -248,16 +260,16 @@ export default function ReaderPage() {
   const selectionHasMarks = selected.some((n) => markByVerse.has(n));
 
   return (
-    <div className="pb-40">
-      <AmbienteLeitura book={book} />
+    <div className="pb-40" data-tema-leitura={temaLeitura}>
+      <AmbienteLeitura book={book} tema={temaLeitura} />
 
       {/* Barra do leitor. Fundo semitransparente para o halo passar por trás. */}
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0b0a0e]/75 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-[color:var(--rl-borda-1)] bg-[var(--rl-header)] backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-1 px-2.5 sm:px-3">
           <Link
             href={`/livro/${slug}`}
             aria-label="Voltar ao livro"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink-300 transition-colors hover:bg-white/10 hover:text-white"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink-300 transition-colors hover:bg-[var(--rl-sutil-3)] hover:text-[color:var(--rl-texto)]"
           >
             <ArrowLeft size={19} />
           </Link>
@@ -267,11 +279,11 @@ export default function ReaderPage() {
           <button
             onClick={() => setPickerOpen((v) => !v)}
             aria-expanded={pickerOpen}
-            className="flex min-w-0 flex-1 items-center gap-1 rounded-lg px-1.5 py-1.5 text-left transition-colors hover:bg-white/10"
+            className="flex min-w-0 flex-1 items-center gap-1 rounded-lg px-1.5 py-1.5 text-left text-[color:var(--rl-texto)] transition-colors hover:bg-[var(--rl-sutil-3)]"
           >
             {/* Um ponto menor e mais apertado no celular: é o que faz
                 "2 Tessalonicenses" caber inteiro em 375px. */}
-            <span className="min-w-0 truncate font-display text-[15px] font-bold tracking-tight sm:text-base sm:tracking-normal">
+            <span className="min-w-0 truncate font-display text-[15px] font-bold tracking-tight text-[color:var(--rl-texto)] sm:text-base sm:tracking-normal">
               <span className="sm:hidden">
                 {NOME_NA_BARRA[book.slug] ?? book.name}
               </span>
@@ -290,7 +302,7 @@ export default function ReaderPage() {
             <button
               onClick={() => setAboutOpen(true)}
               aria-label={`Sobre ${book.name}`}
-              className="grid h-8 w-8 place-items-center rounded-full text-ink-300 transition-colors hover:bg-white/10 hover:text-white"
+              className="grid h-8 w-8 place-items-center rounded-full text-ink-300 transition-colors hover:bg-[var(--rl-sutil-3)] hover:text-[color:var(--rl-texto)]"
             >
               <Info size={16} />
             </button>
@@ -301,6 +313,8 @@ export default function ReaderPage() {
               passo={sizeStep}
               totalPassos={TEXT_SIZES.length}
               aoMudarTamanho={changeSize}
+              tema={temaLeitura}
+              aoMudarTema={changeTema}
               paralela={parallel}
               aoMudarParalela={setParallel}
             />
@@ -365,7 +379,7 @@ export default function ReaderPage() {
                   onClick={() => toggleVerse(n)}
                   className={`-mx-2 cursor-pointer rounded-md px-2 py-0.5 transition-colors ${
                     mark ? `mark-${mark.color}` : ""
-                  } ${isSelected ? "bg-white/15 ring-1 ring-white/30" : ""} ${
+                  } ${isSelected ? "bg-[var(--rl-selecao)] ring-1 ring-[color:var(--rl-selecao-anel)]" : ""} ${
                     focusVerse === n ? "animate-pulse bg-gold-400/25" : ""
                   }`}
                 >
@@ -382,7 +396,7 @@ export default function ReaderPage() {
                 </p>
 
                 {parallel && secondVerses[i] && (
-                  <p className="-mx-2 mb-2 border-l-2 border-white/10 px-3 py-1 text-[0.82em] italic leading-relaxed text-ink-400">
+                  <p className="-mx-2 mb-2 border-l-2 border-[color:var(--rl-borda-2)] px-3 py-1 text-[0.82em] italic leading-relaxed text-ink-400">
                     {secondVerses[i]}
                   </p>
                 )}
@@ -417,7 +431,7 @@ export default function ReaderPage() {
         <div ref={endRef} className="h-px" />
 
         {/* Navegação entre capítulos */}
-        <nav className="mt-14 flex items-center justify-between gap-3 border-t border-white/5 pt-6">
+        <nav className="mt-14 flex items-center justify-between gap-3 border-t border-[color:var(--rl-borda-1)] pt-6">
           {chapter > 1 ? (
             <Link
               href={`/livro/${slug}/${chapter - 1}`}

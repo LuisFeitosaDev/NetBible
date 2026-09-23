@@ -2,32 +2,37 @@
 
 import { GROUP_THEME } from "@/lib/catalog";
 import type { BookMeta } from "@/lib/bible";
+import type { TemaLeitura } from "@/lib/temaLeitura";
 
 /**
  * Fundo da tela de leitura.
  *
- * Preto chapado cansa a vista em texto longo e some com a identidade do livro.
- * Aqui a base é um quase-preto levemente quente, com um halo da cor do grupo
- * no topo e um rodapé mais fundo, para a página ter profundidade sem ganhar
- * contraste que atrapalhe.
+ * No escuro, a base é um quase-preto levemente quente, com um halo da cor do
+ * grupo no topo e um rodapé mais fundo, para a página ter profundidade sem
+ * ganhar contraste que atrapalhe. No claro é papel: o mesmo halo fica muito
+ * mais fraco, porque uma cor saturada sobre creme fica suja, não elegante.
  *
- * Tudo em opacidade baixa de propósito: o texto continua em #ececf2 sobre
- * fundo escuro, então a legibilidade não muda. A cor serve para o olho saber
- * que Salmos não é Marcos, não para decorar.
+ * A base em si (`--rl-canvas`) e o grão seguem o tema pela variável CSS
+ * escopada em `[data-tema-leitura]`; só a intensidade do halo colorido, que é
+ * um degradê construído em JS a partir da cor do grupo, precisa do valor de
+ * `tema` diretamente para escolher o sufixo de opacidade certo.
  */
-export function AmbienteLeitura({ book }: { book: BookMeta }) {
-  const tema = GROUP_THEME[book.group];
+export function AmbienteLeitura({ book, tema }: { book: BookMeta; tema: TemaLeitura }) {
+  const cor = GROUP_THEME[book.group];
+  const claro = tema === "claro";
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Base levemente quente, em vez do preto puro. */}
-      <div className="absolute inset-0 bg-[#0b0a0e]" />
+      {/* Base quente: quase-preto no escuro, papel no claro. */}
+      <div className="absolute inset-0 bg-[var(--rl-canvas)]" />
 
-      {/* Halo da cor do grupo, entrando por cima. */}
+      {/* Halo da cor do grupo, entrando por cima. Bem mais discreto no claro. */}
       <div
         className="absolute inset-x-0 top-0 h-[70vh]"
         style={{
-          background: `radial-gradient(120% 100% at 50% -20%, ${tema.from}26 0%, ${tema.to}14 38%, transparent 72%)`,
+          background: claro
+            ? `radial-gradient(120% 100% at 50% -20%, ${cor.from}12 0%, ${cor.to}0a 38%, transparent 72%)`
+            : `radial-gradient(120% 100% at 50% -20%, ${cor.from}26 0%, ${cor.to}14 38%, transparent 72%)`,
         }}
       />
 
@@ -35,7 +40,9 @@ export function AmbienteLeitura({ book }: { book: BookMeta }) {
       <div
         className="absolute inset-x-0 bottom-0 h-[45vh]"
         style={{
-          background: `linear-gradient(to top, ${tema.to}1a 0%, transparent 100%)`,
+          background: claro
+            ? `linear-gradient(to top, ${cor.to}0c 0%, transparent 100%)`
+            : `linear-gradient(to top, ${cor.to}1a 0%, transparent 100%)`,
         }}
       />
 

@@ -48,7 +48,7 @@ export function VersionSwitch({ alvo = "principal" }: { alvo?: "principal" | "pa
         onClick={() => setAberto((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={aberto}
-        className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 py-1.5 pl-3 pr-2 text-xs font-bold tracking-wide transition-colors hover:border-white/25"
+        className="flex items-center gap-1.5 rounded-full border border-[color:var(--rl-borda-2)] bg-[var(--rl-sutil-1)] py-1.5 pl-3 pr-2 text-xs font-bold tracking-wide transition-colors hover:border-[color:var(--rl-borda-4)]"
       >
         <span className={alvo === "principal" ? "text-gold-400" : "text-ink-300"}>
           {selecionada?.short ?? "?"}
@@ -62,14 +62,14 @@ export function VersionSwitch({ alvo = "principal" }: { alvo?: "principal" | "pa
       {aberto && (
         <div
           role="listbox"
-          className="absolute right-0 z-50 mt-2 w-64 animate-rise overflow-hidden rounded-xl border border-white/10 bg-ink-850 shadow-2xl shadow-black/60"
+          className="absolute right-0 z-50 mt-2 w-64 animate-rise overflow-hidden rounded-xl border border-[color:var(--rl-borda-2)] bg-ink-850 shadow-2xl shadow-black/60"
         >
           {porIdioma.map((idioma) => {
             const doIdioma = versoes.filter((v) => (v.idioma ?? "pt") === idioma);
             if (!doIdioma.length) return null;
             return (
               <div key={idioma}>
-                <p className="border-b border-white/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-ink-500">
+                <p className="border-b border-[color:var(--rl-borda-1)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[color:var(--rl-texto-mudo)]">
                   {IDIOMA[idioma]}
                 </p>
                 {doIdioma.map((v) => {
@@ -87,7 +87,7 @@ export function VersionSwitch({ alvo = "principal" }: { alvo?: "principal" | "pa
                       className={`flex w-full items-start gap-2.5 px-3 py-2.5 text-left transition-colors ${
                         indisponivel
                           ? "cursor-not-allowed opacity-35"
-                          : "hover:bg-white/8"
+                          : "hover:bg-[var(--rl-sutil-2)]"
                       }`}
                     >
                       <span
@@ -98,10 +98,10 @@ export function VersionSwitch({ alvo = "principal" }: { alvo?: "principal" | "pa
                         {v.short}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-[13px] font-semibold leading-tight">
+                        <span className="block text-[13px] font-semibold leading-tight text-ink-100">
                           {v.name}
                         </span>
-                        <span className="block text-[11px] text-ink-500">
+                        <span className="block text-[11px] text-[color:var(--rl-texto-mudo)]">
                           {indisponivel ? "já é a leitura principal" : v.note}
                         </span>
                       </span>

@@ -37,9 +37,9 @@ export function VerseActions({
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-      <div className="pointer-events-auto w-full max-w-lg animate-rise rounded-2xl border border-white/10 bg-ink-850/95 p-3 shadow-2xl shadow-black/70 backdrop-blur-xl">
+      <div className="pointer-events-auto w-full max-w-lg animate-rise rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-850/95 p-3 shadow-2xl shadow-black/70 backdrop-blur-xl">
         <div className="mb-3 flex items-center justify-between px-1">
-          <span className="font-display text-sm font-bold text-white">
+          <span className="font-display text-sm font-bold text-[color:var(--rl-texto)]">
             {label}
             <span className="ml-2 font-sans text-xs font-normal text-ink-400">
               {count} {count === 1 ? "versículo" : "versículos"}
@@ -48,7 +48,7 @@ export function VerseActions({
           <button
             onClick={onClose}
             aria-label="Cancelar seleção"
-            className="rounded-full p-1 text-ink-400 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-full p-1 text-ink-400 transition-colors hover:bg-[var(--rl-sutil-3)] hover:text-[color:var(--rl-texto)]"
           >
             <X size={17} />
           </button>
@@ -61,7 +61,7 @@ export function VerseActions({
               onClick={() => onColor(c.id as HighlightColor)}
               aria-label={`Marcar de ${c.label.toLowerCase()}`}
               className={`grid h-9 flex-1 place-items-center rounded-lg transition-transform hover:scale-105 active:scale-95 ${
-                activeColor === c.id ? "ring-2 ring-white" : "ring-1 ring-white/15"
+                activeColor === c.id ? "ring-2 ring-[color:var(--rl-texto)]" : "ring-1 ring-[color:var(--rl-borda-3)]"
               }`}
               style={{ background: `${c.hex}40` }}
             >
@@ -72,7 +72,7 @@ export function VerseActions({
             onClick={onClearMarks}
             disabled={!hasMarks}
             aria-label="Remover marcação"
-            className="grid h-9 w-11 place-items-center rounded-lg text-ink-300 ring-1 ring-white/15 transition-colors enabled:hover:bg-white/10 enabled:hover:text-white disabled:opacity-30"
+            className="grid h-9 w-11 place-items-center rounded-lg text-ink-300 ring-1 ring-[color:var(--rl-borda-3)] transition-colors enabled:hover:bg-[var(--rl-sutil-3)] enabled:hover:text-[color:var(--rl-texto)] disabled:opacity-30"
           >
             <Eraser size={16} />
           </button>
@@ -104,7 +104,7 @@ function ActionButton({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1 rounded-lg bg-white/[0.06] py-2.5 text-[11px] font-semibold text-ink-100 transition-colors hover:bg-white/12"
+      className="flex flex-col items-center gap-1 rounded-lg bg-[var(--rl-sutil-2)] py-2.5 text-[11px] font-semibold text-ink-100 transition-colors hover:bg-[var(--rl-sutil-3)]"
     >
       <Icon size={17} />
       {label}
