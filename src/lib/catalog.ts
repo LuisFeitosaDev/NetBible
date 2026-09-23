@@ -30,6 +30,16 @@ export const GROUP_THEME: Record<GroupId, GroupTheme> = {
   apocaliptico: { from: "#ef4444", to: "#7f1d1d", accent: "#f87171" },
 };
 
+/**
+ * Nome enxuto para a barra do leitor, onde a largura é disputada com os
+ * controles. Só entra aqui o livro cujo nome completo não cabe num celular de
+ * 375px: "Lamentações" é melhor que "Lamentações de ...". Em qualquer outro
+ * lugar do app o nome completo continua valendo.
+ */
+export const NOME_NA_BARRA: Record<string, string> = {
+  lm: "Lamentações",
+};
+
 /** Logline de cada livro, o "resumo do episódio". */
 export const SYNOPSIS: Record<string, string> = {
   gn: "O começo de tudo: criação, queda, dilúvio e a promessa feita a Abraão.",

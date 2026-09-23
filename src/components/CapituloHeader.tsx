@@ -11,9 +11,9 @@ import type { BookMeta } from "@/lib/bible";
 /**
  * Abertura do capítulo: arte, número e visão geral.
  *
- * Substitui o título simples quando existe ficha ou arte para aquele capítulo.
- * Sem nenhum dos dois, quem chama continua desenhando o cabeçalho antigo, e é
- * assim que os 1.185 capítulos ainda sem material seguem funcionando.
+ * Sempre desenha o título, porque é ele que abre o capítulo na tela. Com arte,
+ * o título se apoia sobre a gravura; sem arte, volta ao formato centralizado.
+ * A ficha, quando existe, entra logo abaixo.
  *
  * O resumo aparece aberto; detalhe e marcos ficam atrás de um toque. Quem está
  * lendo a Bíblia não pediu um artigo antes do texto.
@@ -52,8 +52,6 @@ export function CapituloHeader({
       vivo = false;
     };
   }, [book.slug, capitulo]);
-
-  if (!ficha && !temArte) return null;
 
   return (
     <header className="mb-8">

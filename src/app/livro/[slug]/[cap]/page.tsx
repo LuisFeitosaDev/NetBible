@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
@@ -9,9 +9,6 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Columns2,
-  Minus,
-  Plus,
   Pencil,
   Info,
 } from "lucide-react";
@@ -32,15 +29,15 @@ import {
   setPref,
   touchReading,
 } from "@/lib/db";
-import type { HighlightColor } from "@/lib/catalog";
+import { NOME_NA_BARRA, type HighlightColor } from "@/lib/catalog";
 import { VerseActions } from "@/components/VerseActions";
 import { NoteSheet, type NoteTarget } from "@/components/NoteSheet";
 import { VersionSwitch } from "@/components/VersionSwitch";
 import { AboutSheet } from "@/components/AboutBook";
 import { AmbienteLeitura } from "@/components/AmbienteLeitura";
 import { CapituloHeader } from "@/components/CapituloHeader";
-import { fichaDoCapitulo } from "@/lib/capitulos";
-import { temArteDeCapitulo } from "@/lib/capitulos.generated";
+import { ControlesLeitura } from "@/components/ControlesLeitura";
+import { SeletorPassagem } from "@/components/SeletorPassagem";
 
 const TEXT_SIZES = ["text-[15px]", "text-[17px]", "text-[19px]", "text-[21px]", "text-[24px]"];
 
@@ -56,7 +53,6 @@ let ultimaLeitura: { slug: string; chapter: number } | null = null;
 export default function ReaderPage() {
   const { slug, cap } = useParams<{ slug: string; cap: string }>();
   const chapter = Number(cap);
-  const router = useRouter();
   const { index, bySlug, version, parallel, setParallel, parallelVersion } = useBible();
   const book = bySlug.get(slug);
 
@@ -66,6 +62,7 @@ export default function ReaderPage() {
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const [sizeStep, setSizeStep] = useState(1);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [controlesOpen, setControlesOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [focusVerse, setFocusVerse] = useState<number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -245,10 +242,6 @@ export default function ReaderPage() {
     );
   }
 
-  // Capítulo com ficha ou arte ganha abertura ilustrada; o resto segue igual.
-  const temAbertura =
-    Boolean(fichaDoCapitulo(slug, chapter)) || temArteDeCapitulo(slug, chapter);
-
   const selectionColor = selected.length
     ? markByVerse.get(selected[0])?.color
     : undefined;
@@ -260,24 +253,40 @@ export default function ReaderPage() {
 
       {/* Barra do leitor. Fundo semitransparente para o halo passar por trás. */}
       <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0b0a0e]/75 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-3">
+        <div className="mx-auto flex h-14 max-w-3xl items-center gap-1 px-2.5 sm:px-3">
           <Link
             href={`/livro/${slug}`}
             aria-label="Voltar ao livro"
-            className="grid h-9 w-9 place-items-center rounded-full text-ink-300 transition-colors hover:bg-white/10 hover:text-white"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink-300 transition-colors hover:bg-white/10 hover:text-white"
           >
             <ArrowLeft size={19} />
           </Link>
 
+          {/* `min-w-0` nos dois níveis: sem ele o flex respeita a largura do
+              texto e "2 Tessalonicenses" empurra a barra em vez de cortar. */}
           <button
             onClick={() => setPickerOpen((v) => !v)}
-            className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 font-display text-base font-bold transition-colors hover:bg-white/10"
+            aria-expanded={pickerOpen}
+            className="flex min-w-0 flex-1 items-center gap-1 rounded-lg px-1.5 py-1.5 text-left transition-colors hover:bg-white/10"
           >
-            {book.name} {chapter}
-            <ChevronDown size={16} className={`transition-transform ${pickerOpen ? "rotate-180" : ""}`} />
+            {/* Um ponto menor e mais apertado no celular: é o que faz
+                "2 Tessalonicenses" caber inteiro em 375px. */}
+            <span className="min-w-0 truncate font-display text-[15px] font-bold tracking-tight sm:text-base sm:tracking-normal">
+              <span className="sm:hidden">
+                {NOME_NA_BARRA[book.slug] ?? book.name}
+              </span>
+              <span className="hidden sm:inline">{book.name}</span>
+            </span>
+            <span className="shrink-0 font-display text-[15px] font-bold text-gold-400 sm:text-base">
+              {chapter}
+            </span>
+            <ChevronDown
+              size={15}
+              className={`shrink-0 text-ink-400 transition-transform ${pickerOpen ? "rotate-180" : ""}`}
+            />
           </button>
 
-          <div className="ml-auto flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1">
             <button
               onClick={() => setAboutOpen(true)}
               aria-label={`Sobre ${book.name}`}
@@ -285,33 +294,18 @@ export default function ReaderPage() {
             >
               <Info size={16} />
             </button>
-            <button
-              onClick={() => changeSize(-1)}
-              disabled={sizeStep === 0}
-              aria-label="Diminuir texto"
-              className="grid h-8 w-8 place-items-center rounded-full text-ink-300 transition-colors enabled:hover:bg-white/10 enabled:hover:text-white disabled:opacity-25"
-            >
-              <Minus size={15} />
-            </button>
-            <button
-              onClick={() => changeSize(1)}
-              disabled={sizeStep === TEXT_SIZES.length - 1}
-              aria-label="Aumentar texto"
-              className="grid h-8 w-8 place-items-center rounded-full text-ink-300 transition-colors enabled:hover:bg-white/10 enabled:hover:text-white disabled:opacity-25"
-            >
-              <Plus size={15} />
-            </button>
-            <button
-              onClick={() => setParallel(!parallel)}
-              aria-label="Leitura paralela"
-              aria-pressed={parallel}
-              className={`grid h-8 w-8 place-items-center rounded-full transition-colors ${
-                parallel ? "bg-gold-400 text-ink-950" : "text-ink-300 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              <Columns2 size={16} />
-            </button>
-            <div className="ml-1 flex items-center gap-1">
+
+            <ControlesLeitura
+              aberto={controlesOpen}
+              aoAlternar={setControlesOpen}
+              passo={sizeStep}
+              totalPassos={TEXT_SIZES.length}
+              aoMudarTamanho={changeSize}
+              paralela={parallel}
+              aoMudarParalela={setParallel}
+            />
+
+            <div className="flex items-center gap-1">
               <VersionSwitch />
               {parallel && (
                 <>
@@ -323,29 +317,25 @@ export default function ReaderPage() {
           </div>
         </div>
 
-        {pickerOpen && (
-          <div className="max-h-[50vh] animate-fade overflow-y-auto border-t border-white/5 bg-ink-900 p-3">
-            <div className="mx-auto grid max-w-3xl grid-cols-[repeat(auto-fill,minmax(52px,1fr))] gap-2">
-              {Array.from({ length: totalChapters }, (_, i) => i + 1).map((n) => (
-                <button
-                  key={n}
-                  onClick={() => {
-                    setPickerOpen(false);
-                    router.push(`/livro/${slug}/${n}`);
-                  }}
-                  className={`aspect-square rounded-lg font-display text-sm font-bold transition-colors ${
-                    n === chapter
-                      ? "bg-gold-400 text-ink-950"
-                      : "bg-ink-850 text-ink-100 hover:bg-ink-700"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-          </div>
+        {pickerOpen && index && (
+          <SeletorPassagem
+            index={index}
+            livroAtual={book}
+            capituloAtual={chapter}
+            aoFechar={() => setPickerOpen(false)}
+          />
         )}
       </header>
+
+      {/* Fecha o seletor ao tocar na leitura, sem escurecer a página: o painel
+          já é opaco e um véu por cima do texto pareceria um modal. */}
+      {pickerOpen && (
+        <div
+          aria-hidden
+          onClick={() => setPickerOpen(false)}
+          className="fixed inset-0 z-30"
+        />
+      )}
 
       {/* Texto */}
       <article className="mx-auto max-w-3xl px-4 pt-8 sm:px-6">
@@ -353,22 +343,12 @@ export default function ReaderPage() {
             tocar de novo. Fica só no texto: o cabeçalho e a navegação não se
             mexem, e nada `fixed` cai dentro do transform. */}
         <div key={`${slug}-${chapter}`} className={`vira-${direcao}`}>
-        {temAbertura ? (
-          <CapituloHeader
-            book={book}
-            capitulo={chapter}
-            aoIrParaVersiculo={setFocusVerse}
-          />
-        ) : (
-          <h1 className="mb-8 text-center">
-            <span className="block font-display text-xs font-bold uppercase tracking-[0.2em] text-ink-400">
-              {book.name}
-            </span>
-            <span className="mt-1 block font-display text-5xl font-black tracking-tight">
-              {chapter}
-            </span>
-          </h1>
-        )}
+        <CapituloHeader
+          book={book}
+          capitulo={chapter}
+          aoIrParaVersiculo={setFocusVerse}
+        />
+
 
         <div
           className={`font-reading ${TEXT_SIZES[sizeStep]} leading-[1.85] text-leitura`}
