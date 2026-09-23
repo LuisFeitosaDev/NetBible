@@ -48,6 +48,64 @@
   }
 }
 
+/* ---------------------------------------------------- virada de página ---
+   Duas direções, para o gesto acompanhar o sentido da navegação: avançar
+   entra pela direita, voltar entra pela esquerda. Curta de propósito, porque
+   quem está lendo repete isso dezenas de vezes.                            */
+
+@keyframes pagina-avanca {
+  from {
+    opacity: 0;
+    transform: translate3d(26px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pagina-volta {
+  from {
+    opacity: 0;
+    transform: translate3d(-26px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.vira-avanca {
+  animation: pagina-avanca 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vira-volta {
+  animation: pagina-volta 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Troca de rota: só opacidade. Qualquer transform aqui viraria bloco de
+   contenção e quebraria o fundo `fixed` e o cabeçalho `sticky`. */
+@keyframes rota-entra {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.rota-entra {
+  animation: rota-entra 0.22s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vira-avanca,
+  .vira-volta,
+  .rota-entra {
+    animation: none;
+  }
+}
+
 :root {
   color-scheme: dark;
 }

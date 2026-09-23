@@ -41,6 +41,15 @@ import { AmbienteLeitura } from "@/components/AmbienteLeitura";
 
 const TEXT_SIZES = ["text-[15px]", "text-[17px]", "text-[19px]", "text-[21px]", "text-[24px]"];
 
+/**
+ * Último capítulo aberto, guardado no módulo.
+ *
+ * Precisa sobreviver à remontagem do componente, que acontece toda vez que a
+ * rota muda. Um `useRef` aqui nasceria já com o capítulo novo e a direção da
+ * animação seria sempre "avança".
+ */
+let ultimaLeitura: { slug: string; chapter: number } | null = null;
+
 export default function ReaderPage() {
   const { slug, cap } = useParams<{ slug: string; cap: string }>();
   const chapter = Number(cap);
@@ -57,6 +66,24 @@ export default function ReaderPage() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [focusVerse, setFocusVerse] = useState<number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * Direção da virada: avançar entra pela direita, voltar pela esquerda.
+   *
+   * Calculada no inicializador do useState, e não num efeito, para a primeira
+   * pintura já sair com a classe certa. O capítulo anterior vive fora do
+   * componente (ver `ultimaLeitura`), porque trocar de capítulo é troca de
+   * rota: o componente remonta e qualquer ref interno voltaria ao valor atual.
+   */
+  const [direcao] = useState<"avanca" | "volta">(() =>
+    ultimaLeitura && ultimaLeitura.slug === slug && chapter < ultimaLeitura.chapter
+      ? "volta"
+      : "avanca",
+  );
+
+  useEffect(() => {
+    ultimaLeitura = { slug, chapter };
+  }, [slug, chapter]);
 
   const otherVersion: VersionId = parallelVersion;
 
@@ -315,6 +342,10 @@ export default function ReaderPage() {
 
       {/* Texto */}
       <article className="mx-auto max-w-3xl px-4 pt-8 sm:px-6">
+        {/* A chave remonta o bloco a cada capítulo, que é o que faz a animação
+            tocar de novo. Fica só no texto: o cabeçalho e a navegação não se
+            mexem, e nada `fixed` cai dentro do transform. */}
+        <div key={`${slug}-${chapter}`} className={`vira-${direcao}`}>
         <h1 className="mb-8 text-center">
           <span className="block font-display text-xs font-bold uppercase tracking-[0.2em] text-ink-400">
             {book.name}
@@ -384,6 +415,8 @@ export default function ReaderPage() {
               </div>
             );
           })}
+        </div>
+
         </div>
 
         <div ref={endRef} className="h-px" />
