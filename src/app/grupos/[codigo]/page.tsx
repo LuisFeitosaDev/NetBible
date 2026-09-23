@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
-  Copy,
   Check,
   Crown,
   Plus,
@@ -14,10 +13,13 @@ import {
   Play,
   CircleDot,
   Archive,
+  Trash2,
 } from "lucide-react";
 import { Gate } from "@/components/grupos/Gate";
+import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
 import {
   estudosDoGrupo,
+  excluirGrupo,
   grupoPorCodigo,
   membrosDoGrupo,
   ouvirGrupo,
@@ -31,11 +33,13 @@ export default function GrupoPage() {
 
 function Conteudo({ perfil }: { perfil: Perfil }) {
   const { codigo } = useParams<{ codigo: string }>();
+  const router = useRouter();
   const [grupo, setGrupo] = useState<Grupo | null>(null);
   const [membros, setMembros] = useState<Membro[]>([]);
   const [estudos, setEstudos] = useState<Estudo[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [copiado, setCopiado] = useState(false);
+  const [apagando, setApagando] = useState(false);
 
   const carregar = useCallback(async () => {
     const g = await grupoPorCodigo(codigo);
@@ -225,6 +229,33 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
               : "Assim que o líder criar um estudo, ele aparece aqui."}
           </p>
         </div>
+      )}
+
+      {/* Zona de perigo, no fim e só para o líder. */}
+      {souLider && (
+        <section className="mt-12 border-t border-white/6 pt-5">
+          <button
+            onClick={() => setApagando(true)}
+            className="inline-flex items-center gap-2 rounded-xl border border-white/8 px-4 py-2.5 text-[13px] font-semibold text-ink-500 transition-colors hover:border-red-500/40 hover:text-red-400"
+          >
+            <Trash2 size={14} />
+            Apagar este grupo
+          </button>
+        </section>
+      )}
+
+      {apagando && grupo && (
+        <ConfirmarExclusao
+          titulo={`Apagar "${grupo.nome}"?`}
+          aviso={`Todos os estudos, respostas e comentários do grupo somem junto, para os ${membros.length} participantes. Isso não tem volta.`}
+          rotuloConfirmar="Apagar grupo"
+          exigirTexto={grupo.codigo}
+          aoConfirmar={async () => {
+            await excluirGrupo(grupo.id);
+            router.push("/grupos");
+          }}
+          aoFechar={() => setApagando(false)}
+        />
       )}
     </div>
   );

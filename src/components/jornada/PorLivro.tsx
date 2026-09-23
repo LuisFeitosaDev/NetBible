@@ -64,7 +64,7 @@ export function PorLivro({
 
   return (
     <div className="space-y-6 pb-16">
-      <section className="rounded-2xl border border-white/8 bg-ink-900/60 p-4">
+      <section className="rounded-2xl border border-white/8 bg-ink-900/60 p-3">
         <MapaDaLeitura
           livros={livros}
           lidosPorLivro={lidosPorLivro}

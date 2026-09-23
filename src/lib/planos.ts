@@ -19,54 +19,33 @@ import {
 
 export type OrdemDoPlano = "canonica" | "cronologica";
 
-export type ModeloDePlano = {
-  id: string;
+/**
+ * Uma ordem de leitura oferecida na criação.
+ *
+ * Eram cinco modelos prontos numa galeria rolável. Viraram duas ordens mais um
+ * prazo livre, porque "Cronológico em 1 ano" e "Cronológico em 2 anos" nunca
+ * foram dois planos: são o mesmo plano com dois números.
+ */
+export type TipoDeOrdem = {
+  id: OrdemDoPlano;
   nome: string;
-  /** Uma linha, o suficiente para escolher sem abrir nada. */
   resumo: string;
-  ordem: OrdemDoPlano;
-  dias: number;
 };
 
-export const MODELOS: ModeloDePlano[] = [
+export const ORDENS: TipoDeOrdem[] = [
   {
-    id: "cronologico-1a",
-    nome: "Cronológico em 1 ano",
-    resumo: "Na ordem em que os fatos aconteceram: Jó entre os patriarcas, os profetas dentro dos reis, as cartas dentro de Atos.",
-    ordem: "cronologica",
-    dias: 365,
+    id: "cronologica",
+    nome: "Cronológico",
+    resumo:
+      "Na ordem em que os fatos aconteceram: Jó entre os patriarcas, os profetas dentro dos reis, as cartas dentro de Atos.",
   },
   {
-    id: "cronologico-2a",
-    nome: "Cronológico em 2 anos",
-    resumo: "A mesma ordem histórica, com metade do peso por dia. Sobra tempo para parar e pensar.",
-    ordem: "cronologica",
-    dias: 730,
-  },
-  {
-    id: "canonico-6m",
-    nome: "Gênesis a Apocalipse em 6 meses",
-    resumo: "A Bíblia na ordem dela mesma, em ritmo forte. Para quem quer a visão do todo rápido.",
-    ordem: "canonica",
-    dias: 182,
-  },
-  {
-    id: "canonico-1a",
-    nome: "Gênesis a Apocalipse em 1 ano",
-    resumo: "O clássico. Começa no primeiro versículo e termina no último, sem desvio.",
-    ordem: "canonica",
-    dias: 365,
-  },
-  {
-    id: "canonico-2a",
-    nome: "Gênesis a Apocalipse em 2 anos",
-    resumo: "Da capa à contracapa, devagar. Um ou dois capítulos por dia, quase sempre.",
-    ordem: "canonica",
-    dias: 730,
+    id: "canonica",
+    nome: "Gênesis a Apocalipse",
+    resumo:
+      "A Bíblia na ordem dela mesma. Começa no primeiro versículo e termina no último, sem desvio.",
   },
 ];
-
-export const modeloPorId = (id: string) => MODELOS.find((m) => m.id === id);
 
 /** O que fica guardado. Um plano por vez, de propósito. */
 export type PlanoSalvo = {
@@ -86,6 +65,16 @@ export type PlanoSalvo = {
    * "no seu ritmo, termina em 3 dias". Ausente nos planos criados antes disto.
    */
   lidosAoComecar?: number;
+  /**
+   * A que dia do plano a atribuição abaixo se refere.
+   *
+   * Existe para a lista de hoje ficar parada enquanto o dia dura. Sem guardar
+   * isso, a lista seria sempre "os próximos N não lidos" e se mexeria a cada
+   * capítulo marcado, virando uma esteira que nunca termina.
+   */
+  diaAtribuido?: number;
+  /** Os capítulos separados para esse dia, como "gn.1". */
+  atribuicao?: string[];
   criadoEm: number;
   atualizadoEm?: number;
 };
@@ -100,17 +89,16 @@ export function inicioDoDia(quando: number | Date = Date.now()) {
 }
 
 export function montarPlano(
-  modelo: ModeloDePlano | { nome: string; ordem: OrdemDoPlano; dias: number },
+  escolha: { nome: string; ordem: OrdemDoPlano; dias: number },
   lidosAoComecar = 0,
   inicioEm = inicioDoDia(),
 ): PlanoSalvo {
-  const id = "id" in modelo ? modelo.id : "personalizado";
   return {
     id: "atual",
-    modelo: id,
-    nome: modelo.nome,
-    ordem: modelo.ordem,
-    dias: modelo.dias,
+    modelo: escolha.ordem,
+    nome: escolha.nome,
+    ordem: escolha.ordem,
+    dias: escolha.dias,
     inicioEm,
     lidosAoComecar,
     criadoEm: Date.now(),
@@ -164,17 +152,25 @@ export type ProgressoDoPlano = {
   dias: number;
   total: number;
   lidos: number;
-  /**
-   * Quantos capítulos separam do calendário, contados só até o fim de ontem.
-   * Zero enquanto o dia de hoje ainda está de pé.
-   */
-  atrasado: number;
-  /** Quantos capítulos além da leitura de hoje. Zero se não passou dela. */
-  adiantado: number;
+  /** Capítulos do roteiro que faltam, em qualquer ponto dele. */
+  faltam: number;
+  /** Dias de plano que ainda restam, contando hoje. Nunca menos que 1. */
+  diasRestantes: number;
+  /** Quantos por dia daqui em diante para terminar no prazo. Recalculado. */
+  ritmoNecessario: number;
+  /** O ritmo com que o plano nasceu, para comparar. */
+  ritmoOriginal: number;
+  /** A leitura separada para hoje, já considerando o que ficou para trás. */
   hoje: CapituloDoPlano[];
-  /** De dias anteriores, ainda não lidos. No máximo os mais recentes. */
-  pendentes: CapituloDoPlano[];
+  /** Quantos de `hoje` já estão lidos. */
+  hojeFeitos: number;
+  /** A atribuição guardada não é a de hoje: quem chama precisa gravar a nova. */
+  precisaAtribuir: boolean;
+  /** Chaves da atribuição de hoje, prontas para gravar. */
+  atribuicaoDeHoje: string[];
   concluido: boolean;
+  /** O prazo venceu e ainda falta leitura. */
+  vencido: boolean;
   /** A data prometida pelo plano. Sempre existe. */
   terminaPrevisto: number;
   /**
@@ -184,8 +180,15 @@ export type ProgressoDoPlano = {
   terminaNoRitmo: number | null;
 };
 
+const chaveDe = (c: CapituloDoPlano) => `${c.slug}.${c.capitulo}`;
+
 /**
  * Junta plano, roteiro e o que já foi lido numa única visão para a tela.
+ *
+ * O ponto central: a cota de hoje não é uma fatia fixa do calendário, é o que
+ * falta dividido pelos dias que sobram. Quem pula um dia não fica com um bloco
+ * órfão no passado e um "você está atrasado" permanente; o atraso se dilui nos
+ * dias seguintes e a conta se refaz sozinha. Quem se adianta vê a cota encolher.
  *
  * `lido` é uma função e não um Set pronto porque a tabela `reading` guarda os
  * capítulos por livro; quem chama já tem esse mapa montado e não precisa
@@ -195,36 +198,35 @@ export function progressoDoPlano(
   plano: PlanoSalvo,
   roteiro: CapituloDoPlano[],
   lido: (slug: string, capitulo: number) => boolean,
-  limitePendentes = 30,
 ): ProgressoDoPlano {
   const total = roteiro.length;
   const dia = diaDeHoje(plano);
   const diaVisivel = Math.min(Math.max(dia, 1), plano.dias);
 
-  let lidos = 0;
-  for (const c of roteiro) if (lido(c.slug, c.capitulo)) lidos++;
+  const restantes: CapituloDoPlano[] = [];
+  for (const c of roteiro) if (!lido(c.slug, c.capitulo)) restantes.push(c);
+  const lidos = total - restantes.length;
+
+  const diasRestantes = Math.max(1, plano.dias - diaVisivel + 1);
+  const ritmoNecessario = Math.max(1, Math.ceil(restantes.length / diasRestantes));
+  const ritmoOriginal = total / plano.dias;
 
   /*
-   * Os dois lados da conta usam marcos diferentes, de propósito.
-   *
-   * Cobrar até o fim de hoje faria o plano abrir no dia 1 dizendo "faltam 3
-   * capítulos", antes de a pessoa ter tido o dia para ler. E creditar vantagem
-   * já no fim de ontem faria quem leu exatamente a cota de hoje ser saudado
-   * como adiantado, o que não é verdade. Então: atraso conta até ontem,
-   * vantagem só a partir de amanhã, e no meio está "em dia".
+   * A atribuição do dia fica gravada. Se ela fosse recalculada a cada pintura,
+   * marcar o primeiro capítulo faria os outros pularem para frente e a lista
+   * nunca esvaziaria: sempre "os próximos N não lidos". Gravada, ela é a mesma
+   * do começo ao fim do dia, e os itens vão sendo riscados.
    */
-  const { de: ateOntem, ate: ateHoje } = faixaDoDia(diaVisivel, total, plano.dias);
-  const atrasado = Math.max(0, ateOntem - lidos);
-  const adiantado = Math.max(0, lidos - ateHoje);
-  const hoje = capitulosDoDia(diaVisivel, roteiro, plano.dias);
+  const precisaAtribuir = plano.diaAtribuido !== dia || !plano.atribuicao;
+  const naOrdem = new Map(roteiro.map((c) => [chaveDe(c), c]));
 
-  // Atrasados, do mais antigo para o mais novo, cortando no limite para a tela
-  // não virar uma lista de centenas de itens em cima de quem sumiu um mês.
-  const pendentes: CapituloDoPlano[] = [];
-  for (let i = 0; i < ateOntem; i++) {
-    const c = roteiro[i];
-    if (!lido(c.slug, c.capitulo)) pendentes.push(c);
-  }
+  const hoje = precisaAtribuir
+    ? restantes.slice(0, ritmoNecessario)
+    : (plano.atribuicao ?? [])
+        .map((k) => naOrdem.get(k))
+        .filter((c): c is CapituloDoPlano => Boolean(c));
+
+  const hojeFeitos = hoje.filter((c) => lido(c.slug, c.capitulo)).length;
 
   /*
    * A projeção só usa o que foi lido depois que o plano começou, e só aparece
@@ -234,10 +236,20 @@ export function progressoDoPlano(
   const decorridos = Math.max(dia, 1);
   const noPlano = lidos - (plano.lidosAoComecar ?? 0);
   const porDia = noPlano / decorridos;
-  const terminaNoRitmo =
-    decorridos >= 3 && porDia > 0 && lidos < total
-      ? inicioDoDia() + Math.ceil((total - lidos) / porDia) * DIA
+  const projecao =
+    decorridos >= 3 && porDia > 0 && restantes.length > 0
+      ? inicioDoDia() + Math.ceil(restantes.length / porDia) * DIA
       : null;
+
+  /*
+   * Projeção absurda não é informação, é desânimo. Quem leu 2 capítulos em 60
+   * dias recebe "termina em 2125", que é aritmeticamente correto e não ajuda
+   * ninguém a abrir a Bíblia hoje. Passando de um prazo inteiro além do
+   * combinado, a tela mostra só o ritmo necessário, que é acionável.
+   */
+  const terminaPrevisto = dataDeTermino(plano.dias, plano.inicioEm);
+  const terminaNoRitmo =
+    projecao && projecao <= terminaPrevisto + plano.dias * DIA ? projecao : null;
 
   return {
     dia,
@@ -245,12 +257,17 @@ export function progressoDoPlano(
     dias: plano.dias,
     total,
     lidos,
-    atrasado,
-    adiantado,
+    faltam: restantes.length,
+    diasRestantes,
+    ritmoNecessario,
+    ritmoOriginal,
     hoje,
-    pendentes: pendentes.slice(-limitePendentes),
-    concluido: lidos >= total,
-    terminaPrevisto: dataDeTermino(plano.dias, plano.inicioEm),
+    hojeFeitos,
+    precisaAtribuir,
+    atribuicaoDeHoje: hoje.map(chaveDe),
+    concluido: restantes.length === 0,
+    vencido: dia > plano.dias && restantes.length > 0,
+    terminaPrevisto,
     terminaNoRitmo,
   };
 }

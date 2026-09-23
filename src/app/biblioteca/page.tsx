@@ -47,11 +47,35 @@ export default function JornadaPage() {
         Seu caminho pela Bíblia, guardado neste dispositivo.
       </p>
 
-      <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <Numero valor={capitulosLidos} rotulo="capítulos lidos" destaque />
-        <Numero valor={livrosAbertos} rotulo={livrosAbertos === 1 ? "livro" : "livros"} />
-        <Numero valor={marks?.length ?? 0} rotulo="marcações" />
-        <Numero valor={notes?.length ?? 0} rotulo="comentários" />
+      {/* Uma faixa só, e não quatro cartões: empilhados em duas linhas eles
+          comiam um terço da tela do celular antes de qualquer conteúdo. */}
+      <div className="mt-4 flex items-stretch overflow-hidden rounded-xl border border-white/6 bg-ink-900">
+        {(
+          [
+            [capitulosLidos, "capítulos", true],
+            [livrosAbertos, livrosAbertos === 1 ? "livro" : "livros", false],
+            [marks?.length ?? 0, "marcações", false],
+            [notes?.length ?? 0, "comentários", false],
+          ] as const
+        ).map(([valor, rotulo, destaque], i) => (
+          <div
+            key={rotulo}
+            className={`min-w-0 flex-1 px-1.5 py-2.5 text-center ${
+              i > 0 ? "border-l border-white/6" : ""
+            }`}
+          >
+            <p
+              className={`font-display text-lg font-black leading-none tracking-tight ${
+                destaque ? "text-gold-400" : "text-white"
+              }`}
+            >
+              {valor}
+            </p>
+            <p className="mt-1 truncate text-[10px] leading-tight text-ink-500">
+              {rotulo}
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="mt-6 flex gap-1 rounded-xl border border-white/8 bg-ink-900 p-1">
@@ -129,29 +153,6 @@ export default function JornadaPage() {
           </div>
         </>
       )}
-    </div>
-  );
-}
-
-function Numero({
-  valor,
-  rotulo,
-  destaque,
-}: {
-  valor: number;
-  rotulo: string;
-  destaque?: boolean;
-}) {
-  return (
-    <div className="rounded-xl border border-white/6 bg-ink-900 px-3 py-2.5">
-      <p
-        className={`font-display text-xl font-black tracking-tight ${
-          destaque ? "text-gold-400" : "text-white"
-        }`}
-      >
-        {valor}
-      </p>
-      <p className="mt-0.5 text-[11px] leading-tight text-ink-500">{rotulo}</p>
     </div>
   );
 }

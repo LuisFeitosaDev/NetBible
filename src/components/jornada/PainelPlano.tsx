@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { Check, ChevronDown, RotateCcw, Settings2, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  CalendarPlus,
+  Check,
+  Gauge,
+  RotateCcw,
+  Settings2,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 import {
   apagarPlano,
   markChapterRead,
@@ -19,16 +27,17 @@ import {
   type PlanoSalvo,
 } from "@/lib/planos";
 import type { BibleIndex, BookMeta } from "@/lib/bible";
-import { GaleriaPlanos } from "./GaleriaPlanos";
+import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
+import { CriarPlano } from "./CriarPlano";
 
 /**
  * O plano em andamento.
  *
  * O tom aqui é deliberadamente sem cobrança. Ficar para trás num plano de
- * leitura é a regra, não a exceção, e um app que responde a isso com vermelho
- * e "você está 12 dias atrasado" é um app que a pessoa desinstala em fevereiro.
- * Então: o atraso aparece como uma lista do que sobrou, com um botão para
- * remarcar o início, e a previsão é feita pelo ritmo real de quem lê.
+ * leitura é a regra, não a exceção, e um app que responde a isso com vermelho e
+ * "você está 12 dias atrasado" é um app que a pessoa desinstala em fevereiro.
+ * Em vez de acusar, ele recalcula: o que faltou se dilui nos dias que restam e
+ * a cota de hoje já vem ajustada.
  */
 export function PainelPlano({
   plano,
@@ -41,8 +50,8 @@ export function PainelPlano({
   bySlug: Map<string, BookMeta>;
   reading: Reading[];
 }) {
-  const [trocando, setTrocando] = useState(false);
-  const [verPendentes, setVerPendentes] = useState(false);
+  const [criando, setCriando] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
 
   const lidosPorLivro = useMemo(
     () => new Map(reading.map((r) => [r.slug, new Set(r.done)])),
@@ -64,123 +73,178 @@ export function PainelPlano({
     [plano, roteiro, lido],
   );
 
-  if (!plano || trocando) {
-    return (
-      <GaleriaPlanos
-        total={roteiro.length || 1189}
-        aoEscolher={async (escolha) => {
-          // O que já estava lido vira o marco zero da previsão de ritmo, e não
-          // desaparece do progresso: quem já leu 300 capítulos começa em 25%.
-          const novoRoteiro = roteiroDoPlano(escolha, index);
-          let jaLidos = 0;
-          for (const c of novoRoteiro) if (lido(c.slug, c.capitulo)) jaLidos++;
-          await salvarPlano(montarPlano(escolha, jaLidos));
-          setTrocando(false);
+  /*
+   * Grava a cota do dia assim que o dia vira. Fica num efeito, e não no cálculo,
+   * porque `progressoDoPlano` é chamado a cada pintura e escrever no banco dali
+   * criaria um laço: grava, o Dexie avisa, repinta, grava de novo.
+   */
+  useEffect(() => {
+    if (!plano || !p?.precisaAtribuir || !roteiro.length) return;
+    void salvarPlano({
+      ...plano,
+      diaAtribuido: p.dia,
+      atribuicao: p.atribuicaoDeHoje,
+    });
+  }, [plano, p, roteiro.length]);
+
+  if (!plano) {
+    return criando ? (
+      <CriarPlano
+        total={roteiroDoPlano({ ordem: "canonica" }, index).length}
+        aoCriar={async (escolha) => {
+          await criar(escolha, index, lido);
+          setCriando(false);
         }}
-        aoCancelar={plano ? () => setTrocando(false) : undefined}
+        aoCancelar={() => setCriando(false)}
+      />
+    ) : (
+      <SemPlano aoComecar={() => setCriando(true)} />
+    );
+  }
+
+  if (criando) {
+    return (
+      <CriarPlano
+        total={roteiro.length}
+        aoCriar={async (escolha) => {
+          await criar(escolha, index, lido);
+          setCriando(false);
+        }}
+        aoCancelar={() => setCriando(false)}
       />
     );
   }
 
   if (!p) return null;
   const percentual = Math.round((p.lidos / p.total) * 100);
+  const apertado = p.ritmoNecessario > p.ritmoOriginal * 1.8;
 
   return (
     <div className="space-y-4 pb-16">
-      {/* Cabeçalho do plano */}
-      <section className="overflow-hidden rounded-2xl border border-white/8 bg-ink-900">
-        <div className="p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="truncate font-display text-[17px] font-bold">
-                {plano.nome}
-              </p>
-              <p className="mt-0.5 text-[12.5px] text-ink-400">
-                {p.concluido
-                  ? "Plano concluído."
-                  : `Dia ${p.diaVisivel} de ${p.dias} · começou em ${formatarData(plano.inicioEm)}`}
-              </p>
-            </div>
+      <section className="rounded-2xl border border-white/8 bg-ink-900 p-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="truncate font-display text-[17px] font-bold">{plano.nome}</p>
+            <p className="mt-0.5 text-[12.5px] text-ink-400">
+              {p.concluido
+                ? "Plano concluído."
+                : p.vencido
+                  ? `O prazo terminou em ${formatarData(p.terminaPrevisto)}`
+                  : `Dia ${p.diaVisivel} de ${p.dias}`}
+            </p>
+          </div>
+          <div className="flex shrink-0 items-center gap-1">
             <button
-              onClick={() => setTrocando(true)}
+              onClick={() => setCriando(true)}
               aria-label="Trocar de plano"
-              className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-ink-400 transition-colors hover:bg-white/10 hover:text-white"
+              className="grid h-8 w-8 place-items-center rounded-full text-ink-400 transition-colors hover:bg-white/10 hover:text-white"
             >
               <Settings2 size={16} />
             </button>
+            <button
+              onClick={() => setConfirmando(true)}
+              aria-label="Apagar plano"
+              className="grid h-8 w-8 place-items-center rounded-full text-ink-400 transition-colors hover:bg-red-500/15 hover:text-red-400"
+            >
+              <Trash2 size={16} />
+            </button>
           </div>
+        </div>
 
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="font-display text-3xl font-black tracking-tight">
-              {percentual}%
-            </span>
-            <span className="font-mono text-[12px] text-ink-500">
-              {p.lidos} de {p.total} capítulos
-            </span>
-          </div>
+        <div className="mt-4 flex items-baseline gap-2">
+          <span className="font-display text-3xl font-black tracking-tight">
+            {percentual}%
+          </span>
+          <span className="font-mono text-[12px] text-ink-500">
+            {p.lidos} de {p.total} capítulos
+          </span>
+        </div>
 
-          <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-white/8">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-300 transition-[width] duration-500"
-              style={{ width: `${percentual}%` }}
-            />
-          </div>
+        <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-white/8">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-300 transition-[width] duration-500"
+            style={{ width: `${percentual}%` }}
+          />
+        </div>
 
+        {p.concluido ? (
+          <p className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-gold-400">
+            <Sparkles size={13} />
+            Você leu a Bíblia inteira.
+          </p>
+        ) : (
           <p className="mt-3 text-[12.5px] leading-relaxed text-ink-400">
-            {p.concluido ? (
-              <span className="inline-flex items-center gap-1.5 font-semibold text-gold-400">
-                <Sparkles size={13} />
-                Você leu a Bíblia inteira.
-              </span>
+            <span className="inline-flex items-center gap-1.5 font-semibold text-ink-200">
+              <Gauge size={12} className="text-gold-400" />
+              {p.ritmoNecessario} {p.ritmoNecessario === 1 ? "capítulo" : "capítulos"} por
+              dia
+            </span>{" "}
+            {p.vencido ? (
+              <>para fechar os {p.faltam} que faltam.</>
             ) : (
               <>
-                {p.atrasado > 0 ? (
-                  <>
-                    Faltam {p.atrasado}{" "}
-                    {p.atrasado === 1 ? "capítulo" : "capítulos"} para alcançar o
-                    calendário.
-                  </>
-                ) : p.adiantado > 0 ? (
-                  <>
-                    Adiantado em {p.adiantado}{" "}
-                    {p.adiantado === 1 ? "capítulo" : "capítulos"}.
-                  </>
-                ) : (
-                  <>Em dia.</>
-                )}{" "}
-                {p.terminaNoRitmo ? (
-                  <>
-                    No ritmo que você vem lendo, termina em{" "}
-                    <span className="text-ink-200">
-                      {formatarData(p.terminaNoRitmo)}
-                    </span>
-                    .
-                  </>
-                ) : (
-                  <>
-                    Previsto para terminar em{" "}
-                    <span className="text-ink-200">
-                      {formatarData(p.terminaPrevisto)}
-                    </span>
-                    .
-                  </>
-                )}
+                nos {p.diasRestantes} dias que restam, para terminar em{" "}
+                <span className="text-ink-200">{formatarData(p.terminaPrevisto)}</span>.
+              </>
+            )}
+            {p.terminaNoRitmo && !p.vencido && (
+              <>
+                {" "}
+                No ritmo que você vem lendo, termina em{" "}
+                <span className="text-ink-200">{formatarData(p.terminaNoRitmo)}</span>.
               </>
             )}
           </p>
-        </div>
+        )}
       </section>
 
       {/* Leitura de hoje */}
       {!p.concluido && (
         <section className="rounded-2xl border border-white/8 bg-ink-900 p-4">
-          <p className="mb-3 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-            Hoje
-          </p>
-          {p.hoje.length === 0 ? (
-            <p className="text-[13px] text-ink-400">
-              Nada marcado para hoje. O plano já passou do último dia.
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+              Hoje
             </p>
+            <p className="font-mono text-[10px] text-ink-500">
+              {p.hojeFeitos}/{p.hoje.length}
+            </p>
+          </div>
+          {/*
+            Fica acima da lista, e não abaixo: com o ritmo apertado a lista tem
+            dezenas de linhas, e um convite para recomeçar que só aparece depois
+            de rolar tudo chega tarde demais para quem já se assustou.
+
+            Oferecer "leia 39 por dia" é oferecer a desistência. Recomeçar a
+            contagem devolve o prazo inteiro a partir de hoje, sem apagar um
+            capítulo do que já foi lido.
+          */}
+          {apertado && (
+            <div className="mb-3 rounded-xl border border-white/10 bg-white/[0.04] p-3">
+              <p className="text-[12.5px] leading-relaxed text-ink-300">
+                Para fechar no prazo seriam {p.ritmoNecessario} capítulos hoje. Se
+                preferir, recomece a contagem e tenha os {p.dias} dias de novo,
+                mantendo os {p.lidos} capítulos que você já leu.
+              </p>
+              <button
+                onClick={() =>
+                  salvarPlano({
+                    ...plano,
+                    inicioEm: inicioDoDia(),
+                    lidosAoComecar: p.lidos,
+                    diaAtribuido: undefined,
+                    atribuicao: undefined,
+                  })
+                }
+                className="mt-2.5 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-[12.5px] font-semibold text-white transition-colors hover:bg-white/16"
+              >
+                <RotateCcw size={13} />
+                Recomeçar a contagem hoje
+              </button>
+            </div>
+          )}
+
+          {p.hoje.length === 0 ? (
+            <p className="text-[13px] text-ink-400">Nada separado para hoje.</p>
           ) : (
             <div className="space-y-1.5">
               {p.hoje.map((c) => (
@@ -197,65 +261,48 @@ export function PainelPlano({
         </section>
       )}
 
-      {/* Pendentes */}
-      {p.pendentes.length > 0 && (
-        <section className="rounded-2xl border border-white/8 bg-ink-900 p-4">
-          <button
-            onClick={() => setVerPendentes((v) => !v)}
-            aria-expanded={verPendentes}
-            className="flex w-full items-center justify-between gap-3 text-left"
-          >
-            <span>
-              <span className="block font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-                Ficou para trás
-              </span>
-              <span className="mt-0.5 block text-[13px] text-ink-300">
-                {p.pendentes.length} {p.pendentes.length === 1 ? "capítulo" : "capítulos"}
-                {p.pendentes.length === 30 && " (os mais recentes)"}
-              </span>
-            </span>
-            <ChevronDown
-              size={16}
-              className={`shrink-0 text-ink-500 transition-transform ${verPendentes ? "rotate-180" : ""}`}
-            />
-          </button>
-
-          {verPendentes && (
-            <div className="mt-3 animate-fade space-y-1.5 border-t border-white/6 pt-3">
-              {p.pendentes.map((c) => (
-                <LinhaCapitulo
-                  key={`${c.slug}.${c.capitulo}`}
-                  slug={c.slug}
-                  capitulo={c.capitulo}
-                  nome={bySlug.get(c.slug)?.name ?? c.slug}
-                  lido={false}
-                />
-              ))}
-              {/* Recomeçar a contagem de hoje é o caminho honesto para quem
-                  sumiu um mês: apaga a dívida sem apagar o que foi lido. */}
-              <button
-                onClick={() =>
-                  salvarPlano({ ...plano, inicioEm: inicioDoDia(), criadoEm: Date.now() })
-                }
-                className="mt-2 inline-flex items-center gap-2 rounded-lg bg-white/[0.06] px-3 py-2 text-[12.5px] font-semibold text-ink-200 transition-colors hover:bg-white/12"
-              >
-                <RotateCcw size={13} />
-                Recomeçar a contagem a partir de hoje
-              </button>
-            </div>
-          )}
-        </section>
+      {confirmando && (
+        <ConfirmarExclusao
+          titulo="Apagar o plano?"
+          aviso={`"${plano.nome}" sai da sua jornada. Os ${p.lidos} capítulos que você leu, as marcações e os comentários continuam salvos.`}
+          rotuloConfirmar="Apagar plano"
+          aoConfirmar={apagarPlano}
+          aoFechar={() => setConfirmando(false)}
+        />
       )}
+    </div>
+  );
+}
 
+/** Monta e grava o plano, marcando quanto do roteiro já estava lido. */
+async function criar(
+  escolha: { nome: string; ordem: "canonica" | "cronologica"; dias: number },
+  index: BibleIndex,
+  lido: (slug: string, capitulo: number) => boolean,
+) {
+  const roteiro = roteiroDoPlano(escolha, index);
+  let jaLidos = 0;
+  for (const c of roteiro) if (lido(c.slug, c.capitulo)) jaLidos++;
+  await salvarPlano(montarPlano(escolha, jaLidos));
+}
+
+function SemPlano({ aoComecar }: { aoComecar: () => void }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-white/12 px-5 py-10 text-center">
+      <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-gold-400/12 text-gold-400">
+        <CalendarPlus size={22} />
+      </span>
+      <p className="mt-4 font-display text-[17px] font-bold">Nenhum plano ativo</p>
+      <p className="mx-auto mt-1.5 max-w-xs text-[13px] leading-relaxed text-ink-400">
+        Escolha uma ordem e um prazo. O app calcula o ritmo, separa a leitura de
+        cada dia e refaz a conta se você pular algum.
+      </p>
       <button
-        onClick={() => {
-          if (confirm("Encerrar o plano? O que você já leu continua salvo.")) {
-            void apagarPlano();
-          }
-        }}
-        className="w-full rounded-xl border border-white/8 py-2.5 text-[12.5px] font-semibold text-ink-500 transition-colors hover:border-white/20 hover:text-ink-300"
+        onClick={aoComecar}
+        className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gold-400 px-5 py-3 font-display text-sm font-bold text-ink-950 transition-colors hover:bg-gold-300"
       >
-        Encerrar plano
+        <CalendarPlus size={16} />
+        Criar plano de leitura
       </button>
     </div>
   );

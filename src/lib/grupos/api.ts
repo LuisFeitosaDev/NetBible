@@ -181,6 +181,27 @@ export async function sairDoGrupo(grupoId: string, perfilId: string) {
   if (error) erro(error);
 }
 
+/**
+ * Apaga o grupo inteiro. Só o líder consegue: a política `grupos_exclusao` no
+ * banco exige `eh_lider(id)`, então não adianta o cliente tentar.
+ *
+ * Membros, estudos, etapas, perguntas e respostas caem junto pelo `on delete
+ * cascade` do schema, e é por isso que não há limpeza manual aqui.
+ */
+export async function excluirGrupo(grupoId: string) {
+  const { error, count } = await sb()
+    .from("grupos")
+    .delete({ count: "exact" })
+    .eq("id", grupoId);
+  if (error) erro(error);
+  // O RLS não devolve erro quando a linha só está invisível para quem pede:
+  // devolve zero linhas afetadas. Sem esta checagem, um participante veria
+  // "apagado" e o grupo continuaria lá.
+  if (!count) {
+    throw new Error("Só o líder do grupo pode apagá-lo.");
+  }
+}
+
 // --------------------------------------------------------------- estudos --
 
 export async function estudosDoGrupo(grupoId: string): Promise<Estudo[]> {

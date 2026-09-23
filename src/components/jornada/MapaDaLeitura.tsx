@@ -33,7 +33,7 @@ export function MapaDaLeitura({
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {testamentos.map(({ id, rotulo }) => {
         const doTestamento = livros.filter((l) => l.testament === id);
         if (!doTestamento.length) return null;
@@ -45,16 +45,18 @@ export function MapaDaLeitura({
 
         return (
           <div key={id}>
-            <div className="mb-2 flex items-baseline justify-between gap-3">
-              <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+            <div className="mb-1.5 flex items-baseline justify-between gap-3">
+              <p className="font-display text-[9.5px] font-bold uppercase tracking-[0.16em] text-ink-500">
                 {rotulo}
               </p>
-              <p className="font-mono text-[10px] text-ink-500">
+              <p className="font-mono text-[9.5px] text-ink-500">
                 {lidosCaps}/{totalCaps}
               </p>
             </div>
 
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(34px,1fr))] gap-1.5">
+            {/* 24px e não 34: com azulejos maiores o mapa sozinho empurrava a
+                lista de livros para fora da primeira tela do celular. */}
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(24px,1fr))] gap-1">
               {doTestamento.map((livro) => {
                 const lidos = lidosPorLivro.get(livro.slug) ?? 0;
                 const fracao = lidos / livro.verses.length;
@@ -68,9 +70,9 @@ export function MapaDaLeitura({
                     title={`${livro.name} · ${lidos} de ${livro.verses.length}`}
                     aria-label={`${livro.name}, ${lidos} de ${livro.verses.length} capítulos lidos`}
                     aria-pressed={ativo}
-                    className={`relative aspect-square overflow-hidden rounded-[5px] border transition-all ${
+                    className={`relative aspect-square overflow-hidden rounded-[4px] border transition-all ${
                       ativo
-                        ? "scale-105 border-white/70"
+                        ? "scale-110 border-white/70"
                         : "border-white/8 hover:border-white/30"
                     }`}
                     style={{ backgroundColor: "rgba(255,255,255,0.035)" }}
@@ -88,7 +90,7 @@ export function MapaDaLeitura({
                       />
                     )}
                     <span
-                      className={`relative font-mono text-[9px] font-bold leading-none ${
+                      className={`relative font-mono text-[7.5px] font-bold leading-none ${
                         fracao > 0.55 ? "text-ink-950" : "text-ink-400"
                       }`}
                     >
@@ -97,7 +99,7 @@ export function MapaDaLeitura({
                     {comAnotacao.has(livro.slug) && (
                       <span
                         aria-hidden
-                        className="absolute right-[3px] top-[3px] h-1 w-1 rounded-full bg-white"
+                        className="absolute right-[2px] top-[2px] h-[3px] w-[3px] rounded-full bg-white"
                       />
                     )}
                   </button>
