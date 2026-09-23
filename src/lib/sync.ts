@@ -11,6 +11,7 @@ import {
   type Note,
   type Reading,
 } from "./db";
+import type { OrdemDoPlano, PlanoSalvo } from "./planos";
 import type { HighlightColor } from "./catalog";
 import type { VersionId } from "./bible";
 
@@ -95,7 +96,42 @@ const favoritoParaRemoto = (f: Favorite, perfil: string) => ({
   atualizado_em: new Date(f.atualizadoEm ?? f.createdAt).toISOString(),
 });
 
+/* Só a configuração sobe. O que já foi lido vai em `leitura`, que continua
+   sendo a fonte única de progresso, aqui e no dispositivo. */
+const planoParaRemoto = (p: PlanoSalvo, perfil: string) => ({
+  perfil_id: perfil,
+  modelo: p.modelo,
+  nome: p.nome,
+  ordem: p.ordem,
+  dias: p.dias,
+  inicio_em: new Date(p.inicioEm).toISOString(),
+  lidos_ao_comecar: p.lidosAoComecar ?? 0,
+  criado_em: new Date(p.criadoEm).toISOString(),
+  atualizado_em: new Date(p.atualizadoEm ?? p.criadoEm).toISOString(),
+});
+
 const ms = (iso: string) => new Date(iso).getTime();
+
+/*
+ * O supabase-js devolve erro em vez de lançar, então uma tabela que não existe
+ * viraria uma falha muda: o plano simplesmente nunca sincronizaria e nada
+ * apareceria em lugar nenhum. Este aviso fecha essa porta.
+ */
+let jaAvisouDoSchema = false;
+function conferirTabelaDePlanos(erro: { code?: string; message?: string } | null) {
+  if (!erro || jaAvisouDoSchema) return;
+  const faltando =
+    erro.code === "42P01" ||
+    erro.code === "PGRST205" ||
+    /planos/i.test(erro.message ?? "");
+  if (!faltando) return;
+  jaAvisouDoSchema = true;
+  console.warn(
+    "O plano de leitura não está sincronizando: a tabela `planos` não existe " +
+      "na conta. Rode supabase/schema-planos.sql no SQL Editor do Supabase. " +
+      "O resto (marcações, notas, progresso) continua normal.",
+  );
+}
 
 /* ------------------------------ o sincronismo --------------------------- */
 
@@ -114,12 +150,13 @@ async function executar(): Promise<void> {
   const agora = Date.now();
 
   // ---------------------------------------------------------------- PUSH --
-  const [marcas, notas, leituras, favoritos, removidos] = await Promise.all([
+  const [marcas, notas, leituras, favoritos, removidos, plano] = await Promise.all([
     db.marks.filter((m) => (m.atualizadoEm ?? m.createdAt) > desde).toArray(),
     db.notes.filter((n) => (n.atualizadoEm ?? n.updatedAt) > desde).toArray(),
     db.reading.filter((r) => (r.atualizadoEm ?? r.updatedAt) > desde).toArray(),
     db.favorites.filter((f) => (f.atualizadoEm ?? f.createdAt) > desde).toArray(),
     db.removidos.filter((r) => r.removidoEm > desde).toArray(),
+    db.planos.get("atual"),
   ]);
 
   if (marcas.length) {
@@ -146,22 +183,43 @@ async function executar(): Promise<void> {
     }
   }
 
+  /*
+   * O plano é uma linha só por pessoa, então não entra no laço acima, que casa
+   * chaves. A regra é direta: existindo plano local, ele manda e sobrescreve o
+   * remoto. Não existindo, e havendo lápide na janela, a linha remota cai.
+   *
+   * A ordem importa: quem encerrou um plano e escolheu outro no mesmo intervalo
+   * tem lápide e plano ao mesmo tempo, e aí o que vale é o plano novo.
+   */
+  if (plano && (plano.atualizadoEm ?? plano.criadoEm) > desde) {
+    const { error } = await c.from("planos").upsert(planoParaRemoto(plano, perfil));
+    conferirTabelaDePlanos(error);
+  } else if (!plano && removidos.some((r) => r.tabela === "planos")) {
+    const { error } = await c.from("planos").delete().eq("perfil_id", perfil);
+    conferirTabelaDePlanos(error);
+  }
+
   // ---------------------------------------------------------------- PULL --
-  const [rMarcas, rNotas, rLeitura, rFav] = await Promise.all([
+  const [rMarcas, rNotas, rLeitura, rFav, rPlano] = await Promise.all([
     c.from("marcacoes").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
     c.from("notas").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
     c.from("leitura").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
     c.from("favoritos").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
+    // `maybeSingle` e não `single`: conta sem plano é o estado normal, e o
+    // `single` transformaria isso num erro que derrubaria a sincronização toda.
+    c
+      .from("planos")
+      .select("*")
+      .eq("perfil_id", perfil)
+      .gt("atualizado_em", janela)
+      .maybeSingle(),
   ]);
 
   const apagadas = new Set(removidos.map((r) => `${r.tabela}:${r.chave}`));
 
   await db.transaction(
     "rw",
-    db.marks,
-    db.notes,
-    db.reading,
-    db.favorites,
+    [db.marks, db.notes, db.reading, db.favorites, db.planos],
     async () => {
       for (const m of rMarcas.data ?? []) {
         if (apagadas.has(`marks:${m.ref}`)) continue; // apagado aqui vence
@@ -226,6 +284,26 @@ async function executar(): Promise<void> {
           createdAt: ms(f.criado_em),
           atualizadoEm: remotoEm,
         });
+      }
+
+      conferirTabelaDePlanos(rPlano.error);
+      const p = rPlano.data;
+      if (p && !apagadas.has("planos:atual")) {
+        const local = await db.planos.get("atual");
+        const remotoEm = ms(p.atualizado_em);
+        if (!local || (local.atualizadoEm ?? local.criadoEm) < remotoEm) {
+          await db.planos.put({
+            id: "atual",
+            modelo: p.modelo,
+            nome: p.nome,
+            ordem: p.ordem as OrdemDoPlano,
+            dias: p.dias,
+            inicioEm: ms(p.inicio_em),
+            lidosAoComecar: p.lidos_ao_comecar ?? 0,
+            criadoEm: ms(p.criado_em),
+            atualizadoEm: remotoEm,
+          });
+        }
       }
     },
   );

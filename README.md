@@ -53,7 +53,9 @@ estudo liberando uma etapa por vez enquanto as respostas aparecem ao vivo.
 
 1. Crie um projeto em supabase.com (plano free serve).
 2. **SQL Editor** → rode [`supabase/schema.sql`](supabase/schema.sql), depois
-   [`supabase/schema-conta.sql`](supabase/schema-conta.sql). Os dois são idempotentes.
+   [`supabase/schema-conta.sql`](supabase/schema-conta.sql) e
+   [`supabase/schema-planos.sql`](supabase/schema-planos.sql). Todos são
+   idempotentes e a ordem importa, porque os dois últimos dependem do primeiro.
 3. **Authentication → Sign In / Providers** → ligue **Anonymous sign-ins**.
 4. Copie `.env.example` para `.env.local` e preencha a URL e a chave pública
    (**Project Settings → API**).

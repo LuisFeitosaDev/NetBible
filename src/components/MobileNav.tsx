@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Library, CircleUser, Users } from "lucide-react";
+import { Home, BookOpen, Compass, CircleUser, Users } from "lucide-react";
 
 /** A ordem é a do uso: abrir o app, ler, voltar ao que é seu, estudar junto, conta. */
 const ITEMS = [
   { href: "/", label: "Início", icon: Home },
   { href: "/busca", label: "Bíblia", icon: BookOpen },
-  { href: "/biblioteca", label: "Biblioteca", icon: Library },
+  { href: "/biblioteca", label: "Jornada", icon: Compass },
   { href: "/grupos", label: "Grupos", icon: Users },
   { href: "/ajustes", label: "Conta", icon: CircleUser },
 ];
@@ -31,8 +31,8 @@ export function MobileNav() {
               }`}
             >
               <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
-              {/* Cinco itens numa tela de 320px: sem `whitespace-nowrap`,
-                  "Biblioteca" quebra em duas linhas e desalinha a barra. */}
+              {/* Cinco itens numa tela de 320px: sem `whitespace-nowrap`, um
+                  rótulo mais longo quebra em duas linhas e desalinha a barra. */}
               <span className="whitespace-nowrap text-[9.5px] font-medium">{label}</span>
             </Link>
           );

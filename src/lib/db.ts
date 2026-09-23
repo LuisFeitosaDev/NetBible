@@ -3,6 +3,7 @@
 import Dexie, { type Table } from "dexie";
 import type { HighlightColor } from "./catalog";
 import { refOf, type VersionId } from "./bible";
+import type { PlanoSalvo } from "./planos";
 
 /**
  * Tudo que é do usuário vive aqui, no IndexedDB do próprio dispositivo.
@@ -32,7 +33,7 @@ export type Mark = {
  */
 export type Removido = {
   chave: string;
-  tabela: "marks" | "notes" | "favorites";
+  tabela: "marks" | "notes" | "favorites" | "planos";
   removidoEm: number;
 };
 
@@ -73,6 +74,7 @@ class GenipseDB extends Dexie {
   favorites!: Table<Favorite, string>;
   prefs!: Table<Pref, string>;
   removidos!: Table<Removido, string>;
+  planos!: Table<PlanoSalvo, string>;
 
   constructor() {
     super("lumen");
@@ -105,6 +107,17 @@ class GenipseDB extends Dexie {
             });
         }
       });
+    // v3 acrescenta o plano de leitura. Só a configuração mora aqui; o que já
+    // foi lido continua vindo de `reading`, que é a fonte única de progresso.
+    this.version(3).stores({
+      marks: "ref, slug, color, createdAt, atualizadoEm, [slug+chapter]",
+      notes: "ref, slug, updatedAt, atualizadoEm, [slug+chapter]",
+      reading: "slug, updatedAt, atualizadoEm",
+      favorites: "slug, createdAt, atualizadoEm",
+      prefs: "key",
+      removidos: "chave, tabela, removidoEm",
+      planos: "id, atualizadoEm",
+    });
   }
 }
 
@@ -191,6 +204,40 @@ export async function touchReading(slug: string, chapter: number) {
   agendarSync();
 }
 
+/** Desmarca um capítulo, para quem tocou no lugar errado na lista do plano. */
+export async function desmarcarCapitulo(slug: string, chapter: number) {
+  const atual = await db.reading.get(slug);
+  if (!atual) return;
+  await db.reading.put({
+    ...atual,
+    done: atual.done.filter((n) => n !== chapter),
+    updatedAt: Date.now(),
+    atualizadoEm: Date.now(),
+  });
+  agendarSync();
+}
+
+/* -------------------------- plano de leitura --------------------------- */
+
+export async function salvarPlano(plano: PlanoSalvo) {
+  await db.planos.put({ ...plano, atualizadoEm: Date.now() });
+  agendarSync();
+}
+
+export async function apagarPlano() {
+  // Lápide junto: sem ela, encerrar o plano no celular deixaria o computador
+  // sincronizando o plano antigo de volta na visita seguinte.
+  await db.transaction("rw", db.planos, db.removidos, async () => {
+    await db.planos.delete("atual");
+    await db.removidos.put({
+      chave: "atual",
+      tabela: "planos",
+      removidoEm: Date.now(),
+    });
+  });
+  agendarSync();
+}
+
 export async function toggleFavorite(slug: string) {
   const existing = await db.favorites.get(slug);
   const agora = Date.now();
@@ -240,15 +287,18 @@ export type Backup = {
   reading: Reading[];
   favorites: Favorite[];
   prefs: Pref[];
+  /** Ausente nos backups gerados antes dos planos de leitura. */
+  planos?: PlanoSalvo[];
 };
 
 export async function exportAll(): Promise<Backup> {
-  const [marks, notes, reading, favorites, prefs] = await Promise.all([
+  const [marks, notes, reading, favorites, prefs, planos] = await Promise.all([
     db.marks.toArray(),
     db.notes.toArray(),
     db.reading.toArray(),
     db.favorites.toArray(),
     db.prefs.toArray(),
+    db.planos.toArray(),
   ]);
   return {
     app: "lumen",
@@ -259,6 +309,7 @@ export async function exportAll(): Promise<Backup> {
     reading,
     favorites,
     prefs,
+    planos,
   };
 }
 
@@ -268,13 +319,20 @@ export async function importAll(backup: Backup) {
   if (backup?.app !== "lumen") {
     throw new Error("Esse arquivo não é um backup do Genipse Bible.");
   }
-  await db.transaction("rw", db.marks, db.notes, db.reading, db.favorites, db.prefs, async () => {
-    if (backup.marks?.length) await db.marks.bulkPut(backup.marks);
-    if (backup.notes?.length) await db.notes.bulkPut(backup.notes);
-    if (backup.reading?.length) await db.reading.bulkPut(backup.reading);
-    if (backup.favorites?.length) await db.favorites.bulkPut(backup.favorites);
-    if (backup.prefs?.length) await db.prefs.bulkPut(backup.prefs);
-  });
+  // Lista e não argumentos soltos: a sobrecarga variádica do Dexie para em
+  // cinco tabelas, e com `planos` passamos de seis.
+  await db.transaction(
+    "rw",
+    [db.marks, db.notes, db.reading, db.favorites, db.prefs, db.planos],
+    async () => {
+      if (backup.marks?.length) await db.marks.bulkPut(backup.marks);
+      if (backup.notes?.length) await db.notes.bulkPut(backup.notes);
+      if (backup.reading?.length) await db.reading.bulkPut(backup.reading);
+      if (backup.favorites?.length) await db.favorites.bulkPut(backup.favorites);
+      if (backup.prefs?.length) await db.prefs.bulkPut(backup.prefs);
+      if (backup.planos?.length) await db.planos.bulkPut(backup.planos);
+    },
+  );
   return {
     marks: backup.marks?.length ?? 0,
     notes: backup.notes?.length ?? 0,

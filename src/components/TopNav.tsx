@@ -10,7 +10,7 @@ import { VersionSwitch } from "./VersionSwitch";
 const LINKS = [
   { href: "/", label: "Início" },
   { href: "/busca", label: "Bíblia" },
-  { href: "/biblioteca", label: "Biblioteca" },
+  { href: "/biblioteca", label: "Jornada" },
   { href: "/grupos", label: "Grupos" },
   { href: "/ajustes", label: "Conta" },
 ];
