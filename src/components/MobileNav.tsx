@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Library, Settings2, Users } from "lucide-react";
+import { Home, BookOpen, Library, CircleUser, Users } from "lucide-react";
 
+/** A ordem é a do uso: abrir o app, ler, voltar ao que é seu, estudar junto, conta. */
 const ITEMS = [
   { href: "/", label: "Início", icon: Home },
-  { href: "/grupos", label: "Grupos", icon: Users },
-  { href: "/busca", label: "Buscar", icon: Search },
+  { href: "/busca", label: "Bíblia", icon: BookOpen },
   { href: "/biblioteca", label: "Biblioteca", icon: Library },
-  { href: "/ajustes", label: "Ajustes", icon: Settings2 },
+  { href: "/grupos", label: "Grupos", icon: Users },
+  { href: "/ajustes", label: "Conta", icon: CircleUser },
 ];
 
 export function MobileNav() {
@@ -25,12 +26,14 @@ export function MobileNav() {
             <Link
               key={href}
               href={href}
-              className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors ${
+              className={`flex min-w-0 flex-1 flex-col items-center gap-1 py-2.5 transition-colors ${
                 active ? "text-gold-400" : "text-ink-400"
               }`}
             >
               <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
-              {label}
+              {/* Cinco itens numa tela de 320px: sem `whitespace-nowrap`,
+                  "Biblioteca" quebra em duas linhas e desalinha a barra. */}
+              <span className="whitespace-nowrap text-[9.5px] font-medium">{label}</span>
             </Link>
           );
         })}

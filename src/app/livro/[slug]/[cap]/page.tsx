@@ -38,6 +38,9 @@ import { NoteSheet, type NoteTarget } from "@/components/NoteSheet";
 import { VersionSwitch } from "@/components/VersionSwitch";
 import { AboutSheet } from "@/components/AboutBook";
 import { AmbienteLeitura } from "@/components/AmbienteLeitura";
+import { CapituloHeader } from "@/components/CapituloHeader";
+import { fichaDoCapitulo } from "@/lib/capitulos";
+import { temArteDeCapitulo } from "@/lib/capitulos.generated";
 
 const TEXT_SIZES = ["text-[15px]", "text-[17px]", "text-[19px]", "text-[21px]", "text-[24px]"];
 
@@ -242,6 +245,10 @@ export default function ReaderPage() {
     );
   }
 
+  // Capítulo com ficha ou arte ganha abertura ilustrada; o resto segue igual.
+  const temAbertura =
+    Boolean(fichaDoCapitulo(slug, chapter)) || temArteDeCapitulo(slug, chapter);
+
   const selectionColor = selected.length
     ? markByVerse.get(selected[0])?.color
     : undefined;
@@ -346,14 +353,22 @@ export default function ReaderPage() {
             tocar de novo. Fica só no texto: o cabeçalho e a navegação não se
             mexem, e nada `fixed` cai dentro do transform. */}
         <div key={`${slug}-${chapter}`} className={`vira-${direcao}`}>
-        <h1 className="mb-8 text-center">
-          <span className="block font-display text-xs font-bold uppercase tracking-[0.2em] text-ink-400">
-            {book.name}
-          </span>
-          <span className="mt-1 block font-display text-5xl font-black tracking-tight">
-            {chapter}
-          </span>
-        </h1>
+        {temAbertura ? (
+          <CapituloHeader
+            book={book}
+            capitulo={chapter}
+            aoIrParaVersiculo={setFocusVerse}
+          />
+        ) : (
+          <h1 className="mb-8 text-center">
+            <span className="block font-display text-xs font-bold uppercase tracking-[0.2em] text-ink-400">
+              {book.name}
+            </span>
+            <span className="mt-1 block font-display text-5xl font-black tracking-tight">
+              {chapter}
+            </span>
+          </h1>
+        )}
 
         <div
           className={`font-reading ${TEXT_SIZES[sizeStep]} leading-[1.85] text-leitura`}

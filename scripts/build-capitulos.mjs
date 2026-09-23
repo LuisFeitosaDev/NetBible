@@ -32,14 +32,51 @@ const FAIXA = { width: 1200, height: 520 };
  */
 const ARTE = {
   "rt-1": ["068.Naomi and Her Daughters-in-Law.jpg"],
+  // Picart, em paisagem: cabe na faixa quase sem corte.
   "rt-2": [
-    "Dore Bible The Gleaners.jpg",
     "Ruth, having gleaned barley in a field owned by Boaz (engraving by Picart).jpg",
+    "William de Brailes - Top - Ruth Meets Boaz as she gleans (Ruth 2 -4-16) - Walters W10618R - Full Page.jpg",
   ],
-  "rt-3": ["069.Ruth and Boaz.jpg"],
+  // Tissot traz a referência no próprio título: Rute 3:7-8, a cena da eira.
+  "rt-3": [
+    "Ruth et Booz (Ruth 7-8) • invenit James Tissot • pinxit Auguste-François Gorguet • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst.jpg",
+    "Tissot Drawing 242 Ruth and Boaz Ruth 3 8 for Brunoff 230 Ruth et Booz.jpg",
+  ],
   "rt-4": [
     "Naomi and the Child Obed (Dalziels' Bible Gallery) MET DP835620.jpg",
-    "Boaz assumes the Legacy of Elimelech (SM 581).png",
+    "Les vieillards à la porte (Ruth 4 8-9) • invenit James Tissot • pinxit Auguste-François Gorguet • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst.jpg",
+  ],
+
+  // Jonas. Quatro capítulos, quatro cenas que a arte cobre inteiras: a
+  // tempestade, o peixe, a pregação e a planta.
+  "jn-1": [
+    "Jonah and the whale (89471723).jpg",
+    "Dore jonah.jpg",
+  ],
+  "jn-2": ["137.Jonah Is Spewed Forth by the Whale.jpg", "Dore jonah whale.jpg"],
+  "jn-3": [
+    "138.Jonah Preaches to the Ninevites.jpg",
+    "John Martin (1789-1854) - Jonah Preaching before Nineveh - NEWHG-2000.003 - Hatton Gallery.jpg",
+  ],
+  // O capítulo da planta quase não tem gravura inglesa; os holandeses do século
+  // XVII fizeram série inteira sobre ele ("wonderboom", a planta de Jonas).
+  "jn-4": [
+    "Jona zit onder de wonderboom in de buurt van Nineve, RP-P-OB-45.390.jpg",
+    "Jona onder de wonderboom, RP-P-BI-7143.jpg",
+    "Jona zit onder de wonderboom Geschiedenis van Jona (serietitel), RP-P-1904-3288.jpg",
+  ],
+
+  // Ester. Doré cobre os capítulos 1 e 5; o 6 e o 7 vêm da pintura, onde o
+  // triunfo de Mardoqueu e a denúncia de Hamã são temas clássicos.
+  "et-1": [
+    "114.Queen Vashti Refuses to Obey Ahasuerus' Command.jpg",
+    "Vashti refusing to come before the king.jpg",
+  ],
+  "et-5": ["115.Esther Before the King.jpg"],
+  "et-6": [
+    "Paolo Veronese - The Triumph of Mordecai - WGA24785.png",
+    "Jean-François de Troy - The Triumph of Mordecai.jpg",
+    "Botticelli - The Triumph of Mordecai.jpeg",
   ],
 };
 

@@ -625,6 +625,100 @@ export const TEMAS: Tema[] = [
   },
 
   {
+    nome: "Trombetas do Apocalipse",
+    sinonimos: [
+      "trombetas",
+      "sete trombetas",
+      "apocalipse 8",
+      "apocalipse 9",
+      "as trombetas",
+      "trombetas do fim",
+    ],
+    resumo:
+      "As sete trombetas de Apocalipse 8 a 11. Um bloco com estrutura clara, eco deliberado das pragas do Egito, e um dos trechos em que as escolas de interpretação mais divergem.",
+    categorias: [
+      {
+        titulo: "De onde elas saem",
+        textos: [
+          t("Apocalipse 8:1-6", "ap", 8, "1-6", "Antes de qualquer trombeta vem silêncio no céu e as orações dos santos subindo com o incenso. É desse altar que o fogo é lançado à terra: a sequência começa em oração, não em catástrofe."),
+          t("Apocalipse 8:13", "ap", 8, "13", "Um anúncio no meio do bloco separa as quatro primeiras trombetas das três últimas, chamadas de 'ais'. A própria estrutura do texto é 4 + 3."),
+        ],
+      },
+      {
+        titulo: "As quatro primeiras: a criação atingida",
+        textos: [
+          t("Apocalipse 8:7-12", "ap", 8, "7-12", "Terra, mar, rios e luzeiros, um terço de cada. O padrão de 'um terço' é limite declarado: é juízo parcial, ainda com espaço para arrependimento."),
+          t("Êxodo 9:22-26", "ex", 9, "22-26", "A praga de granizo e fogo no Egito. João escreve para leitores que conheciam Êxodo de cor, e a semelhança é proposital: é linguagem de libertação, não só de destruição."),
+        ],
+      },
+      {
+        titulo: "Os dois primeiros ais",
+        textos: [
+          t("Apocalipse 9:1-12", "ap", 9, "1-12", "Quinta trombeta: gafanhotos que não comem vegetação, e recebem ordem de não matar. O rei deles é nomeado em hebraico e grego, o que sugere alcance sobre os dois mundos."),
+          t("Joel 2:1-11", "jl", 2, "1-11", "Joel já tinha unido trombeta, gafanhotos e Dia do Senhor. Apocalipse não inventa a imagem, ele a retoma."),
+          t("Apocalipse 9:13-21", "ap", 9, "13-21", "Sexta trombeta, junto ao Eufrates, fronteira do império. O verso 20 é o ponto: apesar de tudo, os sobreviventes não se arrependem."),
+        ],
+      },
+      {
+        titulo: "O intervalo antes da sétima",
+        textos: [
+          t("Apocalipse 10:1-11", "ap", 10, "1-11", "João engole um livrinho doce na boca e amargo no estômago, como Ezequiel. A pausa interrompe a contagem de propósito."),
+          t("Apocalipse 11:1-14", "ap", 11, "1-14", "As duas testemunhas, com sinais de Moisés e Elias. Morrem, ficam expostas e são levantadas: é o padrão do próprio evangelho, aplicado à igreja."),
+        ],
+      },
+      {
+        titulo: "A sétima: o desfecho antecipado",
+        textos: [
+          t("Apocalipse 11:15-19", "ap", 11, "15-19", "A sétima trombeta não traz praga: traz a declaração de que o reino do mundo passou a ser do Senhor. O clímax do bloco é louvor, não desastre."),
+        ],
+      },
+    ],
+    perguntas: [
+      "O que muda ao ver que a sequência começa nas orações dos santos, em 8:3-5?",
+      "Por que 'um terço' se repete tanto? O que esse limite comunica?",
+      "Quantos ecos do Êxodo você reconhece nas quatro primeiras trombetas?",
+      "Apocalipse 9:20-21 diz que não houve arrependimento. Qual é o propósito dos juízos, então?",
+      "Por que o autor interrompe a contagem no capítulo 10, em vez de ir direto à sétima?",
+      "A sétima trombeta é celebração, não catástrofe. Isso muda a sua leitura do bloco inteiro?",
+    ],
+    aplicacoes: [
+      "Escreva o que este bloco diz sobre a oração de gente comum, à luz de 8:3-5.",
+      "Identifique onde você lê Apocalipse buscando calendário em vez de buscando esperança.",
+    ],
+    visoes: [
+      {
+        nome: "Preterista",
+        resumo:
+          "As trombetas descrevem o juízo sobre Jerusalém e o Império Romano no primeiro século; o livro fala do tempo dos primeiros leitores.",
+        textos: ["Apocalipse 1:1", "Apocalipse 1:3", "Apocalipse 22:10"],
+      },
+      {
+        nome: "Historicista",
+        resumo:
+          "As trombetas são etapas sucessivas da história da igreja, da queda de Roma em diante.",
+        textos: ["Daniel 2:31-45", "Apocalipse 9:13-16"],
+      },
+      {
+        nome: "Futurista",
+        resumo:
+          "O bloco descreve uma tribulação ainda por vir, imediatamente anterior à volta de Cristo.",
+        textos: ["Apocalipse 4:1", "Mateus 24:21", "1 Tessalonicenses 4:16"],
+      },
+      {
+        nome: "Idealista",
+        resumo:
+          "As trombetas são símbolos de realidades que se repetem em toda a era da igreja, sem corresponder a eventos datáveis.",
+        textos: ["Apocalipse 12:1-6", "Efésios 6:12"],
+      },
+    ],
+    notas: [
+      "Este é um dos trechos mais disputados da Bíblia. As quatro escolas acima são leituras cristãs históricas, e o estudo apresenta as quatro sem eleger vencedor.",
+      "Apocalipse é literatura apocalíptica: números e imagens são simbólicos por convenção do gênero, não por fuga do sentido literal. Tratar '1/3' e 'gafanhotos' como estatística é ler o texto fora do gênero dele.",
+      "Cuidado pastoral: fim dos tempos mexe com medo. Se houver no grupo quem chegue ansioso, note que o bloco termina em adoração e em reino estabelecido, não em terror.",
+    ],
+  },
+
+  {
     nome: "Discipulado",
     sinonimos: ["seguir Jesus", "mentoria", "crescimento", "maturidade"],
     resumo:

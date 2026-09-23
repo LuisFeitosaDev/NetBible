@@ -103,7 +103,7 @@ export default function HomePage() {
             cada livro está em <code>/capas/creditos.json</code>.
           </p>
           <p className="mt-2">
-            Suas marcações e notas ficam só neste dispositivo. Faça backup em Ajustes.
+            Suas marcações e notas ficam só neste dispositivo até você entrar em Conta.
           </p>
         </footer>
       </div>

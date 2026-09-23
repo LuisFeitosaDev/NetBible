@@ -91,13 +91,14 @@ export function PainelLider({
               ? `${etapaAtual.icone} ${etapaAtual.titulo}`
               : "Sem etapa"}
         </span>
-        <span className="flex items-center gap-3 text-[12px] text-ink-400">
-          <span className="inline-flex items-center gap-1">
+        {/* No celular sobra pouca largura: só os números, sem quebrar linha. */}
+        <span className="flex shrink-0 items-center gap-2 text-[12px] text-ink-400 sm:gap-3">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap">
             <Users size={13} />
             {responderam}/{membros.length}
           </span>
           {restante && (
-            <span className="inline-flex items-center gap-1">
+            <span className="inline-flex items-center gap-1 whitespace-nowrap">
               <Timer size={13} />
               {restante}
             </span>
@@ -128,10 +129,11 @@ export function PainelLider({
                 <button
                   onClick={() => agir(() => liberarEtapa(estudo.id, proxima))}
                   disabled={ocupado}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gold-400 py-3 font-display text-sm font-bold text-ink-950 transition-colors hover:bg-gold-300 disabled:opacity-40"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-gold-400 px-4 py-3 font-display text-sm font-bold text-ink-950 transition-colors hover:bg-gold-300 disabled:opacity-40"
                 >
-                  <Unlock size={16} />
-                  Liberar: {proxima.titulo}
+                  <Unlock size={16} className="shrink-0" />
+                  {/* Título de etapa pode ser longo: corta em vez de esticar o botão. */}
+                  <span className="truncate">Liberar: {proxima.titulo}</span>
                 </button>
               ) : (
                 <button

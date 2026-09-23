@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, ChevronDown, Info, Scale } from "lucide-react";
 import type { Material, TextoApoio, Visao } from "@/lib/grupos/conteudo/tipos";
@@ -65,7 +65,12 @@ function TextoInline({ texto }: { texto: TextoApoio }) {
 
   // Carrega sob demanda: uma etapa pode ter vários textos, e baixar todos de
   // uma vez só para o caso de alguém abrir seria desperdício.
-  if (!versiculos && !erro) {
+  //
+  // Dentro de um efeito, e não no corpo do componente: disparar estado durante
+  // o render faz o componente se re-renderizar em cadeia, e o pedido saía duas
+  // vezes por conta do modo estrito.
+  useEffect(() => {
+    let vivo = true;
     void (async () => {
       try {
         const { loadBook } = await import("@/lib/bible");
@@ -76,16 +81,20 @@ function TextoInline({ texto }: { texto: TextoApoio }) {
         const [de, ate] = texto.versiculos
           ? texto.versiculos.split("-").map((n) => Number(n.trim()))
           : [1, cap.length];
+        if (!vivo) return;
         setVersiculos(
           cap
             .map((t, i) => ({ n: i + 1, t }))
             .filter((v) => v.n >= de && v.n <= (ate || de)),
         );
       } catch {
-        setErro(true);
+        if (vivo) setErro(true);
       }
     })();
-  }
+    return () => {
+      vivo = false;
+    };
+  }, [texto.slug, texto.capitulo, texto.versiculos]);
 
   if (erro) {
     return <p className="mt-2 text-[12px] text-ink-500">Não consegui carregar o texto.</p>;

@@ -48,7 +48,7 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 pt-8 md:px-6">
-      <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">Ajustes</h1>
+      <h1 className="font-display text-3xl font-black tracking-tight md:text-4xl">Conta</h1>
 
       <Section title="Sua conta">
         <ContaCard />

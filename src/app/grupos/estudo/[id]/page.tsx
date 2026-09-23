@@ -36,6 +36,7 @@ import {
 } from "@/lib/grupos/api";
 import { metodoPorId } from "@/lib/grupos/metodos";
 import type {
+  Etapa,
   Membro,
   Perfil,
   Pergunta,
@@ -125,7 +126,8 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
   const equipeDe = (equipeId: string | null) => equipes.find((e) => e.id === equipeId);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-28 md:px-6">
+    // pb-28 abre espaço para a barra do celular; no desktop ela não existe.
+    <div className="mx-auto max-w-6xl px-4 pb-28 md:px-6 lg:pb-16">
       {souLider && (
         <PainelLider
           estudo={estudo}
@@ -148,11 +150,12 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
           Grupos
         </Link>
 
-        <header className="mt-4">
+        {/* Título limitado mesmo numa tela larga: linha longa de display fica feia. */}
+        <header className="mt-4 max-w-3xl">
           <p className="text-[11px] font-bold uppercase tracking-wider text-gold-400">
             {metodo?.nome ?? estudo.metodo}
           </p>
-          <h1 className="mt-1 font-display text-2xl font-black tracking-tight md:text-3xl">
+          <h1 className="mt-1 font-display text-2xl font-black tracking-tight md:text-3xl lg:text-4xl">
             {estudo.titulo}
           </h1>
           <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-ink-400">
@@ -180,9 +183,11 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
       </div>
 
       {estudo.status === "rascunho" && !souLider && (
-        <Aviso icone={<Lock size={18} />} titulo="O estudo ainda não começou">
-          Quando o líder iniciar, esta tela abre sozinha. Pode deixar aberta.
-        </Aviso>
+        <div className="max-w-2xl">
+          <Aviso icone={<Lock size={18} />} titulo="O estudo ainda não começou">
+            Quando o líder iniciar, esta tela abre sozinha. Pode deixar aberta.
+          </Aviso>
+        </div>
       )}
 
       {estudo.status === "encerrado" ? (
@@ -204,78 +209,171 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
       ) : (
         estudo.status === "ativo" &&
         etapaAtual && (
-          <section className="mt-6">
-            {/* Trilha compacta para o participante saber onde está */}
-            <div className="mb-5 flex items-center gap-1.5">
-              {etapas.map((e) => (
-                <span
-                  key={e.id}
-                  title={e.titulo}
-                  className={`h-1.5 flex-1 rounded-full transition-colors ${
-                    e.ordem < estudo.etapa_atual
-                      ? "bg-gold-500/50"
-                      : e.ordem === estudo.etapa_atual
-                        ? "bg-gold-400"
-                        : "bg-white/10"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <div className="rounded-2xl border border-white/8 bg-ink-900 p-5">
-              <p className="text-3xl">{etapaAtual.icone}</p>
-              <h2 className="mt-2 font-display text-xl font-bold">
-                Etapa {etapaAtual.ordem + 1}: {etapaAtual.titulo}
-              </h2>
-              {etapaAtual.descricao && (
-                <p className="mt-1.5 text-[14px] leading-relaxed text-ink-300">
-                  {etapaAtual.descricao}
-                </p>
-              )}
-            </div>
-
-            {!liberada && (
-              <Aviso icone={<Lock size={18} />} titulo="Aguardando o líder">
-                Esta etapa ainda não foi liberada.
-              </Aviso>
-            )}
-
-            {liberada && <MaterialEtapa material={etapaAtual.material} />}
-
-            {liberada && estudo.referencia && (
-              <div className="mt-4">
-                <TextoBiblico
-                  referencia={estudo.referencia}
-                  mostrarFicha={["contexto", "interpretacao"].includes(etapaAtual.chave)}
-                />
+          /*
+           * Duas colunas a partir de lg.
+           *
+           * O que a pessoa responde fica na coluna de leitura, com largura de
+           * texto; a trilha das etapas sai para uma lateral fixa, onde deixa de
+           * ocupar o topo a cada rolagem. No celular a lateral desaparece e a
+           * trilha volta como a barrinha de sempre.
+           */
+          <div className="mt-6 gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+            <section className="min-w-0">
+              {/* Trilha compacta: só no celular e tablet, onde não há lateral. */}
+              <div className="mb-5 flex items-center gap-1.5 lg:hidden">
+                {etapas.map((e) => (
+                  <span
+                    key={e.id}
+                    title={e.titulo}
+                    className={`h-1.5 flex-1 rounded-full transition-colors ${
+                      e.ordem < estudo.etapa_atual
+                        ? "bg-gold-500/50"
+                        : e.ordem === estudo.etapa_atual
+                          ? "bg-gold-400"
+                          : "bg-white/10"
+                    }`}
+                  />
+                ))}
               </div>
-            )}
 
-            {liberada &&
-              minhasPerguntas.map((pergunta) => (
-                <BlocoPergunta
-                  key={pergunta.id}
-                  pergunta={pergunta}
-                  perfilId={perfil.id}
-                  souLider={souLider}
-                  minhaEquipe={minhaEquipe}
-                  respostas={respostas.filter((r) => r.pergunta_id === pergunta.id)}
-                  reacoes={reacoes}
-                  nomeDe={nomeDe}
-                  equipeDe={equipeDe}
-                  aoResponder={carregar}
-                />
-              ))}
+              <div className="rounded-2xl border border-white/8 bg-ink-900 p-5 md:p-6">
+                <p className="text-3xl">{etapaAtual.icone}</p>
+                <h2 className="mt-2 font-display text-xl font-bold md:text-2xl">
+                  Etapa {etapaAtual.ordem + 1}: {etapaAtual.titulo}
+                </h2>
+                {etapaAtual.descricao && (
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-ink-300 md:text-[15px]">
+                    {etapaAtual.descricao}
+                  </p>
+                )}
+              </div>
 
-            {liberada && !minhasPerguntas.length && (
-              <Aviso icone={<Sparkles size={18} />} titulo="Sem pergunta nesta etapa">
-                É um momento de leitura ou oração. Fiquem juntos nisso antes de seguir.
-              </Aviso>
-            )}
-          </section>
+              {!liberada && (
+                <Aviso icone={<Lock size={18} />} titulo="Aguardando o líder">
+                  Esta etapa ainda não foi liberada.
+                </Aviso>
+              )}
+
+              {liberada && <MaterialEtapa material={etapaAtual.material} />}
+
+              {liberada && estudo.referencia && (
+                <div className="mt-4">
+                  <TextoBiblico
+                    referencia={estudo.referencia}
+                    mostrarFicha={["contexto", "interpretacao"].includes(etapaAtual.chave)}
+                  />
+                </div>
+              )}
+
+              {liberada &&
+                minhasPerguntas.map((pergunta) => (
+                  <BlocoPergunta
+                    key={pergunta.id}
+                    pergunta={pergunta}
+                    perfilId={perfil.id}
+                    souLider={souLider}
+                    minhaEquipe={minhaEquipe}
+                    respostas={respostas.filter((r) => r.pergunta_id === pergunta.id)}
+                    reacoes={reacoes}
+                    nomeDe={nomeDe}
+                    equipeDe={equipeDe}
+                    aoResponder={carregar}
+                  />
+                ))}
+
+              {liberada && !minhasPerguntas.length && (
+                <Aviso icone={<Sparkles size={18} />} titulo="Sem pergunta nesta etapa">
+                  É um momento de leitura ou oração. Fiquem juntos nisso antes de seguir.
+                </Aviso>
+              )}
+            </section>
+
+            <TrilhaLateral
+              etapas={etapas}
+              etapaAtual={estudo.etapa_atual}
+              membros={membros}
+              respostas={respostas}
+              perguntas={perguntas}
+            />
+          </div>
         )
       )}
     </div>
+  );
+}
+
+/**
+ * Trilha das etapas na lateral, só no desktop.
+ *
+ * É a mesma informação da barrinha do celular, aberta: dá para ver de onde o
+ * grupo veio e o que falta, sem tirar o olho da pergunta que está respondendo.
+ */
+function TrilhaLateral({
+  etapas,
+  etapaAtual,
+  membros,
+  respostas,
+  perguntas,
+}: {
+  etapas: Etapa[];
+  etapaAtual: number;
+  membros: Membro[];
+  respostas: Resposta[];
+  perguntas: Pergunta[];
+}) {
+  const responderamNaEtapa = (etapaId: string) => {
+    const ids = new Set(perguntas.filter((p) => p.etapa_id === etapaId).map((p) => p.id));
+    return new Set(respostas.filter((r) => ids.has(r.pergunta_id)).map((r) => r.perfil_id))
+      .size;
+  };
+
+  return (
+    <aside className="hidden lg:sticky lg:top-20 lg:block">
+      <div className="rounded-2xl border border-white/8 bg-ink-900 p-4">
+        <p className="mb-3 text-[11px] font-bold uppercase tracking-wider text-ink-400">
+          Etapa {etapaAtual + 1} de {etapas.length}
+        </p>
+
+        <ol className="space-y-0.5">
+          {etapas.map((e) => {
+            const atual = e.ordem === etapaAtual;
+            const passou = e.ordem < etapaAtual;
+            const feitas = responderamNaEtapa(e.id);
+            return (
+              <li
+                key={e.id}
+                className={`flex items-start gap-2.5 rounded-lg px-2 py-2 transition-colors ${
+                  atual ? "bg-gold-400/12" : ""
+                }`}
+              >
+                <span className="mt-px shrink-0 text-[15px] leading-none">{e.icone}</span>
+                <span className="min-w-0 flex-1">
+                  <span
+                    className={`block text-[13px] leading-snug ${
+                      atual
+                        ? "font-bold text-white"
+                        : passou
+                          ? "text-ink-300"
+                          : "text-ink-500"
+                    }`}
+                  >
+                    {e.titulo}
+                  </span>
+                  {(atual || passou) && feitas > 0 && (
+                    <span className="mt-0.5 block text-[11px] text-ink-500">
+                      {feitas}/{membros.length} responderam
+                    </span>
+                  )}
+                </span>
+                {!e.liberada && (
+                  <Lock size={12} className="mt-1 shrink-0 text-ink-600" />
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </aside>
   );
 }
 
@@ -516,59 +614,69 @@ function Encerramento({
   );
 
   return (
-    <div className="mt-6 space-y-5">
+    <div className="mt-6">
       <div className="rounded-2xl border border-emerald-400/25 bg-emerald-400/8 p-5">
         <p className="font-display text-lg font-bold">Estudo encerrado</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
+        <div className="mt-3 grid grid-cols-3 gap-2 sm:max-w-md">
           {destaques.map((d) => (
             <div key={d.rotulo} className="rounded-xl bg-black/20 p-3 text-center">
               <p className="font-display text-xl font-black text-emerald-300">{d.valor}</p>
-              <p className="text-[11px] text-ink-400">{d.rotulo}</p>
+              <p className="text-[11px] leading-tight text-ink-400">{d.rotulo}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Tudo que o grupo respondeu, etapa por etapa */}
-      <div className="rounded-2xl border border-white/8 bg-ink-900 p-5">
-        <h2 className="font-display text-lg font-bold">O que o grupo respondeu</h2>
-        <div className="mt-4 space-y-5">
-          {etapas.map((etapa) => {
-            const doEtapa = perguntas.filter((p) => p.etapa_id === etapa.id);
-            if (!doEtapa.length) return null;
-            return (
-              <div key={etapa.id}>
-                <p className="mb-2 text-[12px] font-bold uppercase tracking-wider text-gold-400">
-                  {etapa.icone} {etapa.titulo}
-                </p>
-                <div className="space-y-3">
-                  {doEtapa.map((p) => {
-                    const rs = respostas.filter((r) => r.pergunta_id === p.id);
-                    return (
-                      <div key={p.id} className="border-l-2 border-white/10 pl-3">
-                        <p className="text-[14px] font-semibold">{p.texto}</p>
-                        {rs.length ? (
-                          <ul className="mt-1.5 space-y-1.5">
-                            {rs.map((r) => (
-                              <li key={r.id} className="text-[13px] leading-relaxed text-ink-300">
-                                <span className="text-ink-500">{nomeDe(r.perfil_id)}: </span>
-                                {r.texto}
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="mt-1 text-[12px] text-ink-600">Sem respostas.</p>
-                        )}
-                      </div>
-                    );
-                  })}
+      {/*
+       * O histórico é longo e a conclusão é curta: no desktop elas ficam lado a
+       * lado, para o líder escrever a conclusão olhando as respostas. No celular
+       * a ordem vira vertical, respostas primeiro.
+       */}
+      <div className="mt-5 gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)] lg:items-start">
+        {/* Tudo que o grupo respondeu, etapa por etapa */}
+        <div className="min-w-0 rounded-2xl border border-white/8 bg-ink-900 p-5">
+          <h2 className="font-display text-lg font-bold">O que o grupo respondeu</h2>
+          <div className="mt-4 space-y-5">
+            {etapas.map((etapa) => {
+              const doEtapa = perguntas.filter((p) => p.etapa_id === etapa.id);
+              if (!doEtapa.length) return null;
+              return (
+                <div key={etapa.id}>
+                  <p className="mb-2 text-[12px] font-bold uppercase tracking-wider text-gold-400">
+                    {etapa.icone} {etapa.titulo}
+                  </p>
+                  <div className="space-y-3">
+                    {doEtapa.map((p) => {
+                      const rs = respostas.filter((r) => r.pergunta_id === p.id);
+                      return (
+                        <div key={p.id} className="border-l-2 border-white/10 pl-3">
+                          <p className="text-[14px] font-semibold">{p.texto}</p>
+                          {rs.length ? (
+                            <ul className="mt-1.5 space-y-1.5">
+                              {rs.map((r) => (
+                                <li
+                                  key={r.id}
+                                  className="text-[13px] leading-relaxed text-ink-300"
+                                >
+                                  <span className="text-ink-500">{nomeDe(r.perfil_id)}: </span>
+                                  {r.texto}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="mt-1 text-[12px] text-ink-600">Sem respostas.</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
 
+        <div className="mt-5 min-w-0 space-y-5 lg:mt-0">
       {/* Conclusão do grupo, escrita pelo líder */}
       <div className="rounded-2xl border border-white/8 bg-ink-900 p-5">
         <h2 className="font-display text-lg font-bold">Conclusão do grupo</h2>
@@ -646,16 +754,15 @@ function Encerramento({
         </button>
       </div>
 
-      <Link
-        href={`/grupos/${""}`}
-        className="block rounded-xl bg-white/[0.06] py-3 text-center font-display text-sm font-bold transition-colors hover:bg-white/12"
-        onClick={(e) => {
-          e.preventDefault();
-          history.back();
-        }}
-      >
-        Voltar ao grupo
-      </Link>
+          <button
+            type="button"
+            className="block w-full rounded-xl bg-white/[0.06] py-3 text-center font-display text-sm font-bold transition-colors hover:bg-white/12"
+            onClick={() => history.back()}
+          >
+            Voltar ao grupo
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

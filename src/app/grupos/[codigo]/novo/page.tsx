@@ -231,7 +231,7 @@ function Assistente() {
   const passos = ["Método", "Conteúdo", "Ajustes", "Revisar"];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pt-6 pb-28 md:px-6">
+    <div className="mx-auto max-w-3xl px-4 pt-6 pb-28 md:px-6">
       <Link
         href={`/grupos/${codigo}`}
         className="inline-flex items-center gap-1.5 text-[13px] text-ink-400 transition-colors hover:text-white"
@@ -618,9 +618,11 @@ function Assistente() {
         )}
       </div>
 
-      {/* Navegação */}
+      {/* Navegação.
+          No celular ela acompanha a rolagem, logo acima da barra de abas: os
+          passos são longos e ficar caçando o botão no fim da página é ruim. */}
       {passo < 3 && (
-        <div className="mt-8 flex items-center justify-between gap-3">
+        <div className="sticky bottom-[calc(60px+env(safe-area-inset-bottom))] z-30 -mx-4 mt-8 flex items-center justify-between gap-3 border-t border-white/8 bg-ink-950/95 px-4 py-3 backdrop-blur-xl md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
           <button
             onClick={() => setPasso((p) => Math.max(0, p - 1))}
             disabled={passo === 0}
@@ -650,13 +652,15 @@ function PassoMetodo({
   aoEscolher: (id: string) => void;
 }) {
   return (
-    <div className="space-y-2.5">
+    // Onze métodos empilhados dão uma rolagem longa no desktop, com a tela
+    // vazia dos lados. Em duas colunas a lista cabe quase inteira na dobra.
+    <div className="grid gap-2.5 md:grid-cols-2">
       {METODOS.map((m: MetodoTemplate) => (
         <button
           key={m.id}
           onClick={() => m.disponivel && aoEscolher(m.id)}
           disabled={!m.disponivel}
-          className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition-colors ${
+          className={`flex h-full w-full items-start gap-3 rounded-2xl border p-4 text-left transition-colors ${
             selecionado === m.id
               ? "border-gold-400 bg-gold-400/10"
               : m.disponivel

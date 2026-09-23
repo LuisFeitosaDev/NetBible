@@ -103,7 +103,7 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
   const encerrados = estudos.filter((e) => e.status === "encerrado");
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-6 pb-24 md:px-6">
+    <div className="mx-auto max-w-4xl px-4 pt-6 pb-24 md:px-6 md:pb-14">
       <Link
         href="/grupos"
         className="inline-flex items-center gap-1.5 text-[13px] text-ink-400 transition-colors hover:text-white"
@@ -168,7 +168,7 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
           <h2 className="mb-3 font-display text-xs font-bold uppercase tracking-[0.16em] text-ink-400">
             Preparados, ainda não iniciados
           </h2>
-          <div className="space-y-2.5">
+          <div className="grid gap-2.5 md:grid-cols-2">
             {rascunhos.map((e) => (
               <CardEstudo key={e.id} estudo={e} />
             ))}
@@ -206,7 +206,7 @@ function Conteudo({ perfil }: { perfil: Perfil }) {
           <h2 className="mb-3 font-display text-xs font-bold uppercase tracking-[0.16em] text-ink-400">
             Histórico
           </h2>
-          <div className="space-y-2.5">
+          <div className="grid gap-2.5 md:grid-cols-2">
             {encerrados.map((e) => (
               <CardEstudo key={e.id} estudo={e} />
             ))}

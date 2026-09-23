@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, Loader2, CornerDownLeft } from "lucide-react";
-import { loadBook, type BookMeta, type VersionId } from "@/lib/bible";
+import { Search, Loader2, CornerDownLeft, ChevronRight } from "lucide-react";
+import { loadBook, citationLabel, type BookMeta, type VersionId } from "@/lib/bible";
 import { useBible } from "@/lib/store";
 import { GROUP_THEME } from "@/lib/catalog";
+import { BookArt } from "@/components/BookCard";
 
 type Hit = { book: BookMeta; chapter: number; verse: number; text: string };
 
@@ -59,9 +60,8 @@ export default function SearchPage() {
 
   const books = index?.books ?? [];
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  // Sem foco automático: esta aba agora é a Bíblia, e quem chega quer ver a
+  // lista de livros. Abrir o teclado do celular por cima dela atrapalha.
 
   const reference = useMemo(
     () => (books.length ? parseReference(query, books) : null),
@@ -112,6 +112,10 @@ export default function SearchPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 pt-6 md:px-6">
+      <h1 className="mb-3 font-display text-3xl font-black tracking-tight md:text-4xl">
+        Bíblia
+      </h1>
+
       <div className="sticky top-16 z-30 -mx-4 bg-ink-950/95 px-4 py-3 backdrop-blur-xl md:-mx-6 md:px-6">
         <div className="relative">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-400" />
@@ -186,9 +190,9 @@ export default function SearchPage() {
 }
 
 /**
- * Com a busca vazia, a tela vira o índice da Bíblia: os 66 livros na ordem
- * canônica, agrupados. Na maior parte das vezes a pessoa não quer procurar uma
- * palavra, quer só abrir um livro.
+ * Com a busca vazia, a tela vira a Bíblia: os 66 livros na ordem canônica,
+ * agrupados, um por linha. Na maior parte das vezes a pessoa não quer procurar
+ * uma palavra, quer só abrir um livro.
  */
 function IndiceDaBiblia() {
   const { index } = useBible();
@@ -197,13 +201,13 @@ function IndiceDaBiblia() {
   return (
     <div className="pb-16">
       <p className="mt-6 text-[13px] leading-relaxed text-ink-400">
-        Digite três letras para procurar uma palavra em toda a Bíblia, ou uma referência
-        como <span className="font-mono text-gold-400">jo 3:16</span>. Abaixo, os 66 livros
-        na ordem.
+        Toque num livro para abrir. Ou digite três letras para procurar uma palavra em
+        toda a Bíblia, ou uma referência como{" "}
+        <span className="font-mono text-gold-400">jo 3:16</span>.
       </p>
 
       {(["VT", "NT"] as const).map((testamento) => (
-        <section key={testamento} className="mt-7">
+        <section key={testamento} className="mt-8">
           <h2 className="mb-3 font-display text-xs font-bold uppercase tracking-[0.16em] text-gold-400">
             {testamento === "VT" ? "Antigo Testamento" : "Novo Testamento"}
           </h2>
@@ -215,27 +219,16 @@ function IndiceDaBiblia() {
               if (!livros.length) return null;
               const tema = GROUP_THEME[grupo.id];
               return (
-                <div key={grupo.id} className="mb-5">
+                <div key={grupo.id} className="mb-6">
                   <p
                     className="mb-2 text-[11px] font-bold uppercase tracking-wider"
                     style={{ color: tema.accent }}
                   >
                     {grupo.label}
                   </p>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  <div className="space-y-1.5">
                     {livros.map((livro) => (
-                      <Link
-                        key={livro.slug}
-                        href={`/livro/${livro.slug}`}
-                        className="group flex items-center justify-between gap-2 rounded-xl border border-white/6 bg-ink-900 px-3 py-2.5 transition-colors hover:border-white/25 hover:bg-ink-850"
-                      >
-                        <span className="min-w-0 truncate text-[14px] font-medium">
-                          {livro.name}
-                        </span>
-                        <span className="shrink-0 text-[11px] text-ink-500">
-                          {livro.verses.length}
-                        </span>
-                      </Link>
+                      <LinhaDoLivro key={livro.slug} book={livro} />
                     ))}
                   </div>
                 </div>
@@ -244,6 +237,52 @@ function IndiceDaBiblia() {
         </section>
       ))}
     </div>
+  );
+}
+
+/**
+ * Um livro por linha, com a própria gravura como fundo da faixa.
+ *
+ * A arte entra no formato panorâmico e o gradiente por cima vai de opaco na
+ * esquerda a quase limpo na direita: o nome fica legível e a imagem aparece
+ * onde não há texto. É a mesma linguagem dos cards, achatada numa linha.
+ */
+function LinhaDoLivro({ book }: { book: BookMeta }) {
+  const capitulos = book.verses.length;
+
+  return (
+    <Link
+      href={`/livro/${book.slug}`}
+      className="group relative block h-[66px] overflow-hidden rounded-xl ring-1 ring-white/8 transition-all duration-300 hover:ring-white/30"
+    >
+      <BookArt book={book} shape="wide" focus="right" className="absolute inset-0" />
+
+      {/* Véu da esquerda para a direita: sem ele a gravura briga com o nome. */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(11,10,14,0.96) 0%, rgba(11,10,14,0.9) 38%, rgba(11,10,14,0.5) 72%, rgba(11,10,14,0.28) 100%)",
+        }}
+      />
+
+      <div className="relative flex h-full items-center gap-3 px-4">
+        <span className="w-9 shrink-0 font-mono text-[10px] font-bold uppercase tracking-wider text-ink-500">
+          {citationLabel(book)}
+        </span>
+        <span className="min-w-0 flex-1 truncate font-display text-[16px] font-bold tracking-tight">
+          {book.name}
+        </span>
+        <span className="shrink-0 text-[11px] text-ink-400">
+          {capitulos} {capitulos === 1 ? "cap" : "caps"}
+        </span>
+        <ChevronRight
+          size={16}
+          className="shrink-0 text-ink-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-white"
+        />
+      </div>
+    </Link>
   );
 }
 

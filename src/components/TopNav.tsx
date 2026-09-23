@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Search, Library, Home, Settings2, Users } from "lucide-react";
+import { Search } from "lucide-react";
 import { VersionSwitch } from "./VersionSwitch";
 
+/** Mesma ordem da barra do celular, para o app não trocar de mapa por tamanho de tela. */
 const LINKS = [
-  { href: "/", label: "Início", icon: Home },
-  { href: "/grupos", label: "Grupos", icon: Users },
-  { href: "/busca", label: "Buscar", icon: Search },
-  { href: "/biblioteca", label: "Biblioteca", icon: Library },
-  { href: "/ajustes", label: "Ajustes", icon: Settings2 },
+  { href: "/", label: "Início" },
+  { href: "/busca", label: "Bíblia" },
+  { href: "/biblioteca", label: "Biblioteca" },
+  { href: "/grupos", label: "Grupos" },
+  { href: "/ajustes", label: "Conta" },
 ];
 
 export function TopNav() {
