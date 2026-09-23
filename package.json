@@ -13,7 +13,11 @@
     "marca": "node scripts/build-marca.mjs",
     "emails": "node scripts/build-emails.mjs",
     "teste:auth": "node scripts/teste-auth.mjs",
-    "capitulos": "node scripts/build-capitulos.mjs"
+    "capitulos": "node scripts/build-capitulos.mjs",
+    "arte:subir": "node --env-file=.env.local scripts/subir-arte.mjs",
+    "arte:colher": "node scripts/harvest-arte.mjs",
+    "fichas": "node --experimental-strip-types scripts/build-fichas.mjs",
+    "prebuild": "npm run fichas"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.127.0",

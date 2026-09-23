@@ -1,27 +1,627 @@
 {
- "rt-1": {
-  "titulo": "068.Naomi and Her Daughters-in-Law",
-  "page": "https://commons.wikimedia.org/wiki/File:068.Naomi_and_Her_Daughters-in-Law.jpg",
+ "1rs-3": {
+  "titulo": "084.The Judgment of Solomon",
+  "page": "https://commons.wikimedia.org/wiki/File:084.The_Judgment_of_Solomon.jpg",
   "artista": "Gustave Doré",
   "licenca": "Public domain"
  },
- "rt-2": {
-  "titulo": "Ruth, having gleaned barley in a field owned by Boaz (engraving by Picart)",
-  "page": "https://commons.wikimedia.org/wiki/File:Ruth,_having_gleaned_barley_in_a_field_owned_by_Boaz_(engraving_by_Picart).jpg",
-  "artista": "Creator:B. Picart",
-  "licenca": "CC BY 4.0"
+ "1rs-5": {
+  "titulo": "085.Cedars Are Cut Down for the Jerusalem Temple",
+  "page": "https://commons.wikimedia.org/wiki/File:085.Cedars_Are_Cut_Down_for_the_Jerusalem_Temple.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
  },
- "rt-3": {
-  "titulo": "Ruth et Booz (Ruth 7-8) • invenit James Tissot • pinxit Auguste-François Gorguet • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
-  "page": "https://commons.wikimedia.org/wiki/File:Ruth_et_Booz_(Ruth_7-8)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Auguste-Fran%C3%A7ois_Gorguet_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg",
+ "1rs-10": {
+  "titulo": "086.Solomon Receives the Queen of Sheba",
+  "page": "https://commons.wikimedia.org/wiki/File:086.Solomon_Receives_the_Queen_of_Sheba.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1rs-11": {
+  "titulo": "087.King Solomon in Old Age",
+  "page": "https://commons.wikimedia.org/wiki/File:087.King_Solomon_in_Old_Age.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1rs-13": {
+  "titulo": "088.The Disobedient Prophet Is Slain by a Lion",
+  "page": "https://commons.wikimedia.org/wiki/File:088.The_Disobedient_Prophet_Is_Slain_by_a_Lion.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1rs-17": {
+  "titulo": "089.Elijah Raises the Son of the Widow of Zarephath",
+  "page": "https://commons.wikimedia.org/wiki/File:089.Elijah_Raises_the_Son_of_the_Widow_of_Zarephath.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1rs-18": {
+  "titulo": "090.The Prophets of Baal Are Slaughtered",
+  "page": "https://commons.wikimedia.org/wiki/File:090.The_Prophets_of_Baal_Are_Slaughtered.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1rs-19": {
+  "titulo": "091.Elijah Is Nourished by an Angel",
+  "page": "https://commons.wikimedia.org/wiki/File:091.Elijah_Is_Nourished_by_an_Angel.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1rs-20": {
+  "titulo": "092.The Israelites Slaughter the Syrians",
+  "page": "https://commons.wikimedia.org/wiki/File:092.The_Israelites_Slaughter_the_Syrians.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1rs-22": {
+  "titulo": "093.The Death of Ahab",
+  "page": "https://commons.wikimedia.org/wiki/File:093.The_Death_of_Ahab.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-6": {
+  "titulo": "070.The Ark Is Returned to Beth-shemesh",
+  "page": "https://commons.wikimedia.org/wiki/File:070.The_Ark_Is_Returned_to_Beth-shemesh.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-10": {
+  "titulo": "070A.Samuel Blesses Saul",
+  "page": "https://commons.wikimedia.org/wiki/File:070A.Samuel_Blesses_Saul.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-15": {
+  "titulo": "071.The Death of Agag",
+  "page": "https://commons.wikimedia.org/wiki/File:071.The_Death_of_Agag.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-17": {
+  "titulo": "071A.David Slays Goliath",
+  "page": "https://commons.wikimedia.org/wiki/File:071A.David_Slays_Goliath.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-18": {
+  "titulo": "072.Saul Attempts to Kill David",
+  "page": "https://commons.wikimedia.org/wiki/File:072.Saul_Attempts_to_Kill_David.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-19": {
+  "titulo": "073.David Escapes through a Window",
+  "page": "https://commons.wikimedia.org/wiki/File:073.David_Escapes_through_a_Window.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-20": {
+  "titulo": "073A.David and Jonathan",
+  "page": "https://commons.wikimedia.org/wiki/File:073A.David_and_Jonathan.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-24": {
+  "titulo": "074.David Shows Saul How He Spared His Life",
+  "page": "https://commons.wikimedia.org/wiki/File:074.David_Shows_Saul_How_He_Spared_His_Life.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-28": {
+  "titulo": "075.Saul and the Witch of Endor",
+  "page": "https://commons.wikimedia.org/wiki/File:075.Saul_and_the_Witch_of_Endor.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "1sm-31": {
+  "titulo": "076.The Death of Saul",
+  "page": "https://commons.wikimedia.org/wiki/File:076.The_Death_of_Saul.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2cr-20": {
+  "titulo": "103.The Ammonite and Moabite Armies Are Destroyed",
+  "page": "https://commons.wikimedia.org/wiki/File:103.The_Ammonite_and_Moabite_Armies_Are_Destroyed.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-1": {
+  "titulo": "094.Elijah Destroys the Messengers of Ahaziah",
+  "page": "https://commons.wikimedia.org/wiki/File:094.Elijah_Destroys_the_Messengers_of_Ahaziah.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-2": {
+  "titulo": "095.Elijah Ascends to Heaven in a Chariot of Fire",
+  "page": "https://commons.wikimedia.org/wiki/File:095.Elijah_Ascends_to_Heaven_in_a_Chariot_of_Fire.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-6": {
+  "titulo": "096.A Famine in Samaria",
+  "page": "https://commons.wikimedia.org/wiki/File:096.A_Famine_in_Samaria.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-9": {
+  "titulo": "097.The Death of Jezebel",
+  "page": "https://commons.wikimedia.org/wiki/File:097.The_Death_of_Jezebel.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-11": {
+  "titulo": "099.The Death of Athaliah",
+  "page": "https://commons.wikimedia.org/wiki/File:099.The_Death_of_Athaliah.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-17": {
+  "titulo": "100.Foreign Nations Are Slain by Lions in Samaria",
+  "page": "https://commons.wikimedia.org/wiki/File:100.Foreign_Nations_Are_Slain_by_Lions_in_Samaria.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-19": {
+  "titulo": "101.Sennacherib's Army Is Destroyed",
+  "page": "https://commons.wikimedia.org/wiki/File:101.Sennacherib%27s_Army_Is_Destroyed.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2rs-25": {
+  "titulo": "102.Zedekiah's Sons Are Slaughtered before His Eyes",
+  "page": "https://commons.wikimedia.org/wiki/File:102.Zedekiah%27s_Sons_Are_Slaughtered_before_His_Eyes.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2sm-2": {
+  "titulo": "078.Combat between Soldiers of Ish-bosheth and David",
+  "page": "https://commons.wikimedia.org/wiki/File:078.Combat_between_Soldiers_of_Ish-bosheth_and_David.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2sm-10": {
+  "titulo": "079.David Attacks the Ammonites",
+  "page": "https://commons.wikimedia.org/wiki/File:079.David_Attacks_the_Ammonites.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2sm-18": {
+  "titulo": "080.The Death of Absalom",
+  "page": "https://commons.wikimedia.org/wiki/File:080.The_Death_of_Absalom.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2sm-19": {
+  "titulo": "081.David Mourns the Death of Absalom",
+  "page": "https://commons.wikimedia.org/wiki/File:081.David_Mourns_the_Death_of_Absalom.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2sm-21": {
+  "titulo": "082.Rizpah’s Kindness toward the Dead",
+  "page": "https://commons.wikimedia.org/wiki/File:082.Rizpah%E2%80%99s_Kindness_toward_the_Dead.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "2sm-24": {
+  "titulo": "102A.The Plague of Jerusalem",
+  "page": "https://commons.wikimedia.org/wiki/File:102A.The_Plague_of_Jerusalem.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "am-1": {
+  "titulo": "136.The Prophet Amos",
+  "page": "https://commons.wikimedia.org/wiki/File:136.The_Prophet_Amos.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "dn-1": {
+  "titulo": "128.Daniel among the Exiles",
+  "page": "https://commons.wikimedia.org/wiki/File:128.Daniel_among_the_Exiles.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "dn-3": {
+  "titulo": "129.Shadrach, Meshach and Abednego in the Furnace",
+  "page": "https://commons.wikimedia.org/wiki/File:129.Shadrach,_Meshach_and_Abednego_in_the_Furnace.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "dn-5": {
+  "titulo": "130.Daniel Interprets the Writing on the Wall",
+  "page": "https://commons.wikimedia.org/wiki/File:130.Daniel_Interprets_the_Writing_on_the_Wall.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "dn-6": {
+  "titulo": "131.Daniel in the Lions' Den",
+  "page": "https://commons.wikimedia.org/wiki/File:131.Daniel_in_the_Lions%27_Den.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "dn-7": {
+  "titulo": "132.Daniel's Vision of the Four Beasts",
+  "page": "https://commons.wikimedia.org/wiki/File:132.Daniel%27s_Vision_of_the_Four_Beasts.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "dt-31": {
+  "titulo": "The Phillip Medhurst Picture Torah 612. Moses declares his age. Deuteronomy cap 31 v 1. Dietvick",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_612._Moses_declares_his_age._Deuteronomy_cap_31_v_1._Dietvick.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ed-1": {
+  "titulo": "104.Cyrus Restores the Vessels of the Temple",
+  "page": "https://commons.wikimedia.org/wiki/File:104.Cyrus_Restores_the_Vessels_of_the_Temple.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ed-3": {
+  "titulo": "105.The Rebuilding of the Temple Is Begun",
+  "page": "https://commons.wikimedia.org/wiki/File:105.The_Rebuilding_of_the_Temple_Is_Begun.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ed-7": {
+  "titulo": "106.Artaxerxes Grants Freedom to the Jews",
+  "page": "https://commons.wikimedia.org/wiki/File:106.Artaxerxes_Grants_Freedom_to_the_Jews.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ed-9": {
+  "titulo": "107.Ezra Kneels in Prayer",
+  "page": "https://commons.wikimedia.org/wiki/File:107.Ezra_Kneels_in_Prayer.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "et-1": {
+  "titulo": "114.Queen Vashti Refuses to Obey Ahasuerus' Command",
+  "page": "https://commons.wikimedia.org/wiki/File:114.Queen_Vashti_Refuses_to_Obey_Ahasuerus%27_Command.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "et-5": {
+  "titulo": "115.Esther Before the King",
+  "page": "https://commons.wikimedia.org/wiki/File:115.Esther_Before_the_King.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "et-6": {
+  "titulo": "116.The Triumph of Mordecai",
+  "page": "https://commons.wikimedia.org/wiki/File:116.The_Triumph_of_Mordecai.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "et-7": {
+  "titulo": "117.Esther Accuses Haman",
+  "page": "https://commons.wikimedia.org/wiki/File:117.Esther_Accuses_Haman.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-2": {
+  "titulo": "031.The Finding of Moses",
+  "page": "https://commons.wikimedia.org/wiki/File:031.The_Finding_of_Moses.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-4": {
+  "titulo": "The Phillip Medhurst Picture Torah 290. Aaron spoke to the the people. Exodus cap 4 vv 30-31. Le Potre",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_290._Aaron_spoke_to_the_the_people._Exodus_cap_4_vv_30-31._Le_Potre.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ex-7": {
+  "titulo": "032.Moses and Aaron Appear before Pharaoh",
+  "page": "https://commons.wikimedia.org/wiki/File:032.Moses_and_Aaron_Appear_before_Pharaoh.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-8": {
+  "titulo": "The Phillip Medhurst Picture Torah 308. The plague of frogs. Exodus cap 8 vv 1-7. Luyken and son",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_308._The_plague_of_frogs._Exodus_cap_8_vv_1-7._Luyken_and_son.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ex-9": {
+  "titulo": "033.The Fifth Plague. Livestock Disease",
+  "page": "https://commons.wikimedia.org/wiki/File:033.The_Fifth_Plague._Livestock_Disease.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-10": {
+  "titulo": "034.The Ninth Plague. Darkness",
+  "page": "https://commons.wikimedia.org/wiki/File:034.The_Ninth_Plague._Darkness.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-12": {
+  "titulo": "035.The Firstborn of the Egyptians Are Slain",
+  "page": "https://commons.wikimedia.org/wiki/File:035.The_Firstborn_of_the_Egyptians_Are_Slain.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-14": {
+  "titulo": "037.The Egyptians Drown in the Sea",
+  "page": "https://commons.wikimedia.org/wiki/File:037.The_Egyptians_Drown_in_the_Sea.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-16": {
+  "titulo": "The Phillip Medhurst Picture Torah 397. The Israelites collect manna. Exodus cap 16 v 14. Luyken and son",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_397._The_Israelites_collect_manna._Exodus_cap_16_v_14._Luyken_and_son.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ex-17": {
+  "titulo": "041.Moses Strikes the Rock at Horeb",
+  "page": "https://commons.wikimedia.org/wiki/File:041.Moses_Strikes_the_Rock_at_Horeb.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-20": {
+  "titulo": "038.The Giving of the Law on Mount Sinai",
+  "page": "https://commons.wikimedia.org/wiki/File:038.The_Giving_of_the_Law_on_Mount_Sinai.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-31": {
+  "titulo": "The Phillip Medhurst Picture Torah 442. Moses receiving the two tablets of the Law. Exodus cap 31. after Raphael",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_442._Moses_receiving_the_two_tablets_of_the_Law._Exodus_cap_31._after_Raphael.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ex-32": {
+  "titulo": "039.Moses Comes Down from Mount Sinai",
+  "page": "https://commons.wikimedia.org/wiki/File:039.Moses_Comes_Down_from_Mount_Sinai.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ex-34": {
+  "titulo": "The Phillip Medhurst Picture Torah 464. Moses delivering the tables of the Law. Exodus cap 34 v 29. Tempestas Bible",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_464._Moses_delivering_the_tables_of_the_Law._Exodus_cap_34_v_29._Tempestas_Bible.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ex-40": {
+  "titulo": "The Phillip Medhurst Picture Torah 490. The erection of the tabernacle. Exodus cap 40 vv 17-19. Hoet",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_490._The_erection_of_the_tabernacle._Exodus_cap_40_vv_17-19._Hoet.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ex-171": {
+  "titulo": "The Phillip Medhurst Picture Torah 416. Joshua fighting Amalek. Exodus 1710&12. after Rubens",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_416._Joshua_fighting_Amalek._Exodus_1710%2612._after_Rubens.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "ez-1": {
+  "titulo": "126.The Prophet Ezekiel",
+  "page": "https://commons.wikimedia.org/wiki/File:126.The_Prophet_Ezekiel.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-1": {
+  "titulo": "The Phillip Medhurst Picture Torah 1. The Almighty. Genesis cap 1 v 16. De Vos",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_1._The_Almighty._Genesis_cap_1_v_16._De_Vos.jpg",
   "artista": "Phillip Medhurst",
-  "licenca": "CC BY-SA 4.0"
+  "licenca": "CC BY-SA 3.0"
  },
- "rt-4": {
-  "titulo": "Naomi and the Child Obed (Dalziels' Bible Gallery) MET DP835620",
-  "page": "https://commons.wikimedia.org/wiki/File:Naomi_and_the_Child_Obed_(Dalziels%27_Bible_Gallery)_MET_DP835620.jpg",
-  "artista": "After Simeon Solomon / Brothers Dalziel / Camden Press",
-  "licenca": "CC0"
+ "gn-2": {
+  "titulo": "The Phillip Medhurst Picture Torah 11. Adam & Eve. Genesis cap 2 v 25. Hoet",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_11._Adam_%26_Eve._Genesis_cap_2_v_25._Hoet.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-3": {
+  "titulo": "The Phillip Medhurst Picture Torah 12. Temptation of Adam and Eve. Genesis cap 3 v 6. Bloemaert",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_12._Temptation_of_Adam_and_Eve._Genesis_cap_3_v_6._Bloemaert.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-4": {
+  "titulo": "The Phillip Medhurst Picture Torah 27. The First Family. Genesis cap 4 vv 1-2. Bloemaert",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_27._The_First_Family._Genesis_cap_4_vv_1-2._Bloemaert.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-5": {
+  "titulo": "The Phillip Medhurst Picture Torah 45. Enoch translated. Genesis cap 5 v 24. De Vos",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_45._Enoch_translated._Genesis_cap_5_v_24._De_Vos.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-6": {
+  "titulo": "The Phillip Medhurst Picture Torah 46. The wickedness of Noah's generation. Genesis cap 6 v 11. Hoet",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_46._The_wickedness_of_Noah%27s_generation._Genesis_cap_6_v_11._Hoet.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-7": {
+  "titulo": "The Phillip Medhurst Picture Torah 49. Going into the Ark. Genesis cap 7 v 7. Borcht",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_49._Going_into_the_Ark._Genesis_cap_7_v_7._Borcht.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-8": {
+  "titulo": "The Phillip Medhurst Picture Torah 66. Rainbow. Genesis cap 8. after Rubens",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_66._Rainbow._Genesis_cap_8._after_Rubens.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-9": {
+  "titulo": "009.Noah Curses Ham and Canaan",
+  "page": "https://commons.wikimedia.org/wiki/File:009.Noah_Curses_Ham_and_Canaan.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-11": {
+  "titulo": "The Phillip Medhurst Picture Torah 70. Building the Tower of Babel. Genesis cap 11 v 2. Jan and Caspar Luyken",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_70._Building_the_Tower_of_Babel._Genesis_cap_11_v_2._Jan_and_Caspar_Luyken.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-12": {
+  "titulo": "011.Abraham Goes to the Land of Canaan",
+  "page": "https://commons.wikimedia.org/wiki/File:011.Abraham_Goes_to_the_Land_of_Canaan.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-14": {
+  "titulo": "The Phillip Medhurst Picture Torah 84. Melchizedek. Genesis cap 14 v 18. after Rubens",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_84._Melchizedek._Genesis_cap_14_v_18._after_Rubens.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-16": {
+  "titulo": "The Phillip Medhurst Picture Torah 90. Abraham and Hagar. Genesis cap 16 v 3. after Rembrandt",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_90._Abraham_and_Hagar._Genesis_cap_16_v_3._after_Rembrandt.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-18": {
+  "titulo": "The Phillip Medhurst Picture Torah 92. Abraham and the Angels. Genesis cap 18 vv 2, 5. after Veronese",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_92._Abraham_and_the_Angels._Genesis_cap_18_vv_2,_5._after_Veronese.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-19": {
+  "titulo": "013.Lot Flees as Sodom and Gomorrah Burn",
+  "page": "https://commons.wikimedia.org/wiki/File:013.Lot_Flees_as_Sodom_and_Gomorrah_Burn.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-21": {
+  "titulo": "The Phillip Medhurst Picture Torah 111. Hagar and Ishmael. Genesis cap 21 v 17. Rosa",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_111._Hagar_and_Ishmael._Genesis_cap_21_v_17._Rosa.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-22": {
+  "titulo": "The Phillip Medhurst Picture Torah 117. Abraham sacrificing Isaac. Genesis cap 22 v 13. after Rubens",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_117._Abraham_sacrificing_Isaac._Genesis_cap_22_v_13._after_Rubens.jpg",
+  "artista": "After Peter Paul Rubens",
+  "licenca": "Public domain"
+ },
+ "gn-23": {
+  "titulo": "017.The Burial of Sarah",
+  "page": "https://commons.wikimedia.org/wiki/File:017.The_Burial_of_Sarah.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-24": {
+  "titulo": "The Phillip Medhurst Picture Torah 125. Rebekah at the well. Genesis cap 24 vv 17-18. Vos",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_125._Rebekah_at_the_well._Genesis_cap_24_vv_17-18._Vos.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-25": {
+  "titulo": "The Phillip Medhurst Picture Torah 129. Esau selling his birthright. Genesis cap 25 v 29. De Vos",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_129._Esau_selling_his_birthright._Genesis_cap_25_v_29._De_Vos.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-26": {
+  "titulo": "The Phillip Medhurst Picture Torah 135. Isaac blessed. Genesis cap 26 vv 2&5. after Raphael",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_135._Isaac_blessed._Genesis_cap_26_vv_2%265._after_Raphael.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-27": {
+  "titulo": "The Phillip Medhurst Picture Torah 142. Isaac blessing Jacob. Genesis cap 27 vv 22&29. Coning",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_142._Isaac_blessing_Jacob._Genesis_cap_27_vv_22%2629._Coning.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-28": {
+  "titulo": "021.Jacob's Dream",
+  "page": "https://commons.wikimedia.org/wiki/File:021.Jacob%27s_Dream.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-29": {
+  "titulo": "The Phillip Medhurst Picture Torah 152. Jacob and Rachel. Genesis cap 29 v 10. Bassano",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_152._Jacob_and_Rachel._Genesis_cap_29_v_10._Bassano.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-31": {
+  "titulo": "The Phillip Medhurst Picture Torah 161. Laban seeking his idols. Genesis cap 31 vv 37&43. Watteau",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_161._Laban_seeking_his_idols._Genesis_cap_31_vv_37%2643._Watteau.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-32": {
+  "titulo": "023.Jacob Prays for Protection",
+  "page": "https://commons.wikimedia.org/wiki/File:023.Jacob_Prays_for_Protection.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-33": {
+  "titulo": "The Phillip Medhurst Picture Torah 167. Meeting of Jacob and Esau. Genesis cap 33 v 3. Jan and Caspar Luyken",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_167._Meeting_of_Jacob_and_Esau._Genesis_cap_33_v_3._Jan_and_Caspar_Luyken.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-37": {
+  "titulo": "The Phillip Medhurst Picture Torah 176. Joseph sold to the Ishmaelites. Genesis cap 37 v 27. Jan and Caspar Luyken",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_176._Joseph_sold_to_the_Ishmaelites._Genesis_cap_37_v_27._Jan_and_Caspar_Luyken.jpg",
+  "artista": "Johannes Luyken (April 16, 1649 - April 5, 1712)",
+  "licenca": "Public domain"
+ },
+ "gn-39": {
+  "titulo": "The Phillip Medhurst Picture Torah 180. Joseph and Potiphar's wife. Genesis cap 39 v 12. artist unknown",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_180._Joseph_and_Potiphar%27s_wife._Genesis_cap_39_v_12._artist_unknown.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-41": {
+  "titulo": "027.Joseph Interprets Pharaoh's Dream",
+  "page": "https://commons.wikimedia.org/wiki/File:027.Joseph_Interprets_Pharaoh%27s_Dream.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-42": {
+  "titulo": "The Phillip Medhurst Picture Torah 210. Joseph's brethren come to buy corn. Genesis cap 42 v 4. Jan and Caspar Luyken",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_210._Joseph%27s_brethren_come_to_buy_corn._Genesis_cap_42_v_4._Jan_and_Caspar_Luyken.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-43": {
+  "titulo": "The Phillip Medhurst Picture Torah 218. Joseph's brethren return from Jacob. Genesis cap 43 vv 26&29. De Vos",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_218._Joseph%27s_brethren_return_from_Jacob._Genesis_cap_43_vv_26%2629._De_Vos.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "gn-45": {
+  "titulo": "028.Joseph Reveals Himself to His Brothers",
+  "page": "https://commons.wikimedia.org/wiki/File:028.Joseph_Reveals_Himself_to_His_Brothers.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "gn-46": {
+  "titulo": "The Phillip Medhurst Picture Torah 243. Joseph goes to meet his father. Genesis cap 46 v 29. Jan and Caspar Luyken",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_243._Joseph_goes_to_meet_his_father._Genesis_cap_46_v_29._Jan_and_Caspar_Luyken.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "is-6": {
+  "titulo": "120.The Prophet Isaiah",
+  "page": "https://commons.wikimedia.org/wiki/File:120.The_Prophet_Isaiah.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "is-13": {
+  "titulo": "121.Isaiah's Vision of the Destruction of Babylon",
+  "page": "https://commons.wikimedia.org/wiki/File:121.Isaiah%27s_Vision_of_the_Destruction_of_Babylon.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "is-27": {
+  "titulo": "122.The Destruction of Leviathan",
+  "page": "https://commons.wikimedia.org/wiki/File:122.The_Destruction_of_Leviathan.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
  },
  "jn-1": {
   "titulo": "Jonah and the Whale RMG BHC0881",
@@ -47,27 +647,237 @@
   "artista": "Rijksmuseum",
   "licenca": "CC0"
  },
- "et-1": {
-  "titulo": "114.Queen Vashti Refuses to Obey Ahasuerus' Command",
-  "page": "https://commons.wikimedia.org/wiki/File:114.Queen_Vashti_Refuses_to_Obey_Ahasuerus%27_Command.jpg",
+ "job-1": {
+  "titulo": "118.Job Hears of His Misfortunes",
+  "page": "https://commons.wikimedia.org/wiki/File:118.Job_Hears_of_His_Misfortunes.jpg",
   "artista": "Gustave Doré",
   "licenca": "Public domain"
  },
- "et-5": {
-  "titulo": "115.Esther Before the King",
-  "page": "https://commons.wikimedia.org/wiki/File:115.Esther_Before_the_King.jpg",
+ "job-2": {
+  "titulo": "119.Job Speaks with His Friends",
+  "page": "https://commons.wikimedia.org/wiki/File:119.Job_Speaks_with_His_Friends.jpg",
   "artista": "Gustave Doré",
   "licenca": "Public domain"
  },
- "et-6": {
-  "titulo": "116.The Triumph of Mordecai",
-  "page": "https://commons.wikimedia.org/wiki/File:116.The_Triumph_of_Mordecai.jpg",
+ "jr-1": {
+  "titulo": "123.The Prophet Jeremiah",
+  "page": "https://commons.wikimedia.org/wiki/File:123.The_Prophet_Jeremiah.jpg",
   "artista": "Gustave Doré",
   "licenca": "Public domain"
  },
- "et-7": {
-  "titulo": "117.Esther Accuses Haman",
-  "page": "https://commons.wikimedia.org/wiki/File:117.Esther_Accuses_Haman.jpg",
+ "jr-36": {
+  "titulo": "123.Baruch Writes Jeremiah's Prophecies",
+  "page": "https://commons.wikimedia.org/wiki/File:123.Baruch_Writes_Jeremiah%27s_Prophecies.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "js-2": {
+  "titulo": "047.Joshua Spares Rahab",
+  "page": "https://commons.wikimedia.org/wiki/File:047.Joshua_Spares_Rahab.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "js-3": {
+  "titulo": "044. The Israelites Cross the Jordan River",
+  "page": "https://commons.wikimedia.org/wiki/File:044._The_Israelites_Cross_the_Jordan_River.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "js-6": {
+  "titulo": "046.The Walls of Jericho Fall Down",
+  "page": "https://commons.wikimedia.org/wiki/File:046.The_Walls_of_Jericho_Fall_Down.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "js-7": {
+  "titulo": "048.Achan Is Stoned to Death",
+  "page": "https://commons.wikimedia.org/wiki/File:048.Achan_Is_Stoned_to_Death.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "js-8": {
+  "titulo": "049.Joshua Burns the Town of Ai",
+  "page": "https://commons.wikimedia.org/wiki/File:049.Joshua_Burns_the_Town_of_Ai.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "js-10": {
+  "titulo": "051.Joshua Commands the Sun to Stand Still",
+  "page": "https://commons.wikimedia.org/wiki/File:051.Joshua_Commands_the_Sun_to_Stand_Still.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-2": {
+  "titulo": "045. An Angel Appears to the Israelites",
+  "page": "https://commons.wikimedia.org/wiki/File:045._An_Angel_Appears_to_the_Israelites.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-4": {
+  "titulo": "052.Jael Kills Sisera",
+  "page": "https://commons.wikimedia.org/wiki/File:052.Jael_Kills_Sisera.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-7": {
+  "titulo": "054.Gideon Chooses 300 Soldiers",
+  "page": "https://commons.wikimedia.org/wiki/File:054.Gideon_Chooses_300_Soldiers.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-8": {
+  "titulo": "055.The Midianites Are Routed",
+  "page": "https://commons.wikimedia.org/wiki/File:055.The_Midianites_Are_Routed.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-9": {
+  "titulo": "057.The Death of Abimelech",
+  "page": "https://commons.wikimedia.org/wiki/File:057.The_Death_of_Abimelech.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-11": {
+  "titulo": "058.Jephthah's Daughter Comes to Meet Her Father",
+  "page": "https://commons.wikimedia.org/wiki/File:058.Jephthah%27s_Daughter_Comes_to_Meet_Her_Father.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-14": {
+  "titulo": "060.Samson Slays a Lion",
+  "page": "https://commons.wikimedia.org/wiki/File:060.Samson_Slays_a_Lion.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-15": {
+  "titulo": "061.Samson Destroys the Philistines with an Ass' Jawbone",
+  "page": "https://commons.wikimedia.org/wiki/File:061.Samson_Destroys_the_Philistines_with_an_Ass%27_Jawbone.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-16": {
+  "titulo": "063.Samson and Delilah",
+  "page": "https://commons.wikimedia.org/wiki/File:063.Samson_and_Delilah.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-19": {
+  "titulo": "065.A Levite Finds a Woman's Corpse",
+  "page": "https://commons.wikimedia.org/wiki/File:065.A_Levite_Finds_a_Woman%27s_Corpse.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "jz-21": {
+  "titulo": "067.The Benjaminites Take the Virgins of Jabesh-gilead",
+  "page": "https://commons.wikimedia.org/wiki/File:067.The_Benjaminites_Take_the_Virgins_of_Jabesh-gilead.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "lm-1": {
+  "titulo": "124.People Mourn over the Destruction of Jerusalem",
+  "page": "https://commons.wikimedia.org/wiki/File:124.People_Mourn_over_the_Destruction_of_Jerusalem.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "lv-1": {
+  "titulo": "The Phillip Medhurst Picture Torah 517. Burnt offering. Leviticus 1 vv 8-14. Heuman",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_517._Burnt_offering._Leviticus_1_vv_8-14._Heuman.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "lv-16": {
+  "titulo": "The Phillip Medhurst Picture Torah 550. The scapegoat. Leviticus cap 16 vv 7-22. Gunst",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_550._The_scapegoat._Leviticus_cap_16_vv_7-22._Gunst.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "mq-6": {
+  "titulo": "139.Micah Exhorts the Israelites to Repent",
+  "page": "https://commons.wikimedia.org/wiki/File:139.Micah_Exhorts_the_Israelites_to_Repent.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ne-2": {
+  "titulo": "108.Nehemiah Views the Ruins of Jerusalem's Walls",
+  "page": "https://commons.wikimedia.org/wiki/File:108.Nehemiah_Views_the_Ruins_of_Jerusalem%27s_Walls.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "ne-8": {
+  "titulo": "109.Ezra Reads the Law to the People",
+  "page": "https://commons.wikimedia.org/wiki/File:109.Ezra_Reads_the_Law_to_the_People.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "nm-13": {
+  "titulo": "041B.The Spies Return from the Promised Land",
+  "page": "https://commons.wikimedia.org/wiki/File:041B.The_Spies_Return_from_the_Promised_Land.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "nm-16": {
+  "titulo": "040.The Death of Korah, Dathan, and Abiram",
+  "page": "https://commons.wikimedia.org/wiki/File:040.The_Death_of_Korah,_Dathan,_and_Abiram.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "nm-19": {
+  "titulo": "The Phillip Medhurst Picture Torah 557. Purification by the red heifer. Numbers cap 19 vv 1-10. Caspar Luyken",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_557._Purification_by_the_red_heifer._Numbers_cap_19_vv_1-10._Caspar_Luyken.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "nm-20": {
+  "titulo": "The Phillip Medhurst Picture Torah 560. Moses brings water out of the rock. Numbers cap 20. Luyken and son",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_560._Moses_brings_water_out_of_the_rock._Numbers_cap_20._Luyken_and_son.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "nm-21": {
+  "titulo": "042.The Bronze Serpent",
+  "page": "https://commons.wikimedia.org/wiki/File:042.The_Bronze_Serpent.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "nm-22": {
+  "titulo": "043.An Angel Appears to Balaam",
+  "page": "https://commons.wikimedia.org/wiki/File:043.An_Angel_Appears_to_Balaam.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "nm-25": {
+  "titulo": "The Phillip Medhurst Picture Torah 586. Idolatry with Baal-peor. Numbers cap 25 vv 1-8. Pool",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Phillip_Medhurst_Picture_Torah_586._Idolatry_with_Baal-peor._Numbers_cap_25_vv_1-8._Pool.jpg",
+  "artista": "Philip  De Vere",
+  "licenca": "CC BY-SA 3.0"
+ },
+ "rt-1": {
+  "titulo": "068.Naomi and Her Daughters-in-Law",
+  "page": "https://commons.wikimedia.org/wiki/File:068.Naomi_and_Her_Daughters-in-Law.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Public domain"
+ },
+ "rt-2": {
+  "titulo": "Ruth, having gleaned barley in a field owned by Boaz (engraving by Picart)",
+  "page": "https://commons.wikimedia.org/wiki/File:Ruth,_having_gleaned_barley_in_a_field_owned_by_Boaz_(engraving_by_Picart).jpg",
+  "artista": "Creator:B. Picart",
+  "licenca": "CC BY 4.0"
+ },
+ "rt-3": {
+  "titulo": "Ruth et Booz (Ruth 7-8) • invenit James Tissot • pinxit Auguste-François Gorguet • excudit Maurice de Brunoff apud Philip de Vere • praesentat Phillip Medhurst",
+  "page": "https://commons.wikimedia.org/wiki/File:Ruth_et_Booz_(Ruth_7-8)_%E2%80%A2_invenit_James_Tissot_%E2%80%A2_pinxit_Auguste-Fran%C3%A7ois_Gorguet_%E2%80%A2_excudit_Maurice_de_Brunoff_apud_Philip_de_Vere_%E2%80%A2_praesentat_Phillip_Medhurst.jpg",
+  "artista": "Phillip Medhurst",
+  "licenca": "CC BY-SA 4.0"
+ },
+ "rt-4": {
+  "titulo": "Naomi and the Child Obed (Dalziels' Bible Gallery) MET DP835620",
+  "page": "https://commons.wikimedia.org/wiki/File:Naomi_and_the_Child_Obed_(Dalziels%27_Bible_Gallery)_MET_DP835620.jpg",
+  "artista": "After Simeon Solomon / Brothers Dalziel / Camden Press",
+  "licenca": "CC0"
+ },
+ "zc-6": {
+  "titulo": "140.Zechariah's Vision of Four Chariots",
+  "page": "https://commons.wikimedia.org/wiki/File:140.Zechariah%27s_Vision_of_Four_Chariots.jpg",
   "artista": "Gustave Doré",
   "licenca": "Public domain"
  }

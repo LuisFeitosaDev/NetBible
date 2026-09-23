@@ -20,6 +20,15 @@ const nextConfig = {
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
+      {
+        // As fichas de capítulo, ao contrário do texto bíblico, são reescritas
+        // quando corrigimos ou melhoramos um resumo. Um dia de cache resolve o
+        // custo de rede sem prender ninguém a uma versão antiga por um ano.
+        source: "/capitulos/:livro.json",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        ],
+      },
     ];
   },
 };

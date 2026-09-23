@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Quote } from "lucide-react";
-import { fichaDoCapitulo } from "@/lib/capitulos";
-import {
-  arteAvifDoCapitulo,
-  arteDoCapitulo,
-  temArteDeCapitulo,
-} from "@/lib/capitulos.generated";
+import { fichaDoCapitulo, type Capitulo } from "@/lib/capitulos";
+import { temArteDeCapitulo } from "@/lib/capitulos.generated";
+import { arteDeCapitulo } from "@/lib/arte";
 import { GROUP_THEME } from "@/lib/catalog";
 import type { BookMeta } from "@/lib/bible";
 
@@ -31,9 +28,30 @@ export function CapituloHeader({
   aoIrParaVersiculo: (n: number) => void;
 }) {
   const [aberto, setAberto] = useState(false);
-  const ficha = fichaDoCapitulo(book.slug, capitulo);
+  const [ficha, setFicha] = useState<Capitulo | null>(null);
+
   const temArte = temArteDeCapitulo(book.slug, capitulo);
+  const fontes = arteDeCapitulo(book.slug, capitulo);
   const tema = GROUP_THEME[book.group];
+
+  /*
+   * A ficha vem de `/capitulos/<livro>.json`, baixado sob demanda. A primeira
+   * pintura sai sem ela e a segunda a inclui, o que é imperceptível porque o
+   * arquivo é pequeno e fica em cache depois do primeiro capítulo do livro.
+   */
+  useEffect(() => {
+    let vivo = true;
+    setAberto(false);
+    // Limpa antes de buscar: sem isso, ao virar a página o resumo do capítulo
+    // anterior continuaria na tela até a nova ficha chegar.
+    setFicha(null);
+    void fichaDoCapitulo(book.slug, capitulo).then((f) => {
+      if (vivo) setFicha(f);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [book.slug, capitulo]);
 
   if (!ficha && !temArte) return null;
 
@@ -45,13 +63,10 @@ export function CapituloHeader({
               trama fina, que é justamente o que o AVIF comprime melhor: sai
               perto da metade do peso. */}
           <picture>
-            <source
-              srcSet={arteAvifDoCapitulo(book.slug, capitulo)}
-              type="image/avif"
-            />
+            <source srcSet={fontes.avif} type="image/avif" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={arteDoCapitulo(book.slug, capitulo)}
+              src={fontes.webp}
               alt=""
               aria-hidden
               decoding="async"

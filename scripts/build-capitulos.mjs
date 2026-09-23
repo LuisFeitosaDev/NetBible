@@ -135,35 +135,79 @@ async function api(params) {
   return null;
 }
 
+/**
+ * Baixa um arquivo, com paciência para o limite de requisições do Commons.
+ *
+ * Numa rodada de centenas de capítulos o servidor começa a responder 429, e a
+ * espera curta só queimava as tentativas: dezenas de capítulos ficaram sem
+ * arte por isso, sendo que os arquivos existiam e baixavam normalmente
+ * sozinhos. Aqui o 429 ganha espera longa e progressiva, e respeita o
+ * `Retry-After` quando o servidor manda um.
+ */
 async function baixar(url) {
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const res = await fetch(url, { headers: { "User-Agent": UA } });
     if (res.ok) return Buffer.from(await res.arrayBuffer());
     await res.arrayBuffer().catch(() => {});
-    await sleep(2500 * (i + 1));
+
+    // 404 não melhora com espera.
+    if (res.status === 404) return null;
+
+    const pedido = Number(res.headers.get("retry-after"));
+    const espera = Number.isFinite(pedido) && pedido > 0
+      ? pedido * 1000
+      : (res.status === 429 ? 8000 : 2500) * (i + 1);
+    await sleep(Math.min(espera, 45000));
   }
   return null;
 }
 
-async function infoArquivo(nome, largura) {
-  const dados = await api({
-    action: "query",
-    titles: `File:${nome}`,
-    prop: "imageinfo",
-    iiprop: "url|extmetadata",
-    iiurlwidth: String(largura),
-  });
-  const pagina = Object.values(dados?.query?.pages ?? {})[0];
-  if (!pagina || pagina.missing !== undefined) return null;
-  const info = pagina.imageinfo?.[0];
-  if (!info) return null;
-  const limpar = (h) => (h ?? "").replace(/<[^>]*>/g, "").trim();
-  return {
-    url: info.thumburl ?? info.url,
-    page: info.descriptionurl,
-    artista: limpar(info.extmetadata?.Artist?.value) || "Desconhecido",
-    licenca: limpar(info.extmetadata?.LicenseShortName?.value) || "Domínio público",
-  };
+const limparHtml = (h) => (h ?? "").replace(/<[^>]*>/g, "").trim();
+
+/**
+ * Consulta metadados de até 50 arquivos numa requisição só.
+ *
+ * É o que faz a coisa escalar. Antes era uma ida ao Commons por candidato,
+ * mais um download só para medir o tamanho e quase sempre descartar. Com 929
+ * capítulos e vários candidatos em cada, isso era uma tarde inteira de espera
+ * e rate limit. Aqui vêm as dimensões originais junto, então a porteira de
+ * resolução é decidida antes de baixar qualquer coisa.
+ *
+ * O limite de 50 títulos por consulta é da própria API.
+ */
+async function infoEmLote(nomes, largura) {
+  const mapa = new Map();
+  for (let i = 0; i < nomes.length; i += 50) {
+    const fatia = nomes.slice(i, i + 50);
+    const dados = await api({
+      action: "query",
+      titles: fatia.map((n) => `File:${n}`).join("|"),
+      prop: "imageinfo",
+      iiprop: "url|size|extmetadata",
+      iiurlwidth: String(largura),
+    });
+
+    /*
+     * A API normaliza títulos e devolve as páginas fora de ordem, com a chave
+     * sendo o pageid. Por isso o casamento é feito pelo título devolvido, e
+     * não pela posição na fatia que foi enviada.
+     */
+    for (const pagina of Object.values(dados?.query?.pages ?? {})) {
+      if (pagina.missing !== undefined) continue;
+      const info = pagina.imageinfo?.[0];
+      if (!info) continue;
+      mapa.set(pagina.title.replace(/^File:/, ""), {
+        url: info.thumburl ?? info.url,
+        page: info.descriptionurl,
+        largura: info.width,
+        altura: info.height,
+        artista: limparHtml(info.extmetadata?.Artist?.value) || "Desconhecido",
+        licenca: limparHtml(info.extmetadata?.LicenseShortName?.value) || "Domínio público",
+      });
+    }
+    await sleep(500);
+  }
+  return mapa;
 }
 
 /** Igual ao das capas: mede o brilho e corrige tudo para a mesma faixa. */
@@ -289,6 +333,54 @@ async function gravar(chave, banda) {
   );
 }
 
+/**
+ * Livros que entram nesta rodada.
+ *
+ * A lista existe para o trabalho ser incremental: acrescentar um livro aqui e
+ * rodar de novo só busca o que falta, porque o que já foi baixado fica em
+ * `sources/capitulos/`. Sem isso, cada rodada bateria de novo em centenas de
+ * arquivos do Commons e levaria o rate limit.
+ *
+ * `"*"` libera tudo que houver em `sources/candidatos.json`.
+ */
+// A Bíblia inteira. Os capítulos sem candidato simplesmente não geram nada, e
+// o leitor cai no cabeçalho antigo, sem imagem.
+const LIVROS = ["*"];
+
+/**
+ * Junta a curadoria manual com o que a colheita achou.
+ *
+ * `ARTE` ganha sempre: é onde ficam os capítulos em que o automático errou, e
+ * as entradas com âncora de corte. Para o resto vale a ordem que
+ * `harvest-arte.mjs` deixou pronta.
+ */
+async function montarEntradas() {
+  let colhidos = {};
+  try {
+    colhidos = JSON.parse(await readFile(join(ROOT, "sources", "candidatos.json"), "utf8"));
+  } catch {
+    console.log("Sem sources/candidatos.json; rode `npm run arte:colher` para ampliar.");
+  }
+
+  const tudo = LIVROS.includes("*");
+  const querido = (chave) => tudo || LIVROS.includes(chave.replace(/-\d+$/, ""));
+
+  const entradas = new Map();
+  for (const [chave, fontes] of Object.entries(colhidos)) {
+    if (querido(chave)) entradas.set(chave, fontes);
+  }
+  for (const [chave, entrada] of Object.entries(ARTE)) {
+    if (querido(chave)) entradas.set(chave, entrada);
+  }
+
+  // Ordena por livro e capítulo, para o log sair legível.
+  return [...entradas].sort(([a], [b]) => {
+    const [la, ca] = [a.replace(/-\d+$/, ""), Number(a.match(/-(\d+)$/)[1])];
+    const [lb, cb] = [b.replace(/-\d+$/, ""), Number(b.match(/-(\d+)$/)[1])];
+    return la === lb ? ca - cb : la.localeCompare(lb);
+  });
+}
+
 async function main() {
   await mkdir(CACHE, { recursive: true });
   await mkdir(OUT, { recursive: true });
@@ -297,8 +389,30 @@ async function main() {
   const prontos = [];
   const faltando = [];
 
-  const entradas = Object.entries(ARTE);
-  console.log(`Gerando arte de ${entradas.length} capítulos...`);
+  const entradas = await montarEntradas();
+  console.log(`${entradas.length} capítulos na fila.`);
+
+  const pendentes = [];
+  for (const [chave, entrada] of entradas) {
+    if (!(await exists(join(CACHE, `${chave}.bin`)))) pendentes.push([chave, entrada]);
+  }
+
+  /*
+   * Uma única varredura de metadados para tudo o que falta.
+   *
+   * O conjunto elimina o nome repetido, que é comum porque a mesma prancha
+   * costuma ser candidata de dois capítulos vizinhos.
+   */
+  let info = new Map();
+  if (pendentes.length) {
+    const nomes = new Set();
+    for (const [, entrada] of pendentes) {
+      for (const n of Array.isArray(entrada) ? entrada : entrada.fontes) nomes.add(n);
+    }
+    console.log(`Consultando ${nomes.size} arquivos no Commons em lotes de 50...`);
+    info = await infoEmLote([...nomes], 1600);
+    console.log(`  ${info.size} existem.`);
+  }
 
   for (const [chave, entrada] of entradas) {
     // Aceita tanto a lista simples quanto `{ fontes, ancoraY }`.
@@ -312,27 +426,44 @@ async function main() {
       buffer = await readFile(bin);
       creditos[chave] = JSON.parse(await readFile(join(CACHE, `${chave}.json`), "utf8"));
     } else {
+      /*
+       * Porteira de qualidade, agora antes do download.
+       *
+       * A faixa final tem 1000px de largura e ainda passa por corte, então um
+       * original de 700px viraria borrão esticado. Como as dimensões vieram
+       * no lote, dá para descartar sem gastar uma transferência.
+       */
+      const bons = candidatos
+        .map((nome) => ({ nome, meta: info.get(nome) }))
+        .filter(({ meta }) => meta && meta.largura >= 1000 && meta.altura >= 500);
+
+      if (!bons.length) {
+        console.log(`  ! ${chave}: nenhum candidato serve`);
+        faltando.push(chave);
+        continue;
+      }
+
       let achou = null;
-      for (const nome of candidatos) {
-        const info = await infoArquivo(nome, 1600);
-        if (!info) {
-          console.log(`    "${nome}" não existe no Commons`);
-          continue;
-        }
-        const bytes = await baixar(info.url);
+      for (const { nome, meta } of bons) {
+        const bytes = await baixar(meta.url);
         if (!bytes) {
           console.log(`    "${nome}" não baixou`);
           continue;
         }
         achou = {
           buffer: bytes,
-          credito: { titulo: nome.replace(/\.[a-z]+$/i, ""), ...info, url: undefined },
+          credito: {
+            titulo: nome.replace(/\.[a-z]+$/i, ""),
+            page: meta.page,
+            artista: meta.artista,
+            licenca: meta.licenca,
+          },
         };
         break;
       }
 
       if (!achou) {
-        console.log(`  ! ${chave}: sem candidato válido`);
+        console.log(`  ! ${chave}: nenhum candidato baixou`);
         faltando.push(chave);
         continue;
       }
@@ -341,7 +472,7 @@ async function main() {
       creditos[chave] = achou.credito;
       await writeFile(bin, buffer);
       await writeFile(join(CACHE, `${chave}.json`), JSON.stringify(achou.credito));
-      await sleep(1200);
+      await sleep(400);
     }
 
     try {
