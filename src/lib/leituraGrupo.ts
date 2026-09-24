@@ -32,7 +32,7 @@ import { salvarPlano } from "./db";
 import { sincronizar } from "./sync";
 import type { BibleIndex } from "./bible";
 
-export { criarGrupo, sairDoGrupo, garantirSessao } from "./grupos/api";
+export { criarGrupo, sairDoGrupo, excluirGrupo, garantirSessao } from "./grupos/api";
 
 /**
  * `entrarNoGrupo` puro (de `grupos/api.ts`) atende por padrão a Grupos de
@@ -54,22 +54,28 @@ export function entrarNoGrupoDeLeitura(codigo: string): Promise<Grupo> {
  * Supabase só por ter aberto a própria Jornada — por isso o `peek` abaixo, que
  * só olha se já existe sessão, sem criar uma.
  */
-export async function meuGrupoDeLeitura(): Promise<Grupo | null> {
+export type MeuGrupoDeLeitura = {
+  grupo: Grupo;
+  /** true quando fui eu quem criou o grupo — só o líder pode apagá-lo para todos. */
+  souLider: boolean;
+};
+
+export async function meuGrupoDeLeitura(): Promise<MeuGrupoDeLeitura | null> {
   const { data: sessao } = await sb().auth.getSession();
   const meuId = sessao.session?.user?.id;
   if (!meuId) return null;
 
   const { data, error } = await sb()
     .from("membros")
-    .select("entrou_em, grupos(*)")
+    .select("entrou_em, papel, grupos(*)")
     .eq("perfil_id", meuId)
     .order("entrou_em", { ascending: false });
   if (error) throw error;
 
-  const grupo = (data ?? [])
-    .map((m) => m.grupos as unknown as Grupo)
-    .find((g) => g?.tipo === "leitura");
-  return grupo ?? null;
+  const linha = (data ?? [])
+    .map((m) => ({ grupo: m.grupos as unknown as Grupo, papel: m.papel as string }))
+    .find((l) => l.grupo?.tipo === "leitura");
+  return linha ? { grupo: linha.grupo, souLider: linha.papel === "lider" } : null;
 }
 
 export type ResultadoDeEntrada = {

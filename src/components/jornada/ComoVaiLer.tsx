@@ -8,6 +8,7 @@ import type { Perfil } from "@/lib/grupos/tipos";
 import {
   criarGrupo,
   entrarNoGrupoDeLeitura,
+  excluirGrupo,
   meuGrupoDeLeitura,
   sairDoGrupo,
 } from "@/lib/leituraGrupo";
@@ -126,6 +127,7 @@ function ConteudoAcompanhado({
 }) {
   const [carregando, setCarregando] = useState(true);
   const [grupo, setGrupo] = useState<Grupo | null>(null);
+  const [souLider, setSouLider] = useState(false);
   const [codigoGerado, setCodigoGerado] = useState<string | null>(null);
   const [codigoDigitado, setCodigoDigitado] = useState("");
   const [ocupado, setOcupado] = useState(false);
@@ -134,7 +136,10 @@ function ConteudoAcompanhado({
 
   useEffect(() => {
     meuGrupoDeLeitura()
-      .then(setGrupo)
+      .then((m) => {
+        setGrupo(m?.grupo ?? null);
+        setSouLider(m?.souLider ?? false);
+      })
       .catch((e) => setFalha(e instanceof Error ? e.message : String(e)))
       .finally(() => setCarregando(false));
   }, []);
@@ -168,7 +173,8 @@ function ConteudoAcompanhado({
             onClick={async () => {
               setOcupado(true);
               try {
-                await sairDoGrupo(grupo.id, perfil.id);
+                if (souLider) await excluirGrupo(grupo.id);
+                else await sairDoGrupo(grupo.id, perfil.id);
               } catch {
                 /* mesmo se falhar, deixa tentar de novo a partir do começo */
               } finally {
@@ -179,7 +185,7 @@ function ConteudoAcompanhado({
             disabled={ocupado}
             className="rounded-lg border border-white/10 px-4 py-2 text-[13px] font-semibold text-ink-400 hover:bg-white/8"
           >
-            Sair do grupo
+            {souLider ? "Apagar grupo" : "Sair do grupo"}
           </button>
         </div>
       </div>

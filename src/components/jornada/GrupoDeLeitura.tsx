@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Unlink, Users } from "lucide-react";
+import { Trash2, Unlink, Users } from "lucide-react";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
-import { meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
+import { excluirGrupo, meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
 import type { Grupo } from "@/lib/grupos/tipos";
 import type { ProgressoDoMembro } from "@/lib/leituraGrupo";
 import type { BibleIndex } from "@/lib/bible";
@@ -20,14 +20,16 @@ import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
 export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
   const [carregando, setCarregando] = useState(true);
   const [grupo, setGrupo] = useState<Grupo | null>(null);
+  const [souLider, setSouLider] = useState(false);
   const [membros, setMembros] = useState<ProgressoDoMembro[]>([]);
   const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const carregar = async () => {
     try {
-      const g = await meuGrupoDeLeitura();
-      setGrupo(g);
-      setMembros(g ? await progressoDoGrupo(g, index) : []);
+      const meu = await meuGrupoDeLeitura();
+      setGrupo(meu?.grupo ?? null);
+      setSouLider(meu?.souLider ?? false);
+      setMembros(meu ? await progressoDoGrupo(meu.grupo, index) : []);
     } catch {
       setGrupo(null);
     } finally {
@@ -57,10 +59,10 @@ export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
         </p>
         <button
           onClick={() => setConfirmandoSaida(true)}
-          aria-label="Sair do grupo"
+          aria-label={souLider ? "Apagar grupo" : "Sair do grupo"}
           className="text-ink-600 transition-colors hover:text-red-400"
         >
-          <Unlink size={13} />
+          {souLider ? <Trash2 size={13} /> : <Unlink size={13} />}
         </button>
       </div>
 
@@ -85,11 +87,16 @@ export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
 
       {confirmandoSaida && meuPerfilId && (
         <ConfirmarExclusao
-          titulo="Sair do grupo?"
-          aviso={`Você para de ver o progresso de ${grupo.nome}, e o grupo para de ver o seu. Sua leitura continua salva como está.`}
-          rotuloConfirmar="Sair do grupo"
+          titulo={souLider ? "Apagar o grupo?" : "Sair do grupo?"}
+          aviso={
+            souLider
+              ? `"${grupo.nome}" é apagado para todo mundo, e o código para de funcionar. A leitura de cada um continua salva como está.`
+              : `Você para de ver o progresso de ${grupo.nome}, e o grupo para de ver o seu. Sua leitura continua salva como está.`
+          }
+          rotuloConfirmar={souLider ? "Apagar grupo" : "Sair do grupo"}
           aoConfirmar={async () => {
-            await sairDoGrupo(grupo.id, meuPerfilId);
+            if (souLider) await excluirGrupo(grupo.id);
+            else await sairDoGrupo(grupo.id, meuPerfilId);
             setGrupo(null);
           }}
           aoFechar={() => setConfirmandoSaida(false)}
