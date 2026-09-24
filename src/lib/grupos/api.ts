@@ -29,6 +29,7 @@ import type {
   Reflexao,
   Resposta,
   Resumo,
+  TipoDeGrupo,
 } from "./tipos";
 
 const NOME_LOCAL = "lumen.nome";
@@ -125,7 +126,7 @@ export async function meusGrupos(): Promise<(Grupo & { papel: string; membros: n
 export async function criarGrupo(
   nome: string,
   descricao?: string,
-  tipo: "estudo" | "leitura" = "estudo",
+  tipo: TipoDeGrupo = "estudo",
 ): Promise<Grupo> {
   await garantirSessao();
   const { data, error } = await sb().rpc("criar_grupo", {
@@ -137,20 +138,40 @@ export async function criarGrupo(
   return data as Grupo;
 }
 
-export async function previaGrupo(codigo: string): Promise<PreviaGrupo | null> {
+/**
+ * `tipo` não é cosmético: sem ele, um código de leitura em dupla digitado
+ * aqui devolvia uma prévia (parcial, sem estudo) de um grupo que não é um
+ * grupo de estudo, e vice-versa — os dois usam o mesmo espaço de códigos.
+ * O padrão 'estudo' é só para quem já chamava esta função sem pensar nisso
+ * continuar funcionando.
+ */
+export async function previaGrupo(
+  codigo: string,
+  tipo: TipoDeGrupo = "estudo",
+): Promise<PreviaGrupo | null> {
   await garantirSessao();
-  const { data, error } = await sb().rpc("previa_grupo", { p_codigo: codigo });
+  const { data, error } = await sb().rpc("previa_grupo", { p_codigo: codigo, p_tipo: tipo });
   if (error) erro(error);
   const linhas = (data ?? []) as PreviaGrupo[];
   return linhas[0] ?? null;
 }
 
-export async function entrarNoGrupo(codigo: string): Promise<Grupo> {
+export async function entrarNoGrupo(codigo: string, tipo: TipoDeGrupo = "estudo"): Promise<Grupo> {
   await garantirSessao();
-  const { data, error } = await sb().rpc("entrar_no_grupo", { p_codigo: codigo });
+  const { data, error } = await sb().rpc("entrar_no_grupo", {
+    p_codigo: codigo,
+    p_tipo: tipo,
+  });
   if (error) {
     if (String(error.message).includes("codigo_invalido")) {
-      throw new Error("Código não encontrado. Confira com o líder do grupo.");
+      throw new Error("Código não encontrado. Confira com quem te passou.");
+    }
+    if (String(error.message).includes("tipo_incorreto")) {
+      throw new Error(
+        tipo === "leitura"
+          ? "Esse código é de um grupo de estudo, não de um plano de leitura."
+          : "Esse código é de um plano de leitura em dupla/grupo, não de um grupo de estudo.",
+      );
     }
     erro(error);
   }

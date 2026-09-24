@@ -7,15 +7,17 @@ import {
   Check,
   Loader2,
   CloudOff,
+  Pencil,
   RefreshCw,
   TriangleAlert,
   Smartphone,
+  X,
 } from "lucide-react";
 import { criarConta, entrar, recuperarSenha, sair, useConta } from "@/lib/conta";
 import { BotaoGoogle } from "@/components/grupos/BotaoGoogle";
 import { ouvirSync, sincronizar, type EstadoSync } from "@/lib/sync";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
-import { nomeSalvo } from "@/lib/grupos/api";
+import { meuPerfil, nomeSalvo, salvarPerfil } from "@/lib/grupos/api";
 
 /**
  * Bloco de conta em Ajustes. É por aqui que os dados deixam de ser do aparelho
@@ -32,7 +34,21 @@ export function ContaCard() {
   const [erro, setErro] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
 
+  // O nome exibido para o grupo é um campo à parte (`profiles.nome`), não o
+  // e-mail da conta. Sem isto em algum lugar, um nome que saiu errado (por
+  // exemplo, o Google sem enviar o nome de verdade) não tinha como ser
+  // corrigido — ficava errado para sempre.
+  const [perfilNome, setPerfilNome] = useState<string | null>(null);
+  const [editandoNome, setEditandoNome] = useState(false);
+  const [nomeEditado, setNomeEditado] = useState("");
+  const [salvandoNome, setSalvandoNome] = useState(false);
+
   useEffect(() => ouvirSync(setEstado), []);
+
+  useEffect(() => {
+    if (!usuario || anonimo) return;
+    void meuPerfil().then((p) => setPerfilNome(p?.nome ?? null));
+  }, [usuario, anonimo]);
 
   if (!supabaseConfigurado) {
     return (
@@ -65,6 +81,22 @@ export function ContaCard() {
   };
 
   if (usuario && !anonimo) {
+    const salvarNomeEditado = async () => {
+      const novo = nomeEditado.trim().slice(0, 40);
+      if (!novo || novo === perfilNome) {
+        setEditandoNome(false);
+        return;
+      }
+      setSalvandoNome(true);
+      try {
+        await salvarPerfil(novo);
+        setPerfilNome(novo);
+        setEditandoNome(false);
+      } finally {
+        setSalvandoNome(false);
+      }
+    };
+
     return (
       <div>
         <div className="flex items-center gap-3">
@@ -72,7 +104,58 @@ export function ContaCard() {
             <UserRound size={20} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate font-display text-base font-bold">{usuario.email}</p>
+            {editandoNome ? (
+              <div className="flex items-center gap-1.5">
+                <input
+                  autoFocus
+                  value={nomeEditado}
+                  onChange={(e) => setNomeEditado(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") void salvarNomeEditado();
+                    if (e.key === "Escape") setEditandoNome(false);
+                  }}
+                  maxLength={40}
+                  className="min-w-0 flex-1 rounded-lg border border-white/10 bg-ink-850 px-2.5 py-1.5 font-display text-[15px] font-bold outline-none focus:border-gold-500/60"
+                />
+                <button
+                  onClick={() => void salvarNomeEditado()}
+                  disabled={salvandoNome}
+                  aria-label="Salvar nome"
+                  className="shrink-0 rounded-lg p-1.5 text-emerald-400 transition-colors hover:bg-white/10 disabled:opacity-40"
+                >
+                  {salvandoNome ? (
+                    <Loader2 size={15} className="animate-spin" />
+                  ) : (
+                    <Check size={15} />
+                  )}
+                </button>
+                <button
+                  onClick={() => setEditandoNome(false)}
+                  disabled={salvandoNome}
+                  aria-label="Cancelar"
+                  className="shrink-0 rounded-lg p-1.5 text-ink-400 transition-colors hover:bg-white/10 disabled:opacity-40"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setNomeEditado(perfilNome ?? "");
+                  setEditandoNome(true);
+                }}
+                className="group flex min-w-0 items-center gap-1.5"
+              >
+                <span className="truncate font-display text-base font-bold">
+                  {perfilNome ?? usuario.email}
+                </span>
+                <Pencil
+                  size={12}
+                  className="shrink-0 text-ink-500 transition-colors group-hover:text-white"
+                />
+              </button>
+            )}
+            <p className="truncate text-[12px] text-ink-500">{usuario.email}</p>
             <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-ink-400">
               {estado === "sincronizando" ? (
                 <>

@@ -132,6 +132,12 @@ function traduzirGoogle(mensagem: string) {
 /**
  * Depois de voltar do Google, garante que o perfil existe e pega o nome que o
  * provedor mandou, para a pessoa não ter que digitar de novo.
+ *
+ * `full_name`/`name` é o caminho comum, mas nem todo login do Google os
+ * preenche — depende do consentimento dado e de como o Supabase normaliza os
+ * dados naquele momento. `given_name`/`family_name` costumam sobreviver mesmo
+ * quando os outros dois faltam. Só cai para o e-mail se restar mesmo nada,
+ * e mesmo assim isso não é permanente: em Ajustes dá para trocar o nome.
  */
 export async function garantirPerfilDoProvedor(): Promise<string | null> {
   const c = sb();
@@ -147,9 +153,13 @@ export async function garantirPerfilDoProvedor(): Promise<string | null> {
   if (existente?.nome) return existente.nome;
 
   const meta = usuario.user_metadata ?? {};
+  const nomeCompostoDoGoogle = [meta.given_name, meta.family_name]
+    .filter((parte): parte is string => Boolean(parte && String(parte).trim()))
+    .join(" ");
   const bruto =
     (meta.full_name as string) ||
     (meta.name as string) ||
+    nomeCompostoDoGoogle ||
     usuario.email?.split("@")[0] ||
     "Participante";
   // O banco limita a 40 caracteres.

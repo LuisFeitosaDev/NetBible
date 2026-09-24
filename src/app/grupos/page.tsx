@@ -282,7 +282,7 @@ function EntrarGrupo({ onFechar, onEntrou }: { onFechar: () => void; onEntrou: (
     setFalha(null);
     const t = setTimeout(async () => {
       try {
-        const p = await previaGrupo(limpo);
+        const p = await previaGrupo(limpo, "estudo");
         if (!vivo) return;
         setPrevia(p);
         if (!p) setFalha("Código não encontrado.");
@@ -302,7 +302,7 @@ function EntrarGrupo({ onFechar, onEntrou }: { onFechar: () => void; onEntrou: (
     setEntrando(true);
     setFalha(null);
     try {
-      const grupo = await entrarNoGrupo(codigo.trim().toUpperCase());
+      const grupo = await entrarNoGrupo(codigo.trim().toUpperCase(), "estudo");
       onEntrou();
       router.push(`/grupos/${grupo.codigo}`);
     } catch (e) {

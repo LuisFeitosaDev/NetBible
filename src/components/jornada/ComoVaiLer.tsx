@@ -7,7 +7,7 @@ import { supabaseConfigurado } from "@/lib/grupos/supabase";
 import type { Perfil } from "@/lib/grupos/tipos";
 import {
   criarGrupo,
-  entrarNoGrupo,
+  entrarNoGrupoDeLeitura,
   meuGrupoDeLeitura,
   sairDoGrupo,
 } from "@/lib/leituraGrupo";
@@ -269,7 +269,7 @@ function ConteudoAcompanhado({
             setOcupado(true);
             setFalha(null);
             try {
-              const g = await entrarNoGrupo(codigoDigitado);
+              const g = await entrarNoGrupoDeLeitura(codigoDigitado);
               setGrupo(g);
             } catch (e) {
               setFalha(e instanceof Error ? e.message : String(e));

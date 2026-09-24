@@ -55,8 +55,9 @@ estudo liberando uma etapa por vez enquanto as respostas aparecem ao vivo.
 2. **SQL Editor** → rode, nesta ordem, [`supabase/schema.sql`](supabase/schema.sql),
    [`supabase/schema-conta.sql`](supabase/schema-conta.sql),
    [`supabase/schema-planos.sql`](supabase/schema-planos.sql),
-   [`supabase/schema-leitura-grupo.sql`](supabase/schema-leitura-grupo.sql) e
-   [`supabase/schema-plano-personalizado.sql`](supabase/schema-plano-personalizado.sql).
+   [`supabase/schema-leitura-grupo.sql`](supabase/schema-leitura-grupo.sql),
+   [`supabase/schema-plano-personalizado.sql`](supabase/schema-plano-personalizado.sql) e
+   [`supabase/schema-grupo-tipo-restrito.sql`](supabase/schema-grupo-tipo-restrito.sql).
    Todos são idempotentes; a ordem importa porque cada um depende do anterior.
 3. **Authentication → Sign In / Providers** → ligue **Anonymous sign-ins**.
 4. Copie `.env.example` para `.env.local` e preencha a URL e a chave pública

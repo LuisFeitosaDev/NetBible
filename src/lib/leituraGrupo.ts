@@ -15,7 +15,11 @@
  * sendo de cada um, porque vem de `leitura`, não do plano em si.
  */
 import { sb } from "./grupos/supabase";
-import { garantirSessao, entrarNoGrupo, membrosDoGrupo } from "./grupos/api";
+import {
+  garantirSessao,
+  entrarNoGrupo as entrarNoGrupoApi,
+  membrosDoGrupo,
+} from "./grupos/api";
 import type { Grupo, Membro } from "./grupos/tipos";
 import {
   montarPlano,
@@ -25,9 +29,20 @@ import {
   type PlanoSalvo,
 } from "./planos";
 import { salvarPlano } from "./db";
+import { sincronizar } from "./sync";
 import type { BibleIndex } from "./bible";
 
-export { criarGrupo, entrarNoGrupo, sairDoGrupo, garantirSessao } from "./grupos/api";
+export { criarGrupo, sairDoGrupo, garantirSessao } from "./grupos/api";
+
+/**
+ * `entrarNoGrupo` puro (de `grupos/api.ts`) atende por padrão a Grupos de
+ * estudo — não é reexportado daqui sem tipo de propósito, porque quem chama a
+ * partir da Jornada precisa SEMPRE de `'leitura'`: um código de dupla/grupo de
+ * leitura digitado sem essa marca já foi aceito por engano na tela errada.
+ */
+export function entrarNoGrupoDeLeitura(codigo: string): Promise<Grupo> {
+  return entrarNoGrupoApi(codigo, "leitura");
+}
 
 /**
  * O grupo de leitura em que estou agora — o mais recente, se por acaso houver
@@ -78,7 +93,7 @@ export async function entrarNoGrupoComPlano(
   index: BibleIndex,
   lido: (slug: string, capitulo: number) => boolean,
 ): Promise<ResultadoDeEntrada> {
-  const grupo = await entrarNoGrupo(codigo);
+  const grupo = await entrarNoGrupoDeLeitura(codigo);
   const meuId = await garantirSessao();
 
   const membros = (await membrosDoGrupo(grupo.id)) as Membro[];
@@ -107,6 +122,10 @@ export async function entrarNoGrupoComPlano(
         remoto.inicioEm, // mesmo início de quem já está lendo: o mesmo dia do plano para os dois
       ),
     );
+    // Sem esperar o debounce de 2500ms: quem acabou de entrar num grupo tende
+    // a olhar o card de progresso na hora, e a própria escrita local que
+    // acabou de acontecer também precisa subir sem atraso.
+    void sincronizar();
     return { grupo, adotouPlano: true };
   }
 
@@ -141,6 +160,14 @@ export async function progressoDoGrupo(
   grupo: Grupo,
   index: BibleIndex,
 ): Promise<ProgressoDoMembro[]> {
+  /*
+   * Espera a própria subida terminar antes de ler. Sem isto, quem acabou de
+   * criar ou mudar o plano e abre o card na sequência via o debounce de
+   * 2500ms ainda não ter disparado, e a própria linha aparece como "sem
+   * plano" para si mesmo, quanto mais para o resto do grupo.
+   */
+  await sincronizar();
+
   const meuId = await garantirSessao();
   const membros = (await membrosDoGrupo(grupo.id)) as Membro[];
   const ids = membros.map((m) => m.perfil_id);
