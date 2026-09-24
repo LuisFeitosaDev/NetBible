@@ -52,10 +52,11 @@ estudo liberando uma etapa por vez enquanto as respostas aparecem ao vivo.
 ### Ligando o Supabase
 
 1. Crie um projeto em supabase.com (plano free serve).
-2. **SQL Editor** → rode [`supabase/schema.sql`](supabase/schema.sql), depois
-   [`supabase/schema-conta.sql`](supabase/schema-conta.sql) e
-   [`supabase/schema-planos.sql`](supabase/schema-planos.sql). Todos são
-   idempotentes e a ordem importa, porque os dois últimos dependem do primeiro.
+2. **SQL Editor** → rode, nesta ordem, [`supabase/schema.sql`](supabase/schema.sql),
+   [`supabase/schema-conta.sql`](supabase/schema-conta.sql),
+   [`supabase/schema-planos.sql`](supabase/schema-planos.sql) e
+   [`supabase/schema-leitura-grupo.sql`](supabase/schema-leitura-grupo.sql). Todos
+   são idempotentes; a ordem importa porque cada um depende do anterior.
 3. **Authentication → Sign In / Providers** → ligue **Anonymous sign-ins**.
 4. Copie `.env.example` para `.env.local` e preencha a URL e a chave pública
    (**Project Settings → API**).

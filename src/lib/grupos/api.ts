@@ -122,11 +122,16 @@ export async function meusGrupos(): Promise<(Grupo & { papel: string; membros: n
   }));
 }
 
-export async function criarGrupo(nome: string, descricao?: string): Promise<Grupo> {
+export async function criarGrupo(
+  nome: string,
+  descricao?: string,
+  tipo: "estudo" | "leitura" = "estudo",
+): Promise<Grupo> {
   await garantirSessao();
   const { data, error } = await sb().rpc("criar_grupo", {
     p_nome: nome,
     p_descricao: descricao ?? null,
+    p_tipo: tipo,
   });
   if (error) erro(error);
   return data as Grupo;

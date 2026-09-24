@@ -30,7 +30,7 @@ import {
 import type { BibleIndex, BookMeta } from "@/lib/bible";
 import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
 import { CriarPlano } from "./CriarPlano";
-import { ParceriaLeitura } from "./ParceriaLeitura";
+import { GrupoDeLeitura } from "./GrupoDeLeitura";
 
 /**
  * O plano em andamento.
@@ -106,7 +106,7 @@ export function PainelPlano({
     return (
       <div className="space-y-4 pb-16">
         <SemPlano aoComecar={() => setCriando(true)} />
-        <ParceriaLeitura meuProgresso={null} index={index} />
+        <GrupoDeLeitura index={index} />
       </div>
     );
   }
@@ -257,16 +257,7 @@ export function PainelPlano({
         </section>
       )}
 
-      <ParceriaLeitura
-        meuProgresso={{
-          percentual: percentual,
-          lidos: p.lidos,
-          total: p.total,
-          diaVisivel: p.diaVisivel,
-          dias: p.dias,
-        }}
-        index={index}
-      />
+      <GrupoDeLeitura index={index} />
 
       {confirmando && (
         <ConfirmarExclusao
@@ -343,7 +334,7 @@ function LinhaCapitulo({
         <Check size={15} strokeWidth={3} />
       </button>
       <Link
-        href={`/livro/${slug}/${capitulo}`}
+        href={`/livro/${slug}/${capitulo}?de=plano`}
         className={`min-w-0 flex-1 truncate font-sans text-[14px] transition-colors hover:text-white ${
           lido ? "text-ink-500 line-through decoration-ink-700" : "text-ink-100"
         }`}

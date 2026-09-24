@@ -1,0 +1,100 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Unlink, Users } from "lucide-react";
+import { supabaseConfigurado } from "@/lib/grupos/supabase";
+import { meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
+import type { Grupo } from "@/lib/grupos/tipos";
+import type { ProgressoDoMembro } from "@/lib/leituraGrupo";
+import type { BibleIndex } from "@/lib/bible";
+import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
+
+/**
+ * Card compacto do grupo de leitura, dentro da tela do plano ativo.
+ *
+ * Só aparece para quem já criou ou entrou num grupo — pela `ComoVaiLer`, no
+ * momento de criar o plano. Não pede conta nem mostra nada para quem lê
+ * sozinho: se não há sessão, `meuGrupoDeLeitura` devolve `null` sem criar uma,
+ * e este componente simplesmente não desenha nada.
+ */
+export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
+  const [carregando, setCarregando] = useState(true);
+  const [grupo, setGrupo] = useState<Grupo | null>(null);
+  const [membros, setMembros] = useState<ProgressoDoMembro[]>([]);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  const carregar = async () => {
+    try {
+      const g = await meuGrupoDeLeitura();
+      setGrupo(g);
+      setMembros(g ? await progressoDoGrupo(g, index) : []);
+    } catch {
+      setGrupo(null);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!supabaseConfigurado) {
+      setCarregando(false);
+      return;
+    }
+    void carregar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!supabaseConfigurado || carregando || !grupo) return null;
+
+  const meuPerfilId = membros.find((m) => m.souEu)?.perfilId;
+
+  return (
+    <section className="rounded-2xl border border-white/8 bg-ink-900 p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="flex items-center gap-1.5 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+          <Users size={11} />
+          {grupo.nome}
+        </p>
+        <button
+          onClick={() => setConfirmandoSaida(true)}
+          aria-label="Sair do grupo"
+          className="text-ink-600 transition-colors hover:text-red-400"
+        >
+          <Unlink size={13} />
+        </button>
+      </div>
+
+      <div className="space-y-2.5">
+        {membros.map((m) => (
+          <div key={m.perfilId} className="flex items-center gap-2.5">
+            <span className="w-20 shrink-0 truncate text-[12.5px] font-semibold text-ink-200">
+              {m.souEu ? "Você" : m.nome}
+            </span>
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/8">
+              <div
+                className={`h-full rounded-full ${m.souEu ? "bg-gold-400" : "bg-emerald-400"}`}
+                style={{ width: `${m.plano?.percentual ?? 0}%` }}
+              />
+            </div>
+            <span className="w-9 shrink-0 text-right font-mono text-[11px] text-ink-500">
+              {m.plano ? `${m.plano.percentual}%` : "—"}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {confirmandoSaida && meuPerfilId && (
+        <ConfirmarExclusao
+          titulo="Sair do grupo?"
+          aviso={`Você para de ver o progresso de ${grupo.nome}, e o grupo para de ver o seu. Sua leitura continua salva como está.`}
+          rotuloConfirmar="Sair do grupo"
+          aoConfirmar={async () => {
+            await sairDoGrupo(grupo.id, meuPerfilId);
+            setGrupo(null);
+          }}
+          aoFechar={() => setConfirmandoSaida(false)}
+        />
+      )}
+    </section>
+  );
+}

@@ -3,12 +3,16 @@ import type { Assunto, Material } from "./conteudo/tipos";
 
 export type Perfil = { id: string; nome: string; criado_em: string };
 
+export type TipoDeGrupo = "estudo" | "leitura";
+
 export type Grupo = {
   id: string;
   codigo: string;
   nome: string;
   descricao: string | null;
   lider_id: string;
+  /** "estudo" é a aba Grupos (métodos, etapas); "leitura" é o plano em dupla/grupo. */
+  tipo: TipoDeGrupo;
   criado_em: string;
 };
 

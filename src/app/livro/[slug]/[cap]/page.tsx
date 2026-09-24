@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
   ArrowLeft,
+  Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -23,6 +24,7 @@ import { useBible } from "@/lib/store";
 import {
   clearMarks,
   db,
+  desmarcarCapitulo,
   getPref,
   markChapterRead,
   setMark,
@@ -67,11 +69,17 @@ export default function ReaderPage() {
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const [sizeStep, setSizeStep] = useState(1);
   const [temaLeitura, setTemaLeitura] = useState<TemaLeitura>(TEMA_LEITURA_PADRAO);
+  /**
+   * Só true quando o capítulo foi aberto a partir do plano de leitura (a
+   * lista de "Hoje" na Jornada), via `?de=plano` na URL. Muda para onde a
+   * seta de voltar aponta, e só nesse caso: abrindo pela Bíblia ou pela
+   * página do livro, ela continua indo para o livro, como sempre foi.
+   */
+  const [vindoDoPlano, setVindoDoPlano] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [controlesOpen, setControlesOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [focusVerse, setFocusVerse] = useState<number | null>(null);
-  const endRef = useRef<HTMLDivElement>(null);
 
   /*
    * Direção da virada: avançar entra pela direita, voltar pela esquerda.
@@ -117,9 +125,13 @@ export default function ReaderPage() {
   }, []);
 
   // ?v=14 vem do versículo do dia e da biblioteca: rola até ele e pisca.
+  // ?de=plano vem da lista de "Hoje" no plano de leitura, e muda para onde a
+  // seta de voltar aponta.
   useEffect(() => {
-    const v = Number(new URLSearchParams(window.location.search).get("v"));
+    const params = new URLSearchParams(window.location.search);
+    const v = Number(params.get("v"));
     if (v > 0) setFocusVerse(v);
+    setVindoDoPlano(params.get("de") === "plano");
   }, [slug, chapter]);
 
   useEffect(() => {
@@ -154,19 +166,15 @@ export default function ReaderPage() {
     window.scrollTo({ top: 0 });
   }, [book, slug, chapter]);
 
-  // Chegou ao fim do capítulo: conta como lido.
-  useEffect(() => {
-    const el = endRef.current;
-    if (!el || !content) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) void markChapterRead(slug, chapter);
-      },
-      { rootMargin: "0px 0px -20% 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [content, slug, chapter]);
+  /*
+   * Ler não é mais detectado por rolagem: marcar como lido ao chegar perto do
+   * fim da tela confundia quem abria o capítulo só para conferir um
+   * versículo, e a rolagem inteira já vinha visível de cara — o capítulo
+   * aparecia como lido sem ter sido. Agora é um toque, no botão do fim do
+   * capítulo (`BotaoCapituloLido`, abaixo).
+   */
+  const registroDeLeitura = useLiveQuery(() => db.reading.get(slug), [slug]);
+  const capituloLido = registroDeLeitura?.done.includes(chapter) ?? false;
 
   useEffect(() => {
     if (!focusVerse) return;
@@ -267,8 +275,8 @@ export default function ReaderPage() {
       <header className="sticky top-0 z-40 border-b border-[color:var(--rl-borda-1)] bg-[var(--rl-header)] backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-1 px-2.5 sm:px-3">
           <Link
-            href={`/livro/${slug}`}
-            aria-label="Voltar ao livro"
+            href={vindoDoPlano ? "/biblioteca" : `/livro/${slug}`}
+            aria-label={vindoDoPlano ? "Voltar ao plano de leitura" : "Voltar ao livro"}
             className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink-300 transition-colors hover:bg-[var(--rl-sutil-3)] hover:text-[color:var(--rl-texto)]"
           >
             <ArrowLeft size={19} />
@@ -361,6 +369,7 @@ export default function ReaderPage() {
           book={book}
           capitulo={chapter}
           aoIrParaVersiculo={setFocusVerse}
+          temaLeitura={temaLeitura}
         />
 
 
@@ -428,14 +437,39 @@ export default function ReaderPage() {
 
         </div>
 
-        <div ref={endRef} className="h-px" />
+        {/* Toque explícito, não rolagem: abrir o capítulo só para conferir um
+            versículo não pode contar como "li o capítulo inteiro". */}
+        <button
+          onClick={() =>
+            capituloLido ? desmarcarCapitulo(slug, chapter) : markChapterRead(slug, chapter)
+          }
+          aria-pressed={capituloLido}
+          className={`mt-10 flex w-full items-center justify-center gap-2.5 rounded-xl border py-3.5 font-display text-[13.5px] font-bold transition-colors ${
+            capituloLido
+              ? "border-gold-400/40 bg-gold-400/10 text-gold-400"
+              : "border-[color:var(--rl-borda-2)] bg-[var(--rl-sutil-2)] text-[color:var(--rl-texto)] hover:bg-[var(--rl-sutil-3)]"
+          }`}
+        >
+          <span
+            className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
+              capituloLido
+                ? "border-gold-400 bg-gold-400 text-ink-950"
+                : "border-[color:var(--rl-borda-4)] text-transparent"
+            }`}
+          >
+            <Check size={12} strokeWidth={3} />
+          </span>
+          {capituloLido
+            ? `${book.name} ${chapter} marcado como lido`
+            : `Marcar ${book.name} ${chapter} como lido`}
+        </button>
 
         {/* Navegação entre capítulos */}
         <nav className="mt-14 flex items-center justify-between gap-3 border-t border-[color:var(--rl-borda-1)] pt-6">
           {chapter > 1 ? (
             <Link
-              href={`/livro/${slug}/${chapter - 1}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-ink-850 px-4 py-3 text-sm font-semibold transition-colors hover:bg-ink-800"
+              href={`/livro/${slug}/${chapter - 1}${vindoDoPlano ? "?de=plano" : ""}`}
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--rl-sutil-3)] px-4 py-3 text-sm font-semibold text-[color:var(--rl-texto)] transition-colors hover:bg-[var(--rl-borda-4)]"
             >
               <ChevronLeft size={17} />
               Capítulo {chapter - 1}
@@ -445,7 +479,7 @@ export default function ReaderPage() {
           )}
           {chapter < totalChapters ? (
             <Link
-              href={`/livro/${slug}/${chapter + 1}`}
+              href={`/livro/${slug}/${chapter + 1}${vindoDoPlano ? "?de=plano" : ""}`}
               className="inline-flex items-center gap-2 rounded-lg bg-gold-400 px-4 py-3 text-sm font-bold text-ink-950 transition-colors hover:bg-gold-300"
             >
               Capítulo {chapter + 1}

@@ -7,6 +7,7 @@ import { temArteDeCapitulo } from "@/lib/capitulos.generated";
 import { arteDeCapitulo } from "@/lib/arte";
 import { GROUP_THEME } from "@/lib/catalog";
 import type { BookMeta } from "@/lib/bible";
+import type { TemaLeitura } from "@/lib/temaLeitura";
 
 /**
  * Abertura do capítulo: arte, número e visão geral.
@@ -22,10 +23,12 @@ export function CapituloHeader({
   book,
   capitulo,
   aoIrParaVersiculo,
+  temaLeitura,
 }: {
   book: BookMeta;
   capitulo: number;
   aoIrParaVersiculo: (n: number) => void;
+  temaLeitura: TemaLeitura;
 }) {
   const [aberto, setAberto] = useState(false);
   const [ficha, setFicha] = useState<Capitulo | null>(null);
@@ -33,6 +36,14 @@ export function CapituloHeader({
   const temArte = temArteDeCapitulo(book.slug, capitulo);
   const fontes = arteDeCapitulo(book.slug, capitulo);
   const tema = GROUP_THEME[book.group];
+  /*
+   * `accent` é a versão clara da cor do grupo, feita para pop sobre fundo
+   * quase-preto. Sobre o papel do tema claro ela quase some — duas cores
+   * claras uma ao lado da outra. `to`, o degradê escuro do mesmo grupo, tem o
+   * contraste que falta, e já existe no tema: não é cor nova, é a metade da
+   * mesma paleta que ainda não tinha uso como texto.
+   */
+  const corDoMarcador = temaLeitura === "claro" ? tema.to : tema.accent;
 
   /*
    * A ficha vem de `/capitulos/<livro>.json`, baixado sob demanda. A primeira
@@ -146,7 +157,7 @@ export function CapituloHeader({
                     >
                       <span
                         className="mt-[3px] font-mono text-[10px] font-bold"
-                        style={{ color: tema.accent }}
+                        style={{ color: corDoMarcador }}
                       >
                         {String(i + 1).padStart(2, "0")}
                       </span>

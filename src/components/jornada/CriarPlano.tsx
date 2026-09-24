@@ -11,6 +11,7 @@ import {
   type OrdemDoPlano,
 } from "@/lib/planos";
 import type { BibleIndex } from "@/lib/bible";
+import { ComoVaiLer } from "./ComoVaiLer";
 
 export type EscolhaDePlano = {
   nome: string;
@@ -30,13 +31,10 @@ const COR_DA_ORDEM: Record<OrdemDoPlano, string> = {
 };
 
 /**
- * Criação do plano, numa tela só.
- *
- * Dois jeitos de começar: um toque nos planos famosos (livro e prazo já
- * combinados, do jeito que todo mundo conhece essa leitura), ou o assistente
- * abaixo, onde ordem e prazo são duas perguntas — a conta aparece ao vivo,
- * porque "1 ano" não decide nada até virar "4 capítulos por dia, terminando
- * em 22 de setembro de 2027".
+ * Criação do plano, numa tela só, em três passos: o quê (um plano famoso ou
+ * ordem + prazo do seu jeito), e por fim com quem — sozinho, ou em dupla/grupo
+ * com um código. O plano só é de fato criado depois desse terceiro passo, para
+ * "criar grupo" e "criar plano" nunca virarem dois fluxos separados.
  */
 export function CriarPlano({
   index,
@@ -49,6 +47,7 @@ export function CriarPlano({
 }) {
   const [ordem, setOrdem] = useState<OrdemDoPlano | null>(null);
   const [meses, setMeses] = useState<number | null>(null);
+  const [escolhaPendente, setEscolhaPendente] = useState<EscolhaDePlano | null>(null);
 
   const total = useMemo(() => roteiroDoPlano({ ordem: "canonica" }, index).length, [index]);
 
@@ -59,6 +58,26 @@ export function CriarPlano({
   const pronto = Boolean(ordem && meses);
   const nomeDaOrdem = ORDENS.find((o) => o.id === ordem)?.nome ?? "";
   const nome = `${nomeDaOrdem} em ${rotuloDePrazo(meses ?? 0)}`;
+
+  if (escolhaPendente) {
+    return (
+      <div className="space-y-5 pb-16">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="font-display text-lg font-bold">{escolhaPendente.nome}</h2>
+          <button
+            onClick={() => setEscolhaPendente(null)}
+            className="shrink-0 text-[13px] font-semibold text-ink-400 transition-colors hover:text-white"
+          >
+            Trocar plano
+          </button>
+        </div>
+        <ComoVaiLer
+          nomeDoPlano={escolhaPendente.nome}
+          aoContinuar={() => aoCriar(escolhaPendente)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 pb-16">
@@ -82,7 +101,7 @@ export function CriarPlano({
           {PLANOS_FAMOSOS.map((f) => (
             <button
               key={f.id}
-              onClick={() => aoCriar({ nome: f.nome, ordem: f.ordem, dias: f.dias })}
+              onClick={() => setEscolhaPendente({ nome: f.nome, ordem: f.ordem, dias: f.dias })}
               className="group flex w-full items-start gap-3 rounded-2xl border border-white/8 bg-ink-900 p-4 text-left transition-colors hover:border-white/22"
               style={{ borderLeft: `3px solid ${COR_DA_ORDEM[f.ordem]}` }}
             >
@@ -96,7 +115,7 @@ export function CriarPlano({
                 </span>
               </span>
               <span className="mt-1 shrink-0 font-sans text-[12px] font-semibold text-gold-400 opacity-0 transition-opacity group-hover:opacity-100">
-                Começar
+                Escolher
               </span>
             </button>
           ))}
@@ -206,11 +225,11 @@ export function CriarPlano({
       </section>
 
       <button
-        onClick={() => pronto && aoCriar({ nome, ordem: ordem!, dias })}
+        onClick={() => pronto && setEscolhaPendente({ nome, ordem: ordem!, dias })}
         disabled={!pronto}
         className="w-full rounded-xl bg-gold-400 py-3.5 font-display text-sm font-bold text-ink-950 transition-colors enabled:hover:bg-gold-300 disabled:cursor-not-allowed disabled:bg-white/8 disabled:text-ink-500"
       >
-        Começar hoje
+        Continuar
       </button>
     </div>
   );
