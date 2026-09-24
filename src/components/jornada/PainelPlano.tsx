@@ -27,6 +27,7 @@ import {
   type OrdemDoPlano,
   type PlanoSalvo,
 } from "@/lib/planos";
+import { sincronizar } from "@/lib/sync";
 import type { BibleIndex, BookMeta } from "@/lib/bible";
 import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
 import { CriarPlano } from "./CriarPlano";
@@ -289,6 +290,7 @@ async function criar(
   let jaLidos = 0;
   for (const c of roteiro) if (lido(c.slug, c.capitulo)) jaLidos++;
   await salvarPlano(montarPlano(escolha, jaLidos));
+  await sincronizar();
 }
 
 function SemPlano({
