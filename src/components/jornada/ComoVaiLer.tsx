@@ -6,6 +6,7 @@ import { Gate } from "@/components/grupos/Gate";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
 import type { Perfil } from "@/lib/grupos/tipos";
 import {
+  apagarPlanoDoGrupo,
   criarGrupo,
   entrarNoGrupoDeLeitura,
   excluirGrupo,
@@ -175,6 +176,7 @@ function ConteudoAcompanhado({
               try {
                 if (souLider) await excluirGrupo(grupo.id);
                 else await sairDoGrupo(grupo.id, perfil.id);
+                await apagarPlanoDoGrupo();
               } catch {
                 /* mesmo se falhar, deixa tentar de novo a partir do começo */
               } finally {

@@ -28,7 +28,7 @@ import {
   roteiroDoPlano,
   type PlanoSalvo,
 } from "./planos";
-import { salvarPlano } from "./db";
+import { apagarPlano, salvarPlano } from "./db";
 import { sincronizar } from "./sync";
 import type { BibleIndex } from "./bible";
 
@@ -128,10 +128,11 @@ export async function entrarNoGrupoComPlano(
         remoto.inicioEm, // mesmo início de quem já está lendo: o mesmo dia do plano para os dois
       ),
     );
-    // Sem esperar o debounce de 2500ms: quem acabou de entrar num grupo tende
-    // a olhar o card de progresso na hora, e a própria escrita local que
-    // acabou de acontecer também precisa subir sem atraso.
-    void sincronizar();
+    // Espera a sincronização terminar antes de retornar. Sem isso, quem acabou
+    // de entrar num grupo vê "Nenhum plano ativo" porque o plano recém-gravado
+    // localmente ainda não subiu para o Supabase — e o componente já tentou
+    // ler. O `await` garante que quando a tela recarrega, tudo já está lá.
+    await sincronizar();
     return { grupo, adotouPlano: true };
   }
 
@@ -224,4 +225,18 @@ export async function progressoDoGrupo(
   });
 
   return progresso.sort((a, b) => (a.souEu === b.souEu ? 0 : a.souEu ? -1 : 1));
+}
+
+/**
+ * Limpa o plano local ao sair ou apagar um grupo de leitura.
+ *
+ * Sem isto, apagar o grupo no Supabase não apaga o plano local (IndexedDB)
+ * porque `planos` referencia `profiles`, não `grupos`. O plano órfão
+ * reaparece na próxima sincronização, e o usuário o vê duplicado — uma vez
+ * como líder (que já foi embora) e outra como participante de um grupo que
+ * não existe mais.
+ */
+export async function apagarPlanoDoGrupo() {
+  await apagarPlano();
+  await sincronizar();
 }

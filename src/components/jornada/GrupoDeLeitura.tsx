@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Trash2, Unlink, Users } from "lucide-react";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
-import { excluirGrupo, meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
+import { apagarPlanoDoGrupo, excluirGrupo, meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
 import type { Grupo } from "@/lib/grupos/tipos";
 import type { ProgressoDoMembro } from "@/lib/leituraGrupo";
 import type { BibleIndex } from "@/lib/bible";
@@ -97,6 +97,10 @@ export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
           aoConfirmar={async () => {
             if (souLider) await excluirGrupo(grupo.id);
             else await sairDoGrupo(grupo.id, meuPerfilId);
+            // Apaga o plano local junto. Sem isto, o plano órfão reaparece na
+            // próxima sincronização: o grupo sumiu, mas o IndexedDB mantém o
+            // plano, que volta a subir como se fosse individual.
+            await apagarPlanoDoGrupo();
             setGrupo(null);
           }}
           aoFechar={() => setConfirmandoSaida(false)}

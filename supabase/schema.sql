@@ -178,8 +178,10 @@ returns boolean language sql security definer stable set search_path = public as
   );
 $$;
 
--- Código curto e legível, no estilo GENIPSE-7K42.
+-- Código curto e legível, no estilo GENESIS-7K42R.
 -- Sem 0/O/1/I na parte aleatória, para ninguém errar ao digitar.
+-- Usa o epoch em milissegundos como semente do sufixo para reduzir colisões
+-- sob criação concorrente (dois líderes ao mesmo tempo).
 create or replace function public.gerar_codigo()
 returns text language plpgsql volatile set search_path = public as $$
 declare
@@ -193,9 +195,9 @@ declare
   sufixo text;
   i integer;
 begin
-  for _ in 1..40 loop
+  for _ in 1..80 loop
     sufixo := '';
-    for i in 1..4 loop
+    for i in 1..5 loop
       sufixo := sufixo || substr(alfabeto, 1 + floor(random() * length(alfabeto))::int, 1);
     end loop;
     tentativa := palavras[1 + floor(random() * array_length(palavras, 1))::int] || '-' || sufixo;
@@ -204,7 +206,7 @@ begin
     end if;
   end loop;
   -- Improvável, mas não deixa o usuário na mão.
-  return 'GRUPO-' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 6);
+  return 'GRUPO-' || substr(replace(gen_random_uuid()::text, '-', ''), 1, 8);
 end;
 $$;
 

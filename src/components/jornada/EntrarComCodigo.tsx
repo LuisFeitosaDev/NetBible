@@ -81,7 +81,8 @@ function Formulario({
       if (adotouPlano) {
         // O plano gravado localmente aparece sozinho: a tela do plano ouve o
         // banco (useLiveQuery) e troca da vazia para a ativa assim que grava.
-        aoFechar();
+        // Forçamos reload para garantir que o Dexie emita a notificação a tempo.
+        window.location.reload();
       } else {
         setSemPlanoAinda(true);
       }
