@@ -113,6 +113,7 @@ export async function progressoDoGrupo(
         dias: planoRemoto.dias,
         inicioEm: new Date(planoRemoto.inicio_em).getTime(),
         lidosAoComecar: planoRemoto.lidos_ao_comecar ?? 0,
+        livros: planoRemoto.livros ?? undefined,
         criadoEm: new Date(planoRemoto.criado_em).getTime(),
         atualizadoEm: new Date(planoRemoto.atualizado_em).getTime(),
       };

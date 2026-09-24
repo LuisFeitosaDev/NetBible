@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, Check, Gauge, Sparkles } from "lucide-react";
+import { CalendarDays, Check, Gauge, ListPlus, Sparkles } from "lucide-react";
 import {
   ORDENS,
   PLANOS_FAMOSOS,
@@ -12,29 +12,34 @@ import {
 } from "@/lib/planos";
 import type { BibleIndex } from "@/lib/bible";
 import { ComoVaiLer } from "./ComoVaiLer";
+import { EscolherLivros } from "./EscolherLivros";
 
 export type EscolhaDePlano = {
   nome: string;
   ordem: OrdemDoPlano;
   dias: number;
+  /** Só em "personalizado": os livros escolhidos, na ordem de leitura. */
+  livros?: string[];
 };
 
 const PRAZOS = [3, 6, 9, 12, 18, 24, 36];
 
-/** Cor do risco à esquerda de cada ordem, só para diferenciar os três cartões. */
+/** Cor do risco à esquerda de cada ordem, só para diferenciar os cartões. */
 const COR_DA_ORDEM: Record<OrdemDoPlano, string> = {
   iniciante: "#34d399",
   cronologica: "#f59e0b",
   canonica: "#818cf8",
   proverbios: "#f59e0b",
   evangelhos: "#38bdf8",
+  personalizado: "#f472b6",
 };
 
 /**
- * Criação do plano, numa tela só, em três passos: o quê (um plano famoso ou
- * ordem + prazo do seu jeito), e por fim com quem — sozinho, ou em dupla/grupo
- * com um código. O plano só é de fato criado depois desse terceiro passo, para
- * "criar grupo" e "criar plano" nunca virarem dois fluxos separados.
+ * Criação do plano, numa tela só, em três passos: o quê (um plano famoso, uma
+ * ordem pronta, ou um roteiro montado por você — livro por livro), e por fim
+ * com quem — sozinho, ou em dupla/grupo com um código. O plano só é de fato
+ * criado depois desse terceiro passo, para "criar grupo" e "criar plano"
+ * nunca virarem dois fluxos separados.
  */
 export function CriarPlano({
   index,
@@ -47,17 +52,40 @@ export function CriarPlano({
 }) {
   const [ordem, setOrdem] = useState<OrdemDoPlano | null>(null);
   const [meses, setMeses] = useState<number | null>(null);
+  const [personalizando, setPersonalizando] = useState(false);
+  const [livrosEscolhidos, setLivrosEscolhidos] = useState<string[]>([]);
   const [escolhaPendente, setEscolhaPendente] = useState<EscolhaDePlano | null>(null);
 
-  const total = useMemo(() => roteiroDoPlano({ ordem: "canonica" }, index).length, [index]);
+  const livroPorSlug = useMemo(
+    () => new Map(index.books.map((b) => [b.slug, b])),
+    [index],
+  );
+  const totalBiblia = useMemo(
+    () => roteiroDoPlano({ ordem: "canonica" }, index).length,
+    [index],
+  );
+  const totalPersonalizado = useMemo(
+    () =>
+      livrosEscolhidos.reduce(
+        (soma, slug) => soma + (livroPorSlug.get(slug)?.verses.length ?? 0),
+        0,
+      ),
+    [livrosEscolhidos, livroPorSlug],
+  );
 
+  const total = personalizando ? totalPersonalizado : totalBiblia;
   // Meses viram dias pelo mês médio do calendário, não por 30: em 24 meses a
   // diferença já passa de uma semana no fim do plano.
   const dias = meses ? Math.round(meses * 30.437) : 0;
-  const porDia = dias ? total / dias : 0;
-  const pronto = Boolean(ordem && meses);
+  const porDia = dias && total ? total / dias : 0;
+  const pronto = personalizando
+    ? Boolean(livrosEscolhidos.length && meses)
+    : Boolean(ordem && meses);
+
   const nomeDaOrdem = ORDENS.find((o) => o.id === ordem)?.nome ?? "";
-  const nome = `${nomeDaOrdem} em ${rotuloDePrazo(meses ?? 0)}`;
+  const nome = personalizando
+    ? nomeDoPersonalizado(livrosEscolhidos, livroPorSlug, meses ?? 0)
+    : `${nomeDaOrdem} em ${rotuloDePrazo(meses ?? 0)}`;
 
   if (escolhaPendente) {
     return (
@@ -93,79 +121,123 @@ export function CriarPlano({
         )}
       </div>
 
-      <section>
-        <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-          Planos conhecidos
-        </p>
-        <div className="space-y-2">
-          {PLANOS_FAMOSOS.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setEscolhaPendente({ nome: f.nome, ordem: f.ordem, dias: f.dias })}
-              className="group flex w-full items-start gap-3 rounded-2xl border border-white/8 bg-ink-900 p-4 text-left transition-colors hover:border-white/22"
-              style={{ borderLeft: `3px solid ${COR_DA_ORDEM[f.ordem]}` }}
-            >
-              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-white/[0.06] text-gold-400">
-                <Sparkles size={15} />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block font-display text-[15px] font-bold">{f.nome}</span>
-                <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-400">
-                  {f.resumo}
+      {!personalizando && (
+        <section>
+          <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+            Planos conhecidos
+          </p>
+          <div className="space-y-2">
+            {PLANOS_FAMOSOS.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setEscolhaPendente({ nome: f.nome, ordem: f.ordem, dias: f.dias })}
+                className="group flex w-full items-start gap-3 rounded-2xl border border-white/8 bg-ink-900 p-4 text-left transition-colors hover:border-white/22"
+                style={{ borderLeft: `3px solid ${COR_DA_ORDEM[f.ordem]}` }}
+              >
+                <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-white/[0.06] text-gold-400">
+                  <Sparkles size={15} />
                 </span>
-              </span>
-              <span className="mt-1 shrink-0 font-sans text-[12px] font-semibold text-gold-400 opacity-0 transition-opacity group-hover:opacity-100">
-                Escolher
-              </span>
-            </button>
-          ))}
-        </div>
-      </section>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display text-[15px] font-bold">{f.nome}</span>
+                  <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-400">
+                    {f.resumo}
+                  </span>
+                </span>
+                <span className="mt-1 shrink-0 font-sans text-[12px] font-semibold text-gold-400 opacity-0 transition-opacity group-hover:opacity-100">
+                  Escolher
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
-        <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-          Ou do seu jeito · 1 · Em que ordem
-        </p>
-        <div className="space-y-2">
-          {ORDENS.map((o) => (
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+            {personalizando ? "Crie seu próprio · escolha os livros" : "Ou do seu jeito · 1 · Em que ordem"}
+          </p>
+          {personalizando && (
             <button
-              key={o.id}
-              onClick={() => setOrdem(o.id)}
-              aria-pressed={ordem === o.id}
-              className={`flex w-full gap-3 rounded-2xl border p-4 text-left transition-colors ${
-                ordem === o.id
-                  ? "border-white/45 bg-white/[0.07]"
-                  : "border-white/8 bg-ink-900 hover:border-white/22"
-              }`}
-              style={
-                ordem === o.id ? { borderLeft: `3px solid ${COR_DA_ORDEM[o.id]}` } : undefined
-              }
+              onClick={() => {
+                setPersonalizando(false);
+                setLivrosEscolhidos([]);
+              }}
+              className="shrink-0 text-[12px] font-semibold text-ink-400 hover:text-white"
             >
-              <span
-                className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border transition-colors ${
+              Usar uma ordem pronta
+            </button>
+          )}
+        </div>
+
+        {personalizando ? (
+          <EscolherLivros
+            index={index}
+            selecionados={livrosEscolhidos}
+            aoMudar={setLivrosEscolhidos}
+          />
+        ) : (
+          <div className="space-y-2">
+            {ORDENS.map((o) => (
+              <button
+                key={o.id}
+                onClick={() => setOrdem(o.id)}
+                aria-pressed={ordem === o.id}
+                className={`flex w-full gap-3 rounded-2xl border p-4 text-left transition-colors ${
                   ordem === o.id
-                    ? "border-gold-400 bg-gold-400 text-ink-950"
-                    : "border-white/20 text-transparent"
+                    ? "border-white/45 bg-white/[0.07]"
+                    : "border-white/8 bg-ink-900 hover:border-white/22"
                 }`}
+                style={
+                  ordem === o.id ? { borderLeft: `3px solid ${COR_DA_ORDEM[o.id]}` } : undefined
+                }
               >
-                <Check size={12} strokeWidth={3} />
+                <span
+                  className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border transition-colors ${
+                    ordem === o.id
+                      ? "border-gold-400 bg-gold-400 text-ink-950"
+                      : "border-white/20 text-transparent"
+                  }`}
+                >
+                  <Check size={12} strokeWidth={3} />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[15px] font-bold">
+                    {o.nome}
+                  </span>
+                  <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-400">
+                    {o.resumo}
+                  </span>
+                </span>
+              </button>
+            ))}
+
+            <button
+              onClick={() => {
+                setPersonalizando(true);
+                setOrdem(null);
+              }}
+              className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-white/16 p-4 text-left transition-colors hover:border-white/32 hover:bg-white/[0.03]"
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-pink-400/12 text-pink-300">
+                <ListPlus size={17} />
               </span>
               <span className="min-w-0">
                 <span className="block font-display text-[15px] font-bold">
-                  {o.nome}
+                  Crie seu próprio plano
                 </span>
-                <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-400">
-                  {o.resumo}
+                <span className="mt-0.5 block text-[12.5px] leading-relaxed text-ink-400">
+                  Você escolhe quais livros ler e em que ordem.
                 </span>
               </span>
             </button>
-          ))}
-        </div>
+          </div>
+        )}
       </section>
 
       <section>
         <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-          2 · Em quanto tempo
+          {personalizando ? "Em quanto tempo" : "2 · Em quanto tempo"}
         </p>
         <div className="flex flex-wrap gap-2">
           {PRAZOS.map((m) => (
@@ -219,13 +291,26 @@ export function CriarPlano({
           </>
         ) : (
           <p className="text-center text-[13px] text-ink-500">
-            {!ordem ? "Escolha a ordem para ver o ritmo." : "Escolha o prazo."}
+            {personalizando
+              ? !livrosEscolhidos.length
+                ? "Escolha ao menos um livro para ver o ritmo."
+                : "Escolha o prazo."
+              : !ordem
+                ? "Escolha a ordem para ver o ritmo."
+                : "Escolha o prazo."}
           </p>
         )}
       </section>
 
       <button
-        onClick={() => pronto && setEscolhaPendente({ nome, ordem: ordem!, dias })}
+        onClick={() =>
+          pronto &&
+          setEscolhaPendente(
+            personalizando
+              ? { nome, ordem: "personalizado", dias, livros: livrosEscolhidos }
+              : { nome, ordem: ordem!, dias },
+          )
+        }
         disabled={!pronto}
         className="w-full rounded-xl bg-gold-400 py-3.5 font-display text-sm font-bold text-ink-950 transition-colors enabled:hover:bg-gold-300 disabled:cursor-not-allowed disabled:bg-white/8 disabled:text-ink-500"
       >
@@ -240,4 +325,23 @@ function rotuloDePrazo(meses: number) {
   const anos = meses / 12;
   if (Number.isInteger(anos)) return anos === 1 ? "1 ano" : `${anos} anos`;
   return `${meses} meses`;
+}
+
+/**
+ * "Rute e Jonas em 2 meses" para poucos livros, "6 livros em 8 meses" para
+ * muitos — nomear cada combinação por extenso viraria um título maior que a
+ * tela.
+ */
+function nomeDoPersonalizado(
+  slugs: string[],
+  livroPorSlug: Map<string, { name: string }>,
+  meses: number,
+) {
+  const prazo = rotuloDePrazo(meses);
+  if (slugs.length === 0) return `Meu plano em ${prazo}`;
+  if (slugs.length <= 2) {
+    const nomes = slugs.map((s) => livroPorSlug.get(s)?.name ?? s);
+    return `${nomes.join(" e ")} em ${prazo}`;
+  }
+  return `${slugs.length} livros em ${prazo}`;
 }

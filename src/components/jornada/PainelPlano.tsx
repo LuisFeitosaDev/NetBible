@@ -113,7 +113,11 @@ export function PainelPlano({
 
   if (!p) return null;
   const percentual = Math.round((p.lidos / p.total) * 100);
-  const apertado = p.ritmoNecessario > p.ritmoOriginal * 1.8;
+  // `> 1` faz parte da condição: num plano esparso (poucos capítulos num prazo
+  // longo, comum nos personalizados) o ritmo original já é bem menor que 1
+  // capítulo por dia, então 1 capítulo — o mínimo possível, não dá pra ler
+  // menos que um inteiro — sempre pareceria "apertado" sem nunca ter sido.
+  const apertado = p.ritmoNecessario > 1 && p.ritmoNecessario > p.ritmoOriginal * 1.8;
 
   return (
     <div className="space-y-4 pb-16">
@@ -274,7 +278,7 @@ export function PainelPlano({
 
 /** Monta e grava o plano, marcando quanto do roteiro já estava lido. */
 async function criar(
-  escolha: { nome: string; ordem: OrdemDoPlano; dias: number },
+  escolha: { nome: string; ordem: OrdemDoPlano; dias: number; livros?: string[] },
   index: BibleIndex,
   lido: (slug: string, capitulo: number) => boolean,
 ) {

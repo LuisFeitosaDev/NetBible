@@ -25,13 +25,17 @@ import {
  * "proverbios"/"evangelhos" são roteiros fixos, de um livro ou grupo só, com
  * nome e prazo já combinados: não fazem sentido com "em 3 anos", então não
  * entram no assistente, só nos cartões prontos de `PLANOS_FAMOSOS`.
+ * "personalizado" é o roteiro que a própria pessoa monta — quais livros, em
+ * que ordem — guardado em `PlanoSalvo.livros`, não numa função fixa como as
+ * outras ordens.
  */
 export type OrdemDoPlano =
   | "canonica"
   | "cronologica"
   | "iniciante"
   | "proverbios"
-  | "evangelhos";
+  | "evangelhos"
+  | "personalizado";
 
 /**
  * Uma ordem de leitura oferecida na criação.
@@ -133,6 +137,8 @@ export type PlanoSalvo = {
   diaAtribuido?: number;
   /** Os capítulos separados para esse dia, como "gn.1". */
   atribuicao?: string[];
+  /** Só para `ordem: "personalizado"`: os livros escolhidos, na ordem de leitura. */
+  livros?: string[];
   criadoEm: number;
   atualizadoEm?: number;
 };
@@ -147,7 +153,7 @@ export function inicioDoDia(quando: number | Date = Date.now()) {
 }
 
 export function montarPlano(
-  escolha: { nome: string; ordem: OrdemDoPlano; dias: number },
+  escolha: { nome: string; ordem: OrdemDoPlano; dias: number; livros?: string[] },
   lidosAoComecar = 0,
   inicioEm = inicioDoDia(),
 ): PlanoSalvo {
@@ -159,15 +165,17 @@ export function montarPlano(
     dias: escolha.dias,
     inicioEm,
     lidosAoComecar,
+    livros: escolha.livros,
     criadoEm: Date.now(),
     atualizadoEm: Date.now(),
   };
 }
 
 export function roteiroDoPlano(
-  plano: Pick<PlanoSalvo, "ordem">,
+  plano: Pick<PlanoSalvo, "ordem"> & { livros?: string[] },
   index: BibleIndex,
 ): CapituloDoPlano[] {
+  if (plano.ordem === "personalizado") return roteiroDeLivros(index, plano.livros ?? []);
   const livros = LIVROS_DO_ROTEIRO[plano.ordem];
   if (livros) return roteiroDeLivros(index, livros);
   if (plano.ordem === "cronologica") return ordemCronologica(index);

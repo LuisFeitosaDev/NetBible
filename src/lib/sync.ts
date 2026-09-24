@@ -106,6 +106,9 @@ const planoParaRemoto = (p: PlanoSalvo, perfil: string) => ({
   dias: p.dias,
   inicio_em: new Date(p.inicioEm).toISOString(),
   lidos_ao_comecar: p.lidosAoComecar ?? 0,
+  // Só tem valor em planos "personalizado"; nas outras ordens fica null, e o
+  // roteiro continua vindo da função fixa daquela ordem.
+  livros: p.livros ?? null,
   criado_em: new Date(p.criadoEm).toISOString(),
   atualizado_em: new Date(p.atualizadoEm ?? p.criadoEm).toISOString(),
 });
@@ -300,6 +303,7 @@ async function executar(): Promise<void> {
             dias: p.dias,
             inicioEm: ms(p.inicio_em),
             lidosAoComecar: p.lidos_ao_comecar ?? 0,
+            livros: p.livros ?? undefined,
             criadoEm: ms(p.criado_em),
             atualizadoEm: remotoEm,
           });
