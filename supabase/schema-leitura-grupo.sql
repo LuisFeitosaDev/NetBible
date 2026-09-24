@@ -60,6 +60,7 @@ $$;
 -- quem está no mesmo grupo de leitura e manter INSERT/UPDATE/DELETE travado
 -- no dono não cabe numa `for all` só.
 
+drop policy if exists leitura_proprias on public.leitura;
 drop policy if exists leitura_select on public.leitura;
 drop policy if exists leitura_insert on public.leitura;
 drop policy if exists leitura_update on public.leitura;
@@ -81,6 +82,7 @@ create policy leitura_update on public.leitura for update
 create policy leitura_delete on public.leitura for delete using (perfil_id = auth.uid());
 
 -- -------------------------------------------------- planos, para o grupo ---
+drop policy if exists planos_proprias on public.planos;
 drop policy if exists planos_select on public.planos;
 drop policy if exists planos_insert on public.planos;
 drop policy if exists planos_update on public.planos;
@@ -100,6 +102,26 @@ create policy planos_insert on public.planos for insert with check (perfil_id = 
 create policy planos_update on public.planos for update
   using (perfil_id = auth.uid()) with check (perfil_id = auth.uid());
 create policy planos_delete on public.planos for delete using (perfil_id = auth.uid());
+
+-- RPC para recuperar planos de todos os membros de um grupo com segurança
+create or replace function public.planos_do_grupo(p_grupo_id uuid)
+returns setof public.planos language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then
+    raise exception 'sem sessão';
+  end if;
+
+  if not exists (select 1 from membros where grupo_id = p_grupo_id and perfil_id = auth.uid()) then
+    raise exception 'não é membro do grupo';
+  end if;
+
+  return query
+  select p.*
+  from planos p
+  join membros m on m.perfil_id = p.perfil_id
+  where m.grupo_id = p_grupo_id;
+end;
+$$;
 
 -- `profiles_leitura` (schema.sql) já libera ver o nome de quem está no mesmo
 -- grupo, para qualquer `tipo` — não precisa de policy nova aqui.

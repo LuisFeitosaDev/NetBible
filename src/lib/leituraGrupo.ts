@@ -102,18 +102,45 @@ export async function entrarNoGrupoComPlano(
   const grupo = await entrarNoGrupoDeLeitura(codigo);
   const meuId = await garantirSessao();
 
-  const membros = (await membrosDoGrupo(grupo.id)) as Membro[];
+  const adotou = await adotarPlanoDoGrupoSeNecessario(grupo.id, index, lido, meuId);
+  return { grupo, adotouPlano: adotou };
+}
+
+/**
+  Tenta adotar o plano do grupo se o usuário estiver em um grupo de leitura mas não tiver plano local.
+ */
+export async function adotarPlanoDoGrupoSeNecessario(
+  grupoId: string,
+  index: BibleIndex,
+  lido: (slug: string, capitulo: number) => boolean,
+  meuIdParam?: string,
+): Promise<boolean> {
+  const meuId = meuIdParam ?? (await garantirSessao());
+  const membros = (await membrosDoGrupo(grupoId)) as Membro[];
+  const ids = membros.map((m) => m.perfil_id);
+  if (!ids.length) return false;
+
+  let planosData: any[] | null = null;
+  try {
+    const { data: rpcData } = await sb().rpc("planos_do_grupo", { p_grupo_id: grupoId });
+    if (rpcData && rpcData.length > 0) planosData = rpcData;
+  } catch {
+    /* fallback se a RPC ainda não foi executada no Supabase */
+  }
+
+  if (!planosData || !planosData.length) {
+    const { data: directData } = await sb().from("planos").select("*").in("perfil_id", ids);
+    planosData = directData ?? [];
+  }
+
+  const planoPorPerfil = new Map(planosData.map((p) => [p.perfil_id, p]));
   const ordemDeBusca = [
     ...membros.filter((m) => m.papel === "lider" && m.perfil_id !== meuId),
-    ...membros.filter((m) => m.papel !== "lider" && m.perfil_id !== meuId),
+    ...membros.filter((m) => m.perfil_id !== meuId),
   ];
 
   for (const m of ordemDeBusca) {
-    const { data } = await sb()
-      .from("planos")
-      .select("*")
-      .eq("perfil_id", m.perfil_id)
-      .maybeSingle();
+    const data = planoPorPerfil.get(m.perfil_id);
     if (!data) continue;
 
     const remoto = planoDeLinhaRemota(data);
@@ -125,18 +152,14 @@ export async function entrarNoGrupoComPlano(
       montarPlano(
         { nome: remoto.nome, ordem: remoto.ordem, dias: remoto.dias, livros: remoto.livros },
         jaLidos,
-        remoto.inicioEm, // mesmo início de quem já está lendo: o mesmo dia do plano para os dois
+        remoto.inicioEm,
       ),
     );
-    // Espera a sincronização terminar antes de retornar. Sem isso, quem acabou
-    // de entrar num grupo vê "Nenhum plano ativo" porque o plano recém-gravado
-    // localmente ainda não subiu para o Supabase — e o componente já tentou
-    // ler. O `await` garante que quando a tela recarrega, tudo já está lá.
     await sincronizar();
-    return { grupo, adotouPlano: true };
+    return true;
   }
 
-  return { grupo, adotouPlano: false };
+  return false;
 }
 
 export type ProgressoDoMembro = {
@@ -180,10 +203,20 @@ export async function progressoDoGrupo(
   const ids = membros.map((m) => m.perfil_id);
   if (!ids.length) return [];
 
-  const [{ data: leituras }, { data: planosRemotos }] = await Promise.all([
+  let planosData: any[] | null = null;
+  try {
+    const { data: rpcData } = await sb().rpc("planos_do_grupo", { p_grupo_id: grupo.id });
+    if (rpcData && rpcData.length > 0) planosData = rpcData;
+  } catch {
+    /* fallback se a RPC ainda não foi executada no Supabase */
+  }
+
+  const [{ data: leituras }, directPlanosRes] = await Promise.all([
     sb().from("leitura").select("perfil_id, slug, concluidos").in("perfil_id", ids),
-    sb().from("planos").select("*").in("perfil_id", ids),
+    planosData ? Promise.resolve({ data: planosData }) : sb().from("planos").select("*").in("perfil_id", ids),
   ]);
+
+  const planosRemotos = directPlanosRes.data ?? [];
 
   const leituraPorPerfil = new Map<string, { slug: string; concluidos: number[] }[]>();
   for (const l of leituras ?? []) {
@@ -191,7 +224,7 @@ export async function progressoDoGrupo(
     lista.push(l);
     leituraPorPerfil.set(l.perfil_id, lista);
   }
-  const planoPorPerfil = new Map((planosRemotos ?? []).map((p) => [p.perfil_id, p]));
+  const planoPorPerfil = new Map(planosRemotos.map((p) => [p.perfil_id, p]));
 
   const progresso = membros.map((m): ProgressoDoMembro => {
     const linhas = leituraPorPerfil.get(m.perfil_id) ?? [];

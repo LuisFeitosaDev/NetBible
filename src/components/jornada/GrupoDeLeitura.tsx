@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Trash2, Unlink, Users } from "lucide-react";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
-import { apagarPlanoDoGrupo, excluirGrupo, meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
+import { adotarPlanoDoGrupoSeNecessario, apagarPlanoDoGrupo, excluirGrupo, meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
 import type { Grupo } from "@/lib/grupos/tipos";
 import type { ProgressoDoMembro } from "@/lib/leituraGrupo";
 import type { BibleIndex } from "@/lib/bible";
@@ -27,6 +27,13 @@ export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
   const carregar = async () => {
     try {
       const meu = await meuGrupoDeLeitura();
+      if (meu?.grupo) {
+        const adotou = await adotarPlanoDoGrupoSeNecessario(meu.grupo.id, index, () => false);
+        if (adotou) {
+          window.location.reload();
+          return;
+        }
+      }
       setGrupo(meu?.grupo ?? null);
       setSouLider(meu?.souLider ?? false);
       setMembros(meu ? await progressoDoGrupo(meu.grupo, index) : []);
