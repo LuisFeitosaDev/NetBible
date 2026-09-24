@@ -122,7 +122,9 @@ const ms = (iso: string) => new Date(iso).getTime();
  */
 let jaAvisouDoSchema = false;
 function conferirTabelaDePlanos(erro: { code?: string; message?: string } | null) {
-  if (!erro || jaAvisouDoSchema) return;
+  if (!erro) return;
+  console.error("[NetBible Sync Error] Tabela `planos`:", erro);
+  if (jaAvisouDoSchema) return;
   const faltando =
     erro.code === "42P01" ||
     erro.code === "PGRST205" ||

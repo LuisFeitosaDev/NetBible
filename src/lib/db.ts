@@ -220,7 +220,10 @@ export async function desmarcarCapitulo(slug: string, chapter: number) {
 /* -------------------------- plano de leitura --------------------------- */
 
 export async function salvarPlano(plano: PlanoSalvo) {
-  await db.planos.put({ ...plano, atualizadoEm: Date.now() });
+  await db.transaction("rw", db.planos, db.removidos, async () => {
+    await db.planos.put({ ...plano, atualizadoEm: Date.now() });
+    await db.removidos.where("tabela").equals("planos").delete();
+  });
   agendarSync();
 }
 
