@@ -33,7 +33,22 @@ function traduzirFalha(e: unknown) {
  * pessoa ter um nome. Este componente resolve as duas antes de liberar a tela,
  * em vez de cada página tratar isso por conta.
  */
-export function Gate({ children }: { children: (perfil: Perfil) => ReactNode }) {
+export function Gate({
+  children,
+  titulo = "Estude a Bíblia junto",
+  descricao = "Entre com a sua conta para o grupo e as suas anotações seguirem você em qualquer aparelho.",
+  descricaoSemConta = 'Dá para entrar só com um nome. Mas aí tudo fica preso a este aparelho, e para criar um grupo é preciso ter conta.',
+  destino = "/grupos",
+}: {
+  children: (perfil: Perfil) => ReactNode;
+  /** Ajusta o discurso da tela de entrada para quem chama de fora de Grupos
+      (ex.: a parceria de leitura) sem duplicar todo o fluxo de login. */
+  titulo?: string;
+  descricao?: string;
+  descricaoSemConta?: string;
+  /** Para onde o login com Google volta depois de autenticar. */
+  destino?: string;
+}) {
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [nome, setNome] = useState(nomeSalvo());
@@ -81,15 +96,14 @@ export function Gate({ children }: { children: (perfil: Perfil) => ReactNode }) 
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icon.png" alt="" aria-hidden className="mx-auto h-16 w-16 rounded-2xl" />
         <h1 className="mt-5 text-center font-display text-2xl font-black tracking-tight">
-          Estude a Bíblia junto
+          {titulo}
         </h1>
         <p className="mx-auto mt-2 max-w-xs text-center text-sm leading-relaxed text-ink-400">
-          Entre com a sua conta para o grupo e as suas anotações seguirem você em qualquer
-          aparelho.
+          {descricao}
         </p>
 
         <div className="mt-7 rounded-2xl border border-white/8 bg-ink-900 p-5">
-          <BotaoGoogle destino="/grupos" aoFalhar={setFalha} />
+          <BotaoGoogle destino={destino} aoFalhar={setFalha} />
 
           <div className="my-4 flex items-center gap-3">
             <span className="h-px flex-1 bg-white/10" />
@@ -121,12 +135,9 @@ export function Gate({ children }: { children: (perfil: Perfil) => ReactNode }) 
         <div className="mt-4 rounded-2xl border border-white/6 bg-white/[0.02] p-5">
           <p className="flex items-center gap-2 font-display text-sm font-bold">
             <UserRound size={16} className="text-ink-400" />
-            Só vou participar de um grupo
+            Entrar só com um nome
           </p>
-          <p className="mt-1 text-[13px] leading-relaxed text-ink-400">
-            Dá para entrar só com um nome. Mas aí tudo fica preso a este aparelho, e para
-            criar um grupo é preciso ter conta.
-          </p>
+          <p className="mt-1 text-[13px] leading-relaxed text-ink-400">{descricaoSemConta}</p>
 
           <input
             value={nome}

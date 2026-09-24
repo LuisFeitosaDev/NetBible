@@ -18,7 +18,8 @@
     "arte:colher": "node scripts/harvest-arte.mjs",
     "fichas": "node --experimental-strip-types scripts/build-fichas.mjs",
     "prebuild": "npm run fichas",
-    "planos:conferir": "node --experimental-strip-types scripts/conferir-planos.mjs"
+    "planos:conferir": "node --experimental-strip-types scripts/conferir-planos.mjs",
+    "arte:add": "node scripts/adicionar-arte.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.127.0",

@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { CalendarDays, Check, Gauge } from "lucide-react";
+import { useMemo, useState } from "react";
+import { CalendarDays, Check, Gauge, Sparkles } from "lucide-react";
 import {
   ORDENS,
+  PLANOS_FAMOSOS,
   dataDeTermino,
   formatarData,
+  roteiroDoPlano,
   type OrdemDoPlano,
 } from "@/lib/planos";
+import type { BibleIndex } from "@/lib/bible";
 
 export type EscolhaDePlano = {
   nome: string;
@@ -17,35 +20,45 @@ export type EscolhaDePlano = {
 
 const PRAZOS = [3, 6, 9, 12, 18, 24, 36];
 
+/** Cor do risco à esquerda de cada ordem, só para diferenciar os três cartões. */
+const COR_DA_ORDEM: Record<OrdemDoPlano, string> = {
+  iniciante: "#34d399",
+  cronologica: "#f59e0b",
+  canonica: "#818cf8",
+  proverbios: "#f59e0b",
+  evangelhos: "#38bdf8",
+};
+
 /**
  * Criação do plano, numa tela só.
  *
- * Escolher a ordem e o prazo são duas perguntas, não seis cartões prontos. E a
- * conta aparece enquanto você mexe, porque "1 ano" não decide nada até virar
- * "4 capítulos por dia, terminando em 22 de setembro de 2027".
+ * Dois jeitos de começar: um toque nos planos famosos (livro e prazo já
+ * combinados, do jeito que todo mundo conhece essa leitura), ou o assistente
+ * abaixo, onde ordem e prazo são duas perguntas — a conta aparece ao vivo,
+ * porque "1 ano" não decide nada até virar "4 capítulos por dia, terminando
+ * em 22 de setembro de 2027".
  */
 export function CriarPlano({
-  total,
+  index,
   aoCriar,
   aoCancelar,
 }: {
-  total: number;
+  index: BibleIndex;
   aoCriar: (escolha: EscolhaDePlano) => void;
   aoCancelar?: () => void;
 }) {
   const [ordem, setOrdem] = useState<OrdemDoPlano | null>(null);
   const [meses, setMeses] = useState<number | null>(null);
 
+  const total = useMemo(() => roteiroDoPlano({ ordem: "canonica" }, index).length, [index]);
+
   // Meses viram dias pelo mês médio do calendário, não por 30: em 24 meses a
   // diferença já passa de uma semana no fim do plano.
   const dias = meses ? Math.round(meses * 30.437) : 0;
   const porDia = dias ? total / dias : 0;
   const pronto = Boolean(ordem && meses);
-
-  const nome =
-    ordem === "cronologica"
-      ? `Cronológico em ${rotuloDePrazo(meses ?? 0)}`
-      : `Gênesis a Apocalipse em ${rotuloDePrazo(meses ?? 0)}`;
+  const nomeDaOrdem = ORDENS.find((o) => o.id === ordem)?.nome ?? "";
+  const nome = `${nomeDaOrdem} em ${rotuloDePrazo(meses ?? 0)}`;
 
   return (
     <div className="space-y-5 pb-16">
@@ -63,7 +76,36 @@ export function CriarPlano({
 
       <section>
         <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-          1 · Em que ordem
+          Planos conhecidos
+        </p>
+        <div className="space-y-2">
+          {PLANOS_FAMOSOS.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => aoCriar({ nome: f.nome, ordem: f.ordem, dias: f.dias })}
+              className="group flex w-full items-start gap-3 rounded-2xl border border-white/8 bg-ink-900 p-4 text-left transition-colors hover:border-white/22"
+              style={{ borderLeft: `3px solid ${COR_DA_ORDEM[f.ordem]}` }}
+            >
+              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-white/[0.06] text-gold-400">
+                <Sparkles size={15} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-[15px] font-bold">{f.nome}</span>
+                <span className="mt-1 block text-[12.5px] leading-relaxed text-ink-400">
+                  {f.resumo}
+                </span>
+              </span>
+              <span className="mt-1 shrink-0 font-sans text-[12px] font-semibold text-gold-400 opacity-0 transition-opacity group-hover:opacity-100">
+                Começar
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+          Ou do seu jeito · 1 · Em que ordem
         </p>
         <div className="space-y-2">
           {ORDENS.map((o) => (
@@ -77,13 +119,7 @@ export function CriarPlano({
                   : "border-white/8 bg-ink-900 hover:border-white/22"
               }`}
               style={
-                ordem === o.id
-                  ? {
-                      borderLeft: `3px solid ${
-                        o.id === "cronologica" ? "#f59e0b" : "#818cf8"
-                      }`,
-                    }
-                  : undefined
+                ordem === o.id ? { borderLeft: `3px solid ${COR_DA_ORDEM[o.id]}` } : undefined
               }
             >
               <span

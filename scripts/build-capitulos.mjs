@@ -15,7 +15,7 @@
 import { mkdir, readFile, writeFile, access } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import sharp from "sharp";
+import { faixa, gravar } from "./lib/tratamento-capitulo.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CACHE = join(ROOT, "sources", "capitulos");
@@ -23,17 +23,6 @@ const OUT = join(ROOT, "public", "capas", "capitulo");
 
 const API = "https://commons.wikimedia.org/w/api.php";
 const UA = "GenipseBible/1.0 (projeto pessoal; arte de domínio público)";
-
-/*
- * 1000x434, e não 1200x520.
- *
- * A faixa aparece na largura da coluna de leitura, no máximo 672px de CSS.
- * Mesmo num celular 3x, 1000px de origem já passa do que a tela resolve, e o
- * que sobra é só peso. Baixar a qualidade não adianta quase nada aqui: a trama
- * de linhas da gravura é detalhe fino, o compressor não tem o que jogar fora.
- * Quem derruba o arquivo é a dimensão.
- */
-const FAIXA = { width: 1000, height: 434 };
 
 /**
  * "<slug>-<capítulo>" -> candidatos no Commons, em ordem de preferência.
@@ -115,9 +104,6 @@ const ARTE = {
     ancoraY: 0.45,
   },
 };
-
-const WARM = { r: 214, g: 176, b: 116 };
-const TARGET_MEAN = 104;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const exists = (p) => access(p).then(() => true, () => false);
@@ -210,128 +196,9 @@ async function infoEmLote(nomes, largura) {
   return mapa;
 }
 
-/** Igual ao das capas: mede o brilho e corrige tudo para a mesma faixa. */
-async function fator(buffer) {
-  const { channels } = await sharp(buffer).greyscale().normalise().stats();
-  return Math.min(1.7, Math.max(0.45, TARGET_MEAN / Math.max(channels[0].mean, 1)));
-}
-
-const tratar = (p, f) =>
-  p.modulate({ saturation: 0 }).normalise().linear(f, 0).tint(WARM);
-
-async function faixa(buffer, ancoraY) {
-  let base = buffer;
-  try {
-    base = await sharp(buffer).trim({ threshold: 28 }).toBuffer();
-  } catch {
-    /* sem borda uniforme */
-  }
-
-  // Raspa a borda: o papel não termina numa linha limpa e sobra rebarba clara.
-  try {
-    const m = await sharp(base).metadata();
-    const raspa = Math.max(2, Math.round(Math.min(m.width, m.height) * 0.012));
-    if (m.width > raspa * 4 && m.height > raspa * 4) {
-      base = await sharp(base)
-        .extract({
-          left: raspa,
-          top: raspa,
-          width: m.width - raspa * 2,
-          height: m.height - raspa * 2,
-        })
-        .toBuffer();
-    }
-  } catch {
-    /* pequena demais */
-  }
-
-  /*
-   * Descarta o rodapé da prancha antes de escolher o corte.
-   *
-   * Várias gravuras trazem a legenda impressa embaixo ("THE GLEANERS.") dentro
-   * da própria imagem, com a margem de papel junto. O `trim` não pega, porque
-   * está dentro do quadro, e o `attention` ia direto para lá: texto é a região
-   * de maior contraste da página. Cortando os 14% de baixo, a busca sobra para
-   * a cena.
-   */
-  try {
-    const m = await sharp(base).metadata();
-    const util = Math.round(m.height * 0.86);
-    if (util > FAIXA.height) {
-      base = await sharp(base)
-        .extract({ left: 0, top: 0, width: m.width, height: util })
-        .toBuffer();
-    }
-  } catch {
-    /* segue sem cortar o rodapé */
-  }
-
-  const f = await fator(base);
-
-  /*
-   * Corte com âncora: a faixa sai de uma altura escolhida à mão.
-   *
-   * Usado quando o corte automático erra. Escala a prancha até a largura da
-   * faixa e fatia os 520px centrados em `ancoraY`, sem deixar sair da imagem.
-   */
-  if (ancoraY != null) {
-    const m = await sharp(base).metadata();
-    const altura = Math.round(m.height * (FAIXA.width / m.width));
-    if (altura >= FAIXA.height) {
-      const redim = await sharp(base).resize(FAIXA.width, altura).toBuffer();
-      const topo = Math.min(
-        Math.max(Math.round(altura * ancoraY - FAIXA.height / 2), 0),
-        altura - FAIXA.height,
-      );
-      return tratar(
-        sharp(redim).extract({
-          left: 0,
-          top: topo,
-          width: FAIXA.width,
-          height: FAIXA.height,
-        }),
-        f,
-      )
-        .png()
-        .toBuffer();
-    }
-  }
-
-  /*
-   * Corte pela região de maior interesse.
-   *
-   * Uma faixa tirada de uma gravura em retrato descarta a maior parte da
-   * altura. Cortar pelo topo devolve só céu, e pelo centro decapita as figuras;
-   * `attention` procura onde a imagem tem detalhe e acerta a cena.
-   */
-  return tratar(
-    sharp(base).resize(FAIXA.width, FAIXA.height, {
-      fit: "cover",
-      position: sharp.strategy.attention,
-    }),
-    f,
-  )
-    .png()
-    .toBuffer();
-}
-
-/**
- * Grava a mesma faixa em AVIF e em WebP.
- *
- * O AVIF sai perto da metade do WebP nestas gravuras, e é o que quase todo
- * navegador atual recebe. O WebP fica como reserva para quem não abre AVIF,
- * e é ele que o `<img>` carrega quando o `<picture>` não acha o primeiro.
- */
-async function gravar(chave, banda) {
-  await writeFile(
-    join(OUT, `${chave}.avif`),
-    await sharp(banda).avif({ quality: 48, effort: 4 }).toBuffer(),
-  );
-  await writeFile(
-    join(OUT, `${chave}.webp`),
-    await sharp(banda).webp({ quality: 62, effort: 6 }).toBuffer(),
-  );
-}
+// `faixa()` e `gravar()` (apara, tira legenda, iguala o tom, corta, grava em
+// AVIF/WebP) moraram aqui e agora vivem em `lib/tratamento-capitulo.mjs`,
+// porque `adicionar-arte.mjs` (a ferramenta manual) precisa do mesmo tratamento.
 
 /**
  * Livros que entram nesta rodada.
@@ -476,7 +343,7 @@ async function main() {
     }
 
     try {
-      await gravar(chave, await faixa(buffer, ancoraY));
+      await gravar(OUT, chave, await faixa(buffer, ancoraY));
       prontos.push(chave);
       console.log(`  ok ${chave}`);
     } catch (e) {

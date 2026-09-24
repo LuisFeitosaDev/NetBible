@@ -15,9 +15,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-const { CRONOLOGICO, ordemCronologica, ordemCanonica } = await import(
-  pathToFileURL(join(ROOT, "src", "lib", "planos.ordem.ts")).href
-);
+const { CRONOLOGICO, ordemCronologica, ordemCanonica, ordemIniciante, ORDEM_INICIANTE } =
+  await import(pathToFileURL(join(ROOT, "src", "lib", "planos.ordem.ts")).href);
 
 const index = JSON.parse(
   readFileSync(join(ROOT, "public", "biblia", "index.json"), "utf8"),
@@ -97,12 +96,34 @@ if (forade.length) erro(`${forade.length} capítulos que não existem: ${forade.
 const canonica = ordemCanonica(index);
 if (canonica.length !== esperado.size) erro(`a ordem canônica tem ${canonica.length}`);
 
+/* 4. Iniciante: livro por livro, sem rede de segurança escondendo um esquecido. */
+const livros = new Set(index.books.map((b) => b.slug));
+const dupLivro = ORDEM_INICIANTE.filter((s, i) => ORDEM_INICIANTE.indexOf(s) !== i);
+if (dupLivro.length) erro(`ORDEM_INICIANTE repete: ${[...new Set(dupLivro)].join(", ")}`);
+const desconhecido = ORDEM_INICIANTE.filter((s) => !livros.has(s));
+if (desconhecido.length) erro(`ORDEM_INICIANTE cita livro inexistente: ${desconhecido.join(", ")}`);
+const esquecido = [...livros].filter((s) => !ORDEM_INICIANTE.includes(s));
+if (esquecido.length) erro(`ORDEM_INICIANTE esqueceu: ${esquecido.join(", ")}`);
+
+const iniciante = ordemIniciante(index);
+if (iniciante.length !== esperado.size) {
+  erro(`a ordem iniciante tem ${iniciante.length} capítulos, esperava ${esperado.size}`);
+}
+const vistosIni = new Set();
+const repetidosIni = iniciante.filter((c) =>
+  !vistosIni.has(chave(c)) ? (vistosIni.add(chave(c)), false) : true,
+);
+if (repetidosIni.length) erro(`${repetidosIni.length} repetidos na ordem iniciante`);
+
 if (problemas) {
-  console.error(`\n${problemas} problema(s). A ordem cronológica não está fechada.`);
+  console.error(`\n${problemas} problema(s). Os planos não estão fechados.`);
   process.exit(1);
 }
 
 console.log(`Cronológica: ${crono.length} capítulos, ${CRONOLOGICO.length} segmentos, sem falha nem repetição.`);
 console.log(`  começa em ${crono.slice(0, 3).map(chave).join(" → ")}`);
 console.log(`  termina em ${crono.slice(-3).map(chave).join(" → ")}`);
+console.log(`Iniciante: ${iniciante.length} capítulos, ${ORDEM_INICIANTE.length} livros, sem falha nem repetição.`);
+console.log(`  começa em ${iniciante.slice(0, 3).map(chave).join(" → ")}`);
+console.log(`  termina em ${iniciante.slice(-3).map(chave).join(" → ")}`);
 console.log("Canônica: derivada do índice, 1 para 1.");

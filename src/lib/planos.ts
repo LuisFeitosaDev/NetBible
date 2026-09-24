@@ -14,15 +14,29 @@ import type { BibleIndex } from "./bible";
 import {
   ordemCanonica,
   ordemCronologica,
+  ordemIniciante,
+  roteiroDeLivros,
   type CapituloDoPlano,
 } from "./planos.ordem";
 
-export type OrdemDoPlano = "canonica" | "cronologica";
+/**
+ * "canonica"/"cronologica"/"iniciante" cobrem a Bíblia inteira e aceitam
+ * qualquer prazo — são as três ordens do assistente "Do meu jeito".
+ * "proverbios"/"evangelhos" são roteiros fixos, de um livro ou grupo só, com
+ * nome e prazo já combinados: não fazem sentido com "em 3 anos", então não
+ * entram no assistente, só nos cartões prontos de `PLANOS_FAMOSOS`.
+ */
+export type OrdemDoPlano =
+  | "canonica"
+  | "cronologica"
+  | "iniciante"
+  | "proverbios"
+  | "evangelhos";
 
 /**
  * Uma ordem de leitura oferecida na criação.
  *
- * Eram cinco modelos prontos numa galeria rolável. Viraram duas ordens mais um
+ * Eram cinco modelos prontos numa galeria rolável. Viraram três ordens mais um
  * prazo livre, porque "Cronológico em 1 ano" e "Cronológico em 2 anos" nunca
  * foram dois planos: são o mesmo plano com dois números.
  */
@@ -33,6 +47,12 @@ export type TipoDeOrdem = {
 };
 
 export const ORDENS: TipoDeOrdem[] = [
+  {
+    id: "iniciante",
+    nome: "Comece pelo mais fácil",
+    resumo:
+      "Livros curtos e histórias primeiro — João, Rute, Jonas, Gênesis. Levítico, Números e os profetas ficam para o fim.",
+  },
   {
     id: "cronologica",
     nome: "Cronológico",
@@ -46,6 +66,44 @@ export const ORDENS: TipoDeOrdem[] = [
       "A Bíblia na ordem dela mesma. Começa no primeiro versículo e termina no último, sem desvio.",
   },
 ];
+
+/**
+ * Planos famosos: um livro (ou grupo) e um prazo que já vêm juntos, do jeito
+ * que a maioria conhece esse tipo de leitura. Um Provérbios de 3 anos não
+ * seria a leitura de "um capítulo por dia" que dá nome à coisa, então esses
+ * dois números não se separam — por isso ficam fora do assistente, em
+ * cartões prontos.
+ */
+export type PlanoFamoso = {
+  id: string;
+  nome: string;
+  resumo: string;
+  ordem: OrdemDoPlano;
+  dias: number;
+};
+
+export const PLANOS_FAMOSOS: PlanoFamoso[] = [
+  {
+    id: "proverbios-31",
+    nome: "Provérbios em 31 dias",
+    resumo:
+      "Um capítulo por dia, o número do dia do mês bate com o capítulo. O jeito mais conhecido de ler o livro.",
+    ordem: "proverbios",
+    dias: 31,
+  },
+  {
+    id: "evangelhos-30",
+    nome: "Evangelhos em 30 dias",
+    resumo: "Mateus, Marcos, Lucas e João, na ordem em que aparecem na Bíblia, em um mês.",
+    ordem: "evangelhos",
+    dias: 30,
+  },
+];
+
+const LIVROS_DO_ROTEIRO: Partial<Record<OrdemDoPlano, string[]>> = {
+  proverbios: ["pv"],
+  evangelhos: ["mt", "mc", "lc", "jo"],
+};
 
 /** O que fica guardado. Um plano por vez, de propósito. */
 export type PlanoSalvo = {
@@ -110,9 +168,11 @@ export function roteiroDoPlano(
   plano: Pick<PlanoSalvo, "ordem">,
   index: BibleIndex,
 ): CapituloDoPlano[] {
-  return plano.ordem === "cronologica"
-    ? ordemCronologica(index)
-    : ordemCanonica(index);
+  const livros = LIVROS_DO_ROTEIRO[plano.ordem];
+  if (livros) return roteiroDeLivros(index, livros);
+  if (plano.ordem === "cronologica") return ordemCronologica(index);
+  if (plano.ordem === "iniciante") return ordemIniciante(index);
+  return ordemCanonica(index);
 }
 
 /**

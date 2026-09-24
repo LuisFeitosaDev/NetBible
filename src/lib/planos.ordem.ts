@@ -238,6 +238,82 @@ export const CRONOLOGICO: Segmento[] = [
   ["ap", 1, 22],
 ];
 
+/**
+ * Ordem para quem está começando: livros inteiros, do mais fácil de entrar
+ * para o mais difícil. É curadoria de livro, não de capítulo — diferente da
+ * cronológica, aqui não há cena para casar entre livros, só uma sequência que
+ * poupa quem nunca leu a Bíblia de abrir direto em Levítico.
+ *
+ * A lógica, em blocos:
+ *  1. Histórias curtas e evangelho mais rápido, para pegar embalo:
+ *     João, Marcos, Rute, Jonas.
+ *  2. O início de tudo e as grandes narrativas do Antigo Testamento.
+ *  3. Ester, e Atos como sequência natural dos evangelhos.
+ *  4. Poesia e sabedoria, que se lê bem em doses pequenas.
+ *  5. Mais história, incluindo Jó e as Crônicas, que repetem Samuel/Reis.
+ *  6. Mateus e Lucas, depois as cartas, da mais direta à mais densa (Hebreus).
+ *  7. Levítico, Números e Deuteronômio: leis e genealogias, que afastam quem
+ *     começa por elas.
+ *  8. Profetas maiores e menores.
+ *  9. Apocalipse por último, de propósito: é o livro que mais confunde quem
+ *     começa, e funciona melhor com o resto da Bíblia já na bagagem.
+ */
+export const ORDEM_INICIANTE: string[] = [
+  "jo", "mc", "rt", "jn",
+  "gn", "ex", "js", "jz", "1sm", "2sm",
+  "et", "at",
+  "sl", "pv", "ec", "ct",
+  "1rs", "2rs", "ed", "ne", "job", "1cr", "2cr",
+  "mt", "lc",
+  "rm", "1co", "2co", "gl", "ef", "fp", "cl", "1ts", "2ts",
+  "1tm", "2tm", "tt", "fm", "tg", "1pe", "2pe", "1jo", "2jo", "3jo", "jd", "hb",
+  "lv", "nm", "dt",
+  "is", "jr", "lm", "ez", "dn",
+  "os", "jl", "am", "ob", "mq", "na", "hc", "sf", "ag", "zc", "ml",
+  "ap",
+];
+
+/** A mesma Bíblia inteira, só que na sequência acima em vez da canônica. */
+export function ordemIniciante(index: BibleIndex): CapituloDoPlano[] {
+  const porSlug = new Map(index.books.map((b) => [b.slug, b]));
+  const saida: CapituloDoPlano[] = [];
+  const vistos = new Set<string>();
+
+  for (const slug of ORDEM_INICIANTE) {
+    const livro = porSlug.get(slug);
+    if (!livro) continue;
+    vistos.add(slug);
+    for (let n = 1; n <= livro.verses.length; n++) saida.push({ slug, capitulo: n });
+  }
+
+  // Rede de segurança: um livro que entrasse no índice sem entrar na lista
+  // acima aparece no fim, em vez de sumir do plano sem ninguém perceber.
+  for (const livro of index.books) {
+    if (vistos.has(livro.slug)) continue;
+    for (let n = 1; n <= livro.verses.length; n++) saida.push({ slug: livro.slug, capitulo: n });
+  }
+
+  return saida;
+}
+
+/**
+ * Roteiro de só alguns livros, na ordem dada — a base dos planos temáticos
+ * ("Provérbios em 31 dias", "Evangelhos em 30 dias"). Livro que não existir no
+ * índice é ignorado, pela mesma razão das outras ordens: uma tradução com
+ * numeração diferente não pode derrubar a página inteira.
+ */
+export function roteiroDeLivros(index: BibleIndex, slugs: string[]): CapituloDoPlano[] {
+  const porSlug = new Map(index.books.map((b) => [b.slug, b]));
+  return slugs.flatMap((slug) => {
+    const livro = porSlug.get(slug);
+    if (!livro) return [];
+    return Array.from({ length: livro.verses.length }, (_, i) => ({
+      slug,
+      capitulo: i + 1,
+    }));
+  });
+}
+
 /** Gênesis a Apocalipse, na ordem em que os livros estão na Bíblia. */
 export function ordemCanonica(index: BibleIndex): CapituloDoPlano[] {
   return index.books.flatMap((livro) =>

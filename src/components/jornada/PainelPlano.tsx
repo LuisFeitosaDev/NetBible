@@ -24,11 +24,13 @@ import {
   montarPlano,
   progressoDoPlano,
   roteiroDoPlano,
+  type OrdemDoPlano,
   type PlanoSalvo,
 } from "@/lib/planos";
 import type { BibleIndex, BookMeta } from "@/lib/bible";
 import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
 import { CriarPlano } from "./CriarPlano";
+import { ParceriaLeitura } from "./ParceriaLeitura";
 
 /**
  * O plano em andamento.
@@ -87,31 +89,25 @@ export function PainelPlano({
     });
   }, [plano, p, roteiro.length]);
 
-  if (!plano) {
-    return criando ? (
-      <CriarPlano
-        total={roteiroDoPlano({ ordem: "canonica" }, index).length}
-        aoCriar={async (escolha) => {
-          await criar(escolha, index, lido);
-          setCriando(false);
-        }}
-        aoCancelar={() => setCriando(false)}
-      />
-    ) : (
-      <SemPlano aoComecar={() => setCriando(true)} />
-    );
-  }
-
   if (criando) {
     return (
       <CriarPlano
-        total={roteiro.length}
+        index={index}
         aoCriar={async (escolha) => {
           await criar(escolha, index, lido);
           setCriando(false);
         }}
         aoCancelar={() => setCriando(false)}
       />
+    );
+  }
+
+  if (!plano) {
+    return (
+      <div className="space-y-4 pb-16">
+        <SemPlano aoComecar={() => setCriando(true)} />
+        <ParceriaLeitura meuProgresso={null} index={index} />
+      </div>
     );
   }
 
@@ -261,6 +257,17 @@ export function PainelPlano({
         </section>
       )}
 
+      <ParceriaLeitura
+        meuProgresso={{
+          percentual: percentual,
+          lidos: p.lidos,
+          total: p.total,
+          diaVisivel: p.diaVisivel,
+          dias: p.dias,
+        }}
+        index={index}
+      />
+
       {confirmando && (
         <ConfirmarExclusao
           titulo="Apagar o plano?"
@@ -276,7 +283,7 @@ export function PainelPlano({
 
 /** Monta e grava o plano, marcando quanto do roteiro já estava lido. */
 async function criar(
-  escolha: { nome: string; ordem: "canonica" | "cronologica"; dias: number },
+  escolha: { nome: string; ordem: OrdemDoPlano; dias: number },
   index: BibleIndex,
   lido: (slug: string, capitulo: number) => boolean,
 ) {
