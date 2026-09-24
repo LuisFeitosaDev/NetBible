@@ -113,7 +113,9 @@ export function PainelPlano({
   }
 
   if (!p) return null;
-  const percentual = Math.round((p.lidos / p.total) * 100);
+  // `p.total` pode ser 0 quando todo o roteiro já estava lido antes do plano
+  // nascer (crédito igual ao total) — nesse caso o plano já nasce completo.
+  const percentual = p.total > 0 ? Math.round((p.lidos / p.total) * 100) : 100;
   // `> 1` faz parte da condição: num plano esparso (poucos capítulos num prazo
   // longo, comum nos personalizados) o ritmo original já é bem menor que 1
   // capítulo por dia, então 1 capítulo — o mínimo possível, não dá pra ler
@@ -224,14 +226,14 @@ export function PainelPlano({
               <p className="text-[12.5px] leading-relaxed text-ink-300">
                 Para fechar no prazo seriam {p.ritmoNecessario} capítulos hoje. Se
                 preferir, recomece a contagem e tenha os {p.dias} dias de novo,
-                mantendo os {p.lidos} capítulos que você já leu.
+                mantendo os {p.lidosBrutos} capítulos que você já leu.
               </p>
               <button
                 onClick={() =>
                   salvarPlano({
                     ...plano,
                     inicioEm: inicioDoDia(),
-                    lidosAoComecar: p.lidos,
+                    lidosAoComecar: p.lidosBrutos,
                     diaAtribuido: undefined,
                     atribuicao: undefined,
                   })
@@ -267,7 +269,7 @@ export function PainelPlano({
       {confirmando && (
         <ConfirmarExclusao
           titulo="Apagar o plano?"
-          aviso={`"${plano.nome}" sai da sua jornada. Os ${p.lidos} capítulos que você leu, as marcações e os comentários continuam salvos.`}
+          aviso={`"${plano.nome}" sai da sua jornada. Os ${p.lidosBrutos} capítulos que você leu, as marcações e os comentários continuam salvos.`}
           rotuloConfirmar="Apagar plano"
           aoConfirmar={apagarPlano}
           aoFechar={() => setConfirmando(false)}

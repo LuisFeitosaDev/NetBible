@@ -250,8 +250,12 @@ export type ProgressoDoPlano = {
   /** O mesmo, preso ao tamanho do plano, que é o que a tela mostra. */
   diaVisivel: number;
   dias: number;
+  /** Já descontados os capítulos que estavam lidos antes do plano nascer. */
   total: number;
+  /** Idem: só o que foi lido DEPOIS que o plano começou. */
   lidos: number;
+  /** Sem desconto — a marca real de quanto do roteiro já foi lido, sempre. */
+  lidosBrutos: number;
   /** Capítulos do roteiro que faltam, em qualquer ponto dele. */
   faltam: number;
   /** Dias de plano que ainda restam, contando hoje. Nunca menos que 1. */
@@ -305,7 +309,19 @@ export function progressoDoPlano(
 
   const restantes: CapituloDoPlano[] = [];
   for (const c of roteiro) if (!lido(c.slug, c.capitulo)) restantes.push(c);
-  const lidos = total - restantes.length;
+  const lidosBrutos = total - restantes.length;
+
+  /*
+   * O que já estava lido quando o plano nasceu não conta na porcentagem: um
+   * plano recém-criado começa em 0%, não com crédito por capítulos lidos antes
+   * de existir. `restantes`, `ritmoNecessario`, `hoje` e `concluido` continuam
+   * usando a contagem bruta acima — esses precisam saber o que falta ler DE
+   * VERDADE, e reler um capítulo que já foi lido não deveria entrar na cota
+   * de ninguém.
+   */
+  const credito = Math.min(plano.lidosAoComecar ?? 0, total);
+  const totalExibido = total - credito;
+  const lidos = Math.max(0, lidosBrutos - credito);
 
   const diasRestantes = Math.max(1, plano.dias - diaVisivel + 1);
   const ritmoNecessario = Math.max(1, Math.ceil(restantes.length / diasRestantes));
@@ -332,10 +348,11 @@ export function progressoDoPlano(
    * A projeção só usa o que foi lido depois que o plano começou, e só aparece
    * depois de alguns dias. Com um ou dois dias de amostra ela oscila de 2027
    * para 2035 a cada capítulo, o que não informa nada e ainda assusta.
+   * `lidos` já é só o que veio depois do crédito inicial, então é isso mesmo
+   * que a projeção precisa.
    */
   const decorridos = Math.max(dia, 1);
-  const noPlano = lidos - (plano.lidosAoComecar ?? 0);
-  const porDia = noPlano / decorridos;
+  const porDia = lidos / decorridos;
   const projecao =
     decorridos >= 3 && porDia > 0 && restantes.length > 0
       ? inicioDoDia() + Math.ceil(restantes.length / porDia) * DIA
@@ -355,8 +372,9 @@ export function progressoDoPlano(
     dia,
     diaVisivel,
     dias: plano.dias,
-    total,
+    total: totalExibido,
     lidos,
+    lidosBrutos,
     faltam: restantes.length,
     diasRestantes,
     ritmoNecessario,
