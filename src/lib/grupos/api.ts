@@ -98,11 +98,20 @@ export async function meuPerfil(): Promise<Perfil | null> {
 
 // ---------------------------------------------------------------- grupos --
 
-export async function meusGrupos(): Promise<(Grupo & { papel: string; membros: number })[]> {
-  await garantirSessao();
+export async function meusGrupos(
+  tipo: TipoDeGrupo = "estudo",
+): Promise<(Grupo & { papel: string; membros: number })[]> {
+  const meuId = await garantirSessao();
+  // `membros_leitura` (RLS) deixa ver a linha de QUALQUER membro dos grupos
+  // em que estou, não só a minha — necessário para listar quem mais está no
+  // grupo. Sem o filtro por `perfil_id` abaixo, esta consulta devolvia uma
+  // linha por PESSOA no grupo, não uma por grupo: o mesmo grupo aparecia
+  // duplicado, uma vez para cada membro.
   const { data, error } = await sb()
     .from("membros")
-    .select("papel, grupos (*)")
+    .select("papel, grupos!inner (*)")
+    .eq("perfil_id", meuId)
+    .eq("grupos.tipo", tipo)
     .order("entrou_em", { ascending: false });
   if (error) erro(error);
 
