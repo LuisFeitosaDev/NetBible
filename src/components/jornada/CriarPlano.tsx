@@ -22,7 +22,7 @@ export type EscolhaDePlano = {
   livros?: string[];
 };
 
-const PRAZOS = [3, 6, 9, 12, 18, 24, 36];
+const PRAZOS = [1, 2, 3, 6, 9, 12, 18, 24, 36];
 
 /** Cor do risco à esquerda de cada ordem, só para diferenciar os cartões. */
 const COR_DA_ORDEM: Record<OrdemDoPlano, string> = {
@@ -321,7 +321,7 @@ export function CriarPlano({
 }
 
 function rotuloDePrazo(meses: number) {
-  if (meses < 12) return `${meses} meses`;
+  if (meses < 12) return meses === 1 ? "1 mês" : `${meses} meses`;
   const anos = meses / 12;
   if (Number.isInteger(anos)) return anos === 1 ? "1 ano" : `${anos} anos`;
   return `${meses} meses`;

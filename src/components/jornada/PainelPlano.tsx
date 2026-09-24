@@ -30,6 +30,7 @@ import {
 import type { BibleIndex, BookMeta } from "@/lib/bible";
 import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
 import { CriarPlano } from "./CriarPlano";
+import { EntrarComCodigo } from "./EntrarComCodigo";
 import { GrupoDeLeitura } from "./GrupoDeLeitura";
 
 /**
@@ -105,7 +106,7 @@ export function PainelPlano({
   if (!plano) {
     return (
       <div className="space-y-4 pb-16">
-        <SemPlano aoComecar={() => setCriando(true)} />
+        <SemPlano aoComecar={() => setCriando(true)} index={index} lido={lido} />
         <GrupoDeLeitura index={index} />
       </div>
     );
@@ -288,7 +289,15 @@ async function criar(
   await salvarPlano(montarPlano(escolha, jaLidos));
 }
 
-function SemPlano({ aoComecar }: { aoComecar: () => void }) {
+function SemPlano({
+  aoComecar,
+  index,
+  lido,
+}: {
+  aoComecar: () => void;
+  index: BibleIndex;
+  lido: (slug: string, capitulo: number) => boolean;
+}) {
   return (
     <div className="rounded-2xl border border-dashed border-white/12 px-5 py-10 text-center">
       <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-gold-400/12 text-gold-400">
@@ -306,6 +315,11 @@ function SemPlano({ aoComecar }: { aoComecar: () => void }) {
         <CalendarPlus size={16} />
         Criar plano de leitura
       </button>
+      {/* Quem só recebeu um código de alguém não devia precisar montar o
+          próprio plano antes de entrar no que já está rolando. */}
+      <div>
+        <EntrarComCodigo index={index} lido={lido} />
+      </div>
     </div>
   );
 }

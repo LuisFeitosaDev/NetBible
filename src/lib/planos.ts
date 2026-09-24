@@ -171,6 +171,38 @@ export function montarPlano(
   };
 }
 
+/**
+ * Uma linha da tabela `planos` do Supabase, do jeito que a API devolve —
+ * `snake_case`, datas em texto. Usada tanto por `sync.ts` (baixar o próprio
+ * plano) quanto por `leituraGrupo.ts` (ler o plano de outro membro do grupo).
+ */
+export type LinhaPlanoRemota = {
+  modelo: string;
+  nome: string;
+  ordem: string;
+  dias: number;
+  inicio_em: string;
+  lidos_ao_comecar: number | null;
+  livros: string[] | null;
+  criado_em: string;
+  atualizado_em: string;
+};
+
+export function planoDeLinhaRemota(linha: LinhaPlanoRemota): PlanoSalvo {
+  return {
+    id: "atual",
+    modelo: linha.modelo,
+    nome: linha.nome,
+    ordem: linha.ordem as OrdemDoPlano,
+    dias: linha.dias,
+    inicioEm: new Date(linha.inicio_em).getTime(),
+    lidosAoComecar: linha.lidos_ao_comecar ?? 0,
+    livros: linha.livros ?? undefined,
+    criadoEm: new Date(linha.criado_em).getTime(),
+    atualizadoEm: new Date(linha.atualizado_em).getTime(),
+  };
+}
+
 export function roteiroDoPlano(
   plano: Pick<PlanoSalvo, "ordem"> & { livros?: string[] },
   index: BibleIndex,

@@ -5,21 +5,26 @@
  * de Grupos de estudo), só que com `tipo: "leitura"`. Uma dupla é um grupo de
  * dois; um grupo maior é o mesmo grupo com mais gente — não são dois sistemas.
  *
- * O vínculo com "qual plano" não existe de propósito: o que o grupo
- * compartilha é a LEITURA (a tabela `reading`/`leitura`, que já é a fonte
- * única de progresso em todo o app), não uma cópia do plano de ninguém. Duas
- * pessoas no mesmo grupo podem até estar em planos diferentes e ainda assim
- * acompanhar quantos capítulos cada uma já leu.
+ * O que o grupo COMPARTILHA é a visibilidade da LEITURA (a tabela
+ * `reading`/`leitura`, a fonte única de progresso em todo o app) — isso é
+ * automático, via RLS, e não depende de ninguém ter o mesmo plano. Mas quem
+ * entra com um código normalmente quer o oposto de "cada um por si": quer ler
+ * junto, o mesmo trecho no mesmo dia. Por isso `entrarNoGrupoComPlano` copia a
+ * configuração do plano de quem já está lendo (mesma ordem, mesmo prazo, MESMO
+ * início) para o recém-chegado — o resto (quanto cada um já leu) continua
+ * sendo de cada um, porque vem de `leitura`, não do plano em si.
  */
 import { sb } from "./grupos/supabase";
-import { garantirSessao, membrosDoGrupo } from "./grupos/api";
+import { garantirSessao, entrarNoGrupo, membrosDoGrupo } from "./grupos/api";
 import type { Grupo, Membro } from "./grupos/tipos";
 import {
+  montarPlano,
+  planoDeLinhaRemota,
   progressoDoPlano,
   roteiroDoPlano,
-  type OrdemDoPlano,
   type PlanoSalvo,
 } from "./planos";
+import { salvarPlano } from "./db";
 import type { BibleIndex } from "./bible";
 
 export { criarGrupo, entrarNoGrupo, sairDoGrupo, garantirSessao } from "./grupos/api";
@@ -50,6 +55,62 @@ export async function meuGrupoDeLeitura(): Promise<Grupo | null> {
     .map((m) => m.grupos as unknown as Grupo)
     .find((g) => g?.tipo === "leitura");
   return grupo ?? null;
+}
+
+export type ResultadoDeEntrada = {
+  grupo: Grupo;
+  /** true quando havia alguém já lendo e o plano dessa pessoa foi copiado. */
+  adotouPlano: boolean;
+};
+
+/**
+ * Entra num grupo pelo código e adota o plano de quem já está lendo — mesma
+ * ordem, mesmo prazo, mesmo início, para o dia 15 significar a mesma leitura
+ * para todo mundo. Prioriza o líder (quem criou o grupo, mais provável de já
+ * ter combinado um plano); sem plano nele, tenta os outros membros na ordem
+ * em que entraram.
+ *
+ * Se ninguém do grupo tiver plano ainda, só entra no grupo mesmo — a próxima
+ * pessoa a criar um plano vira, na prática, quem o grupo segue.
+ */
+export async function entrarNoGrupoComPlano(
+  codigo: string,
+  index: BibleIndex,
+  lido: (slug: string, capitulo: number) => boolean,
+): Promise<ResultadoDeEntrada> {
+  const grupo = await entrarNoGrupo(codigo);
+  const meuId = await garantirSessao();
+
+  const membros = (await membrosDoGrupo(grupo.id)) as Membro[];
+  const ordemDeBusca = [
+    ...membros.filter((m) => m.papel === "lider" && m.perfil_id !== meuId),
+    ...membros.filter((m) => m.papel !== "lider" && m.perfil_id !== meuId),
+  ];
+
+  for (const m of ordemDeBusca) {
+    const { data } = await sb()
+      .from("planos")
+      .select("*")
+      .eq("perfil_id", m.perfil_id)
+      .maybeSingle();
+    if (!data) continue;
+
+    const remoto = planoDeLinhaRemota(data);
+    const roteiro = roteiroDoPlano(remoto, index);
+    let jaLidos = 0;
+    for (const c of roteiro) if (lido(c.slug, c.capitulo)) jaLidos++;
+
+    await salvarPlano(
+      montarPlano(
+        { nome: remoto.nome, ordem: remoto.ordem, dias: remoto.dias, livros: remoto.livros },
+        jaLidos,
+        remoto.inicioEm, // mesmo início de quem já está lendo: o mesmo dia do plano para os dois
+      ),
+    );
+    return { grupo, adotouPlano: true };
+  }
+
+  return { grupo, adotouPlano: false };
 }
 
 export type ProgressoDoMembro = {
@@ -105,18 +166,7 @@ export async function progressoDoGrupo(
 
     let plano: ProgressoDoMembro["plano"] = null;
     if (planoRemoto) {
-      const p: PlanoSalvo = {
-        id: "atual",
-        modelo: planoRemoto.modelo,
-        nome: planoRemoto.nome,
-        ordem: planoRemoto.ordem as OrdemDoPlano,
-        dias: planoRemoto.dias,
-        inicioEm: new Date(planoRemoto.inicio_em).getTime(),
-        lidosAoComecar: planoRemoto.lidos_ao_comecar ?? 0,
-        livros: planoRemoto.livros ?? undefined,
-        criadoEm: new Date(planoRemoto.criado_em).getTime(),
-        atualizadoEm: new Date(planoRemoto.atualizado_em).getTime(),
-      };
+      const p = planoDeLinhaRemota(planoRemoto);
       const lidoPorLivro = new Map(linhas.map((r) => [r.slug, new Set(r.concluidos ?? [])]));
       const roteiro = roteiroDoPlano(p, index);
       const prog = progressoDoPlano(p, roteiro, (slug, cap) => lidoPorLivro.get(slug)?.has(cap) ?? false);

@@ -11,7 +11,7 @@ import {
   type Note,
   type Reading,
 } from "./db";
-import type { OrdemDoPlano, PlanoSalvo } from "./planos";
+import { planoDeLinhaRemota, type PlanoSalvo } from "./planos";
 import type { HighlightColor } from "./catalog";
 import type { VersionId } from "./bible";
 
@@ -295,18 +295,7 @@ async function executar(): Promise<void> {
         const local = await db.planos.get("atual");
         const remotoEm = ms(p.atualizado_em);
         if (!local || (local.atualizadoEm ?? local.criadoEm) < remotoEm) {
-          await db.planos.put({
-            id: "atual",
-            modelo: p.modelo,
-            nome: p.nome,
-            ordem: p.ordem as OrdemDoPlano,
-            dias: p.dias,
-            inicioEm: ms(p.inicio_em),
-            lidosAoComecar: p.lidos_ao_comecar ?? 0,
-            livros: p.livros ?? undefined,
-            criadoEm: ms(p.criado_em),
-            atualizadoEm: remotoEm,
-          });
+          await db.planos.put({ ...planoDeLinhaRemota(p), atualizadoEm: remotoEm });
         }
       }
     },
