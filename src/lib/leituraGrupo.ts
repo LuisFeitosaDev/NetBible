@@ -148,13 +148,24 @@ export async function adotarPlanoDoGrupoSeNecessario(
 
     const remoto = planoDeLinhaRemota(data);
     const roteiro = roteiroDoPlano(remoto, index);
-    let jaLidos = 0;
-    for (const c of roteiro) if (lido(c.slug, c.capitulo)) jaLidos++;
+    const slugs = new Set(roteiro.map((c) => c.slug));
+    for (const slug of slugs) {
+      const atual = await db.reading.get(slug);
+      if (atual && atual.done.length > 0) {
+        await db.reading.put({
+          ...atual,
+          done: [],
+          lastChapter: 1,
+          updatedAt: Date.now(),
+          atualizadoEm: Date.now(),
+        });
+      }
+    }
 
     await salvarPlano(
       montarPlano(
         { nome: remoto.nome, ordem: remoto.ordem, dias: remoto.dias, livros: remoto.livros },
-        jaLidos,
+        0,
         remoto.inicioEm,
       ),
     );
@@ -178,6 +189,11 @@ export type ProgressoDoMembro = {
     total: number;
     percentual: number;
     concluido: boolean;
+    metaHoje: {
+      total: number;
+      feitos: number;
+      concluida: boolean;
+    };
   } | null;
 };
 
@@ -240,6 +256,10 @@ export async function progressoDoGrupo(
       const lidoPorLivro = new Map(linhas.map((r) => [r.slug, new Set(r.concluidos ?? [])]));
       const roteiro = roteiroDoPlano(p, index);
       const prog = progressoDoPlano(p, roteiro, (slug, cap) => lidoPorLivro.get(slug)?.has(cap) ?? false);
+      const metaTotal = prog.hoje.length;
+      const metaFeitos = prog.hojeFeitos;
+      const metaConcluida = metaTotal > 0 && metaFeitos >= metaTotal;
+
       plano = {
         nome: p.nome,
         diaVisivel: prog.diaVisivel,
@@ -248,6 +268,11 @@ export async function progressoDoGrupo(
         total: prog.total,
         percentual: prog.total > 0 ? Math.round((prog.lidos / prog.total) * 100) : 0,
         concluido: prog.concluido,
+        metaHoje: {
+          total: metaTotal,
+          feitos: metaFeitos,
+          concluida: metaConcluida,
+        },
       };
     }
 

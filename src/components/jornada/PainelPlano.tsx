@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import {
   apagarPlano,
+  db,
   markChapterRead,
   desmarcarCapitulo,
   salvarPlano,
@@ -128,6 +129,8 @@ export function PainelPlano({
 
   return (
     <div className="space-y-4 pb-16">
+      <GrupoDeLeitura index={index} />
+
       <section className="rounded-2xl border border-white/8 bg-ink-900 p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
@@ -268,7 +271,6 @@ export function PainelPlano({
         </section>
       )}
 
-      <GrupoDeLeitura index={index} />
 
       {confirmando && (
         <ConfirmarExclusao
@@ -283,16 +285,30 @@ export function PainelPlano({
   );
 }
 
-/** Monta e grava o plano, marcando quanto do roteiro já estava lido. */
+/** Monta e grava o plano, sempre começando do zero no primeiro capítulo. */
 async function criar(
   escolha: { nome: string; ordem: OrdemDoPlano; dias: number; livros?: string[] },
   index: BibleIndex,
-  lido: (slug: string, capitulo: number) => boolean,
+  _lido: (slug: string, capitulo: number) => boolean,
 ) {
   const roteiro = roteiroDoPlano(escolha, index);
-  let jaLidos = 0;
-  for (const c of roteiro) if (lido(c.slug, c.capitulo)) jaLidos++;
-  await salvarPlano(montarPlano(escolha, jaLidos));
+  const slugs = new Set(roteiro.map((c) => c.slug));
+
+  // Um plano novo sempre começa zerado a partir do primeiro capítulo:
+  for (const slug of slugs) {
+    const atual = await db.reading.get(slug);
+    if (atual && atual.done.length > 0) {
+      await db.reading.put({
+        ...atual,
+        done: [],
+        lastChapter: 1,
+        updatedAt: Date.now(),
+        atualizadoEm: Date.now(),
+      });
+    }
+  }
+
+  await salvarPlano(montarPlano(escolha, 0));
   await sincronizar();
 }
 

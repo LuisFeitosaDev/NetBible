@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Trash2, Unlink, Users } from "lucide-react";
+import { Check, Clock, Trash2, Unlink, Users } from "lucide-react";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
 import { adotarPlanoDoGrupoSeNecessario, apagarPlanoDoGrupo, excluirGrupo, meuGrupoDeLeitura, progressoDoGrupo, sairDoGrupo } from "@/lib/leituraGrupo";
 import type { Grupo } from "@/lib/grupos/tipos";
@@ -80,22 +80,60 @@ export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
       </div>
 
       <div className="space-y-2.5">
-        {membros.map((m) => (
-          <div key={m.perfilId} className="flex items-center gap-2.5">
-            <span className="w-20 shrink-0 truncate text-[12.5px] font-semibold text-ink-200">
-              {m.souEu ? "Você" : m.nome}
-            </span>
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/8">
-              <div
-                className={`h-full rounded-full ${m.souEu ? "bg-gold-400" : "bg-emerald-400"}`}
-                style={{ width: `${m.plano?.percentual ?? 0}%` }}
-              />
+        {membros.map((m) => {
+          const meta = m.plano?.metaHoje;
+          return (
+            <div
+              key={m.perfilId}
+              className="rounded-xl border border-white/6 bg-white/[0.025] p-2.5 transition-colors hover:border-white/12"
+            >
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-1.5">
+                  <span className="truncate text-[13px] font-bold text-ink-100">
+                    {m.souEu ? "Você" : m.nome}
+                  </span>
+                  {m.souEu && (
+                    <span className="rounded bg-gold-400/10 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-gold-400">
+                      Eu
+                    </span>
+                  )}
+                </div>
+
+                {/* Status da meta de hoje */}
+                {meta && meta.total > 0 ? (
+                  meta.concluida ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[10.5px] font-semibold text-emerald-400">
+                      <Check size={11} strokeWidth={3} />
+                      Meta de hoje concluída
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-white/8 bg-white/5 px-2 py-0.5 text-[10.5px] font-medium text-ink-400">
+                      <Clock size={11} />
+                      Hoje: {meta.feitos}/{meta.total}
+                    </span>
+                  )
+                ) : null}
+              </div>
+
+              {/* Barra de progresso geral */}
+              <div className="flex items-center gap-2.5">
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/8">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      m.souEu
+                        ? "bg-gradient-to-r from-gold-500 to-gold-300"
+                        : "bg-gradient-to-r from-emerald-500 to-emerald-400"
+                    }`}
+                    style={{ width: `${m.plano?.percentual ?? 0}%` }}
+                  />
+                </div>
+                <span className="w-9 shrink-0 text-right font-mono text-[11px] font-semibold text-ink-400">
+                  {m.plano ? `${m.plano.percentual}%` : "—"}
+                </span>
+              </div>
             </div>
-            <span className="w-9 shrink-0 text-right font-mono text-[11px] text-ink-500">
-              {m.plano ? `${m.plano.percentual}%` : "—"}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {confirmandoSaida && meuPerfilId && (
