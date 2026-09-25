@@ -44,10 +44,12 @@ const COR_DA_ORDEM: Record<OrdemDoPlano, string> = {
 export function CriarPlano({
   index,
   aoCriar,
+  aoSalvar,
   aoCancelar,
 }: {
   index: BibleIndex;
   aoCriar: (escolha: EscolhaDePlano) => void;
+  aoSalvar?: (escolha: EscolhaDePlano) => Promise<void>;
   aoCancelar?: () => void;
 }) {
   const [ordem, setOrdem] = useState<OrdemDoPlano | null>(null);
@@ -102,6 +104,7 @@ export function CriarPlano({
         <ComoVaiLer
           nomeDoPlano={escolhaPendente.nome}
           aoContinuar={() => aoCriar(escolhaPendente)}
+          aoSalvarPlano={aoSalvar ? () => aoSalvar(escolhaPendente) : undefined}
         />
       </div>
     );

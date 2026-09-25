@@ -60,10 +60,15 @@ export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
   return (
     <section className="rounded-2xl border border-white/8 bg-ink-900 p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="flex items-center gap-1.5 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-          <Users size={11} />
-          {grupo.nome}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="flex items-center gap-1.5 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+            <Users size={11} />
+            {grupo.nome}
+          </p>
+          <span className="rounded bg-white/6 px-1.5 py-0.5 font-mono text-[11px] font-bold tracking-wider text-gold-300">
+            {grupo.codigo}
+          </span>
+        </div>
         <button
           onClick={() => setConfirmandoSaida(true)}
           aria-label={souLider ? "Apagar grupo" : "Sair do grupo"}

@@ -17,7 +17,7 @@ create table if not exists public.planos (
   perfil_id        uuid primary key references public.profiles (id) on delete cascade,
   modelo           text not null,                 -- "cronologico-1a" ou "personalizado"
   nome             text not null,
-  ordem            text not null check (ordem in ('canonica', 'cronologica')),
+  ordem            text not null check (ordem in ('canonica', 'cronologica', 'iniciante', 'proverbios', 'evangelhos', 'personalizado')),
   dias             integer not null check (dias between 1 and 7300),
   inicio_em        timestamptz not null,
   -- Quantos capítulos do roteiro já estavam lidos no dia 1. Sem isso a

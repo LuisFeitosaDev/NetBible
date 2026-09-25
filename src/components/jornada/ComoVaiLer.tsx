@@ -27,9 +27,11 @@ import type { Grupo } from "@/lib/grupos/tipos";
 export function ComoVaiLer({
   nomeDoPlano,
   aoContinuar,
+  aoSalvarPlano,
 }: {
   nomeDoPlano: string;
   aoContinuar: () => void;
+  aoSalvarPlano?: () => Promise<void>;
 }) {
   const [modo, setModo] = useState<"escolher" | "acompanhado">("escolher");
 
@@ -103,6 +105,7 @@ export function ComoVaiLer({
               perfil={perfil}
               nomeDoPlano={nomeDoPlano}
               aoContinuar={aoContinuar}
+              aoSalvarPlano={aoSalvarPlano}
             />
           )}
         </Gate>
@@ -121,10 +124,12 @@ function ConteudoAcompanhado({
   perfil,
   nomeDoPlano,
   aoContinuar,
+  aoSalvarPlano,
 }: {
   perfil: Perfil;
   nomeDoPlano: string;
   aoContinuar: () => void;
+  aoSalvarPlano?: () => Promise<void>;
 }) {
   const [carregando, setCarregando] = useState(true);
   const [grupo, setGrupo] = useState<Grupo | null>(null);
@@ -165,7 +170,10 @@ function ConteudoAcompanhado({
         </p>
         <div className="flex justify-center gap-2">
           <button
-            onClick={aoContinuar}
+            onClick={async () => {
+              if (aoSalvarPlano) await aoSalvarPlano();
+              aoContinuar();
+            }}
             className="rounded-lg bg-gold-400 px-4 py-2 text-[13px] font-bold text-ink-950 hover:bg-gold-300"
           >
             Continuar assim
@@ -244,6 +252,9 @@ function ConteudoAcompanhado({
           setFalha(null);
           try {
             const g = await criarGrupo(`Leitura: ${nomeDoPlano}`, undefined, "leitura");
+            if (aoSalvarPlano) {
+              await aoSalvarPlano();
+            }
             setCodigoGerado(g.codigo);
           } catch (e) {
             setFalha(e instanceof Error ? e.message : String(e));

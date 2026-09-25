@@ -196,7 +196,7 @@ async function executar(): Promise<void> {
    * A ordem importa: quem encerrou um plano e escolheu outro no mesmo intervalo
    * tem lápide e plano ao mesmo tempo, e aí o que vale é o plano novo.
    */
-  if (plano && (plano.atualizadoEm ?? plano.criadoEm) > desde) {
+  if (plano) {
     const { error } = await c.from("planos").upsert(planoParaRemoto(plano, perfil));
     conferirTabelaDePlanos(error);
   } else if (!plano && removidos.some((r) => r.tabela === "planos")) {

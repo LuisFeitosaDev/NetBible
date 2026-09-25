@@ -99,6 +99,9 @@ export function PainelPlano({
           await criar(escolha, index, lido);
           setCriando(false);
         }}
+        aoSalvar={async (escolha) => {
+          await criar(escolha, index, lido);
+        }}
         aoCancelar={() => setCriando(false)}
       />
     );
