@@ -28,16 +28,17 @@ export function GrupoDeLeitura({ index }: { index: BibleIndex }) {
     try {
       const meu = await meuGrupoDeLeitura();
       if (meu?.grupo) {
-        const adotou = await adotarPlanoDoGrupoSeNecessario(meu.grupo.id, index, () => false);
-        if (adotou) {
-          window.location.reload();
-          return;
-        }
+        await adotarPlanoDoGrupoSeNecessario(meu.grupo.id, index, () => false);
+        setGrupo(meu.grupo);
+        setSouLider(meu.souLider);
+        const lista = await progressoDoGrupo(meu.grupo, index);
+        setMembros(lista);
+      } else {
+        setGrupo(null);
+        setMembros([]);
       }
-      setGrupo(meu?.grupo ?? null);
-      setSouLider(meu?.souLider ?? false);
-      setMembros(meu ? await progressoDoGrupo(meu.grupo, index) : []);
-    } catch {
+    } catch (e) {
+      console.error("[GrupoDeLeitura] erro ao carregar:", e);
       setGrupo(null);
     } finally {
       setCarregando(false);

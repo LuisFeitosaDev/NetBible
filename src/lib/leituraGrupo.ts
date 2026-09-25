@@ -28,7 +28,7 @@ import {
   roteiroDoPlano,
   type PlanoSalvo,
 } from "./planos";
-import { apagarPlano, salvarPlano } from "./db";
+import { apagarPlano, db, salvarPlano } from "./db";
 import { sincronizar } from "./sync";
 import type { BibleIndex } from "./bible";
 
@@ -115,6 +115,9 @@ export async function adotarPlanoDoGrupoSeNecessario(
   lido: (slug: string, capitulo: number) => boolean,
   meuIdParam?: string,
 ): Promise<boolean> {
+  const localExistente = await db.planos.get("atual");
+  if (localExistente) return false;
+
   const meuId = meuIdParam ?? (await garantirSessao());
   const membros = (await membrosDoGrupo(grupoId)) as Membro[];
   const ids = membros.map((m) => m.perfil_id);
@@ -243,7 +246,7 @@ export async function progressoDoGrupo(
         dias: prog.dias,
         lidos: prog.lidos,
         total: prog.total,
-        percentual: Math.round((prog.lidos / prog.total) * 100),
+        percentual: prog.total > 0 ? Math.round((prog.lidos / prog.total) * 100) : 0,
         concluido: prog.concluido,
       };
     }
