@@ -12,7 +12,7 @@
  * - Um plano por pessoa, então um grupo de leitura por pessoa. Criar outro
  *   plano desfaz o vínculo com o grupo atual.
  * - Só o líder apaga o grupo, e com ele o plano de todo mundo.
- * - Quem entrou pelo código só sai. O plano fica com ele, agora sozinho.
+ * - Quem entrou pelo código só sai, e o plano sai junto: são uma coisa só.
  */
 import { sb } from "./grupos/supabase";
 import {

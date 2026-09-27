@@ -27,7 +27,7 @@ import {
   vistoEm,
   type EventoDoGrupo,
 } from "@/lib/grupoEventos";
-import { salvarPlano } from "@/lib/db";
+import { apagarPlano } from "@/lib/db";
 import { inicioDoDia, type PlanoSalvo, type ProgressoDoPlano } from "@/lib/planos";
 import { HIGHLIGHT_COLORS } from "@/lib/catalog";
 import type { Grupo } from "@/lib/grupos/tipos";
@@ -274,11 +274,11 @@ export function GrupoDeLeitura({
       {confirmandoSaida && (
         <ConfirmarExclusao
           titulo="Sair do grupo?"
-          aviso="Você para de ver o grupo e o grupo para de ver você. O plano continua com você, agora sozinho, com tudo que já leu."
+          aviso={`O plano e o grupo são uma coisa só: saindo, "${plano.nome}" sai da sua jornada. Suas marcações e sua leitura na Bíblia continuam salvas.`}
           rotuloConfirmar="Sair do grupo"
           aoConfirmar={async () => {
             await desfazerVinculo(grupo.id);
-            await salvarPlano({ ...plano, grupoId: undefined });
+            await apagarPlano();
           }}
           aoFechar={() => setConfirmandoSaida(false)}
         />
