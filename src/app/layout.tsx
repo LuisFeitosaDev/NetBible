@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit, Lora } from "next/font/google";
+import { Inter, Outfit, Lora, Literata, Atkinson_Hyperlegible } from "next/font/google";
 import "./globals.css";
 import { BibleProvider } from "@/lib/store";
 import { TopNav } from "@/components/TopNav";
@@ -11,6 +11,20 @@ import { AvisosDoGrupo } from "@/components/AvisosDoGrupo";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap" });
+// Fontes opcionais do leitor: sem preload, só baixam para quem escolher.
+const literata = Literata({
+  subsets: ["latin"],
+  variable: "--font-literata",
+  display: "swap",
+  preload: false,
+});
+const atkinson = Atkinson_Hyperlegible({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-atkinson",
+  display: "swap",
+  preload: false,
+});
 
 export const metadata: Metadata = {
   title: "Genipse Bible",
@@ -42,7 +56,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${outfit.variable} ${lora.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${outfit.variable} ${lora.variable} ${literata.variable} ${atkinson.variable}`}
+    >
       <body className="font-sans antialiased">
         <BibleProvider>
           <TopNav />

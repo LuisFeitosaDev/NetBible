@@ -1,8 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Columns2, Minus, Moon, Plus, Sun, Type } from "lucide-react";
-import type { TemaLeitura } from "@/lib/temaLeitura";
+import { Columns2, Minus, Plus, Type } from "lucide-react";
+import {
+  FONTES_DE_LEITURA,
+  type FonteLeitura,
+  type TemaLeitura,
+} from "@/lib/temaLeitura";
+
+/** Amostras com as cores reais de cada fundo (as mesmas de globals.css). */
+const FUNDOS: { id: TemaLeitura; rotulo: string; fundo: string; texto: string; borda: string }[] = [
+  { id: "escuro", rotulo: "Escuro", fundo: "#0b0a0e", texto: "#ece7dc", borda: "rgb(255 255 255 / 14%)" },
+  { id: "claro", rotulo: "Claro", fundo: "#f7f1e3", texto: "#211a0d", borda: "rgb(40 30 10 / 16%)" },
+  { id: "papel", rotulo: "Papel", fundo: "#efdfb9", texto: "#2b1f0c", borda: "rgb(60 40 5 / 20%)" },
+];
 
 /**
  * Tamanho do texto, fundo de leitura e leitura paralela, atrás de um botão só.
@@ -19,6 +30,8 @@ export function ControlesLeitura({
   aoMudarTamanho,
   tema,
   aoMudarTema,
+  fonte,
+  aoMudarFonte,
   paralela,
   aoMudarParalela,
 }: {
@@ -29,6 +42,8 @@ export function ControlesLeitura({
   aoMudarTamanho: (delta: number) => void;
   tema: TemaLeitura;
   aoMudarTema: (t: TemaLeitura) => void;
+  fonte: FonteLeitura;
+  aoMudarFonte: (f: FonteLeitura) => void;
   paralela: boolean;
   aoMudarParalela: (v: boolean) => void;
 }) {
@@ -68,7 +83,7 @@ export function ControlesLeitura({
       </button>
 
       {aberto && (
-        <div className="absolute right-0 top-10 z-50 w-56 animate-fade rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-900/98 p-3 shadow-2xl shadow-black/60 backdrop-blur-xl">
+        <div className="absolute right-0 top-10 z-50 w-64 animate-fade rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-900/98 p-3 shadow-2xl shadow-black/60 backdrop-blur-xl">
           <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--rl-texto-mudo)]">
             Tamanho do texto
           </p>
@@ -106,32 +121,61 @@ export function ControlesLeitura({
             </button>
           </div>
 
-          {/* Fundo de leitura: preto ou branco. Alguns leitores não conseguem
-              ler texto longo em fundo escuro, e essa opção existe só aqui,
-              dentro do capítulo — o resto do app continua escuro sempre. */}
+          {/* Fundo de leitura. Existe só aqui, dentro do capítulo — o resto
+              do app continua escuro sempre. Cada botão é uma amostra do fundo
+              de verdade, com um "Aa" na cor do texto daquele tema. */}
           <div className="mt-3 border-t border-[color:var(--rl-borda-1)] pt-3">
             <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--rl-texto-mudo)]">
               Fundo de leitura
             </p>
-            <div className="grid grid-cols-2 gap-1.5">
-              {(
-                [
-                  ["escuro", "Escuro", Moon],
-                  ["claro", "Claro", Sun],
-                ] as const
-              ).map(([id, rotulo, Icone]) => (
+            <div className="grid grid-cols-3 gap-1.5">
+              {FUNDOS.map((f) => (
                 <button
-                  key={id}
-                  onClick={() => aoMudarTema(id)}
-                  aria-pressed={tema === id}
-                  className={`flex items-center justify-center gap-1.5 rounded-lg py-2 text-[12.5px] font-semibold transition-colors ${
-                    tema === id
+                  key={f.id}
+                  onClick={() => aoMudarTema(f.id)}
+                  aria-pressed={tema === f.id}
+                  aria-label={`Fundo ${f.rotulo}`}
+                  className="flex flex-col items-center gap-1"
+                >
+                  <span
+                    className={`grid h-11 w-full place-items-center rounded-lg border font-reading text-[15px] font-semibold transition-shadow ${
+                      tema === f.id ? "ring-2 ring-gold-400" : ""
+                    }`}
+                    style={{ background: f.fundo, color: f.texto, borderColor: f.borda }}
+                  >
+                    Aa
+                  </span>
+                  <span
+                    className={`text-[11px] font-semibold ${
+                      tema === f.id ? "text-gold-500" : "text-[color:var(--rl-texto-mudo)]"
+                    }`}
+                  >
+                    {f.rotulo}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-3 border-t border-[color:var(--rl-borda-1)] pt-3">
+            <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--rl-texto-mudo)]">
+              Fonte
+            </p>
+            <div className="grid grid-cols-2 gap-1.5">
+              {FONTES_DE_LEITURA.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => aoMudarFonte(f.id)}
+                  aria-pressed={fonte === f.id}
+                  className={`flex items-baseline justify-center gap-1.5 rounded-lg py-2 transition-colors ${
+                    fonte === f.id
                       ? "bg-gold-400 text-ink-950"
                       : "bg-[var(--rl-sutil-2)] text-ink-100 hover:bg-[var(--rl-sutil-3)]"
                   }`}
+                  style={{ fontFamily: f.familia }}
                 >
-                  <Icone size={13} />
-                  {rotulo}
+                  <span className="text-[16px] font-semibold leading-none">Aa</span>
+                  <span className="text-[12px] leading-none">{f.rotulo}</span>
                 </button>
               ))}
             </div>

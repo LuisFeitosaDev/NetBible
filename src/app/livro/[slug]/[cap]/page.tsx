@@ -43,8 +43,12 @@ import {
 import { membrosDoGrupo } from "@/lib/grupos/api";
 import { sb, supabaseConfigurado } from "@/lib/grupos/supabase";
 import {
+  CHAVE_FONTE_LEITURA,
   CHAVE_TEMA_LEITURA,
+  FONTE_LEITURA_PADRAO,
+  FONTES_DE_LEITURA,
   TEMA_LEITURA_PADRAO,
+  type FonteLeitura,
   type TemaLeitura,
 } from "@/lib/temaLeitura";
 import { VerseActions } from "@/components/VerseActions";
@@ -81,6 +85,7 @@ export default function ReaderPage() {
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const [sizeStep, setSizeStep] = useState(1);
   const [temaLeitura, setTemaLeitura] = useState<TemaLeitura>(TEMA_LEITURA_PADRAO);
+  const [fonteLeitura, setFonteLeitura] = useState<FonteLeitura>(FONTE_LEITURA_PADRAO);
   /**
    * Só true quando o capítulo foi aberto a partir do plano de leitura (a
    * lista de "Hoje" na Jornada), via `?de=plano` na URL. Muda para onde a
@@ -134,6 +139,7 @@ export default function ReaderPage() {
   useEffect(() => {
     void getPref<number>("textSize", 1).then(setSizeStep);
     void getPref<TemaLeitura>(CHAVE_TEMA_LEITURA, TEMA_LEITURA_PADRAO).then(setTemaLeitura);
+    void getPref<FonteLeitura>(CHAVE_FONTE_LEITURA, FONTE_LEITURA_PADRAO).then(setFonteLeitura);
   }, []);
 
   // ?v=14 vem do versículo do dia e da biblioteca: rola até ele e pisca.
@@ -334,6 +340,13 @@ export default function ReaderPage() {
     void setPref(CHAVE_TEMA_LEITURA, t);
   };
 
+  const changeFonte = (f: FonteLeitura) => {
+    setFonteLeitura(f);
+    void setPref(CHAVE_FONTE_LEITURA, f);
+  };
+  const familiaDaLeitura =
+    FONTES_DE_LEITURA.find((f) => f.id === fonteLeitura)?.familia ?? FONTES_DE_LEITURA[0].familia;
+
   if (!book || !content) {
     return (
       <div className="mx-auto max-w-2xl space-y-4 px-5 pt-28">
@@ -405,6 +418,8 @@ export default function ReaderPage() {
               aoMudarTamanho={changeSize}
               tema={temaLeitura}
               aoMudarTema={changeTema}
+              fonte={fonteLeitura}
+              aoMudarFonte={changeFonte}
               paralela={parallel}
               aoMudarParalela={setParallel}
             />
@@ -457,6 +472,7 @@ export default function ReaderPage() {
 
         <div
           className={`font-reading ${TEXT_SIZES[sizeStep]} leading-[1.85] text-leitura`}
+          style={{ fontFamily: familiaDaLeitura }}
         >
           {verses.map((text, i) => {
             const n = i + 1;

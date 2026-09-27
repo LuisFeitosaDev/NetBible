@@ -7,7 +7,7 @@ import { temArteDeCapitulo } from "@/lib/capitulos.generated";
 import { arteDeCapitulo } from "@/lib/arte";
 import { GROUP_THEME } from "@/lib/catalog";
 import type { BookMeta } from "@/lib/bible";
-import type { TemaLeitura } from "@/lib/temaLeitura";
+import { temaEhClaro, type TemaLeitura } from "@/lib/temaLeitura";
 
 /**
  * Abertura do capítulo: arte, número e visão geral.
@@ -43,7 +43,7 @@ export function CapituloHeader({
    * contraste que falta, e já existe no tema: não é cor nova, é a metade da
    * mesma paleta que ainda não tinha uso como texto.
    */
-  const corDoMarcador = temaLeitura === "claro" ? tema.to : tema.accent;
+  const corDoMarcador = temaEhClaro(temaLeitura) ? tema.to : tema.accent;
 
   /*
    * A ficha vem de `/capitulos/<livro>.json`, baixado sob demanda. A primeira

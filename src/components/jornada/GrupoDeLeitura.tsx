@@ -519,10 +519,17 @@ function AtivarAvisos() {
   return (
     <button
       onClick={async () => setPermissao(await Notification.requestPermission())}
-      className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/12 py-2.5 text-[12.5px] font-semibold text-ink-300 transition-colors hover:border-white/25 hover:text-white"
+      className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-white/12 p-3 text-left transition-colors hover:border-white/25"
     >
-      <Bell size={14} />
-      Receber avisos quando o grupo grifar ou te cutucar
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gold-400/12 text-gold-400">
+        <Bell size={17} />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[13px] font-semibold text-ink-100">Receber avisos</span>
+        <span className="block text-[11.5px] leading-snug text-ink-400">
+          Quando o grupo grifar, bater a meta ou te cutucar
+        </span>
+      </span>
     </button>
   );
 }

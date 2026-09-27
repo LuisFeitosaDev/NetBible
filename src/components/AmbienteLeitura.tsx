@@ -2,7 +2,7 @@
 
 import { GROUP_THEME } from "@/lib/catalog";
 import type { BookMeta } from "@/lib/bible";
-import type { TemaLeitura } from "@/lib/temaLeitura";
+import { temaEhClaro, type TemaLeitura } from "@/lib/temaLeitura";
 
 /**
  * Fundo da tela de leitura.
@@ -19,7 +19,7 @@ import type { TemaLeitura } from "@/lib/temaLeitura";
  */
 export function AmbienteLeitura({ book, tema }: { book: BookMeta; tema: TemaLeitura }) {
   const cor = GROUP_THEME[book.group];
-  const claro = tema === "claro";
+  const claro = temaEhClaro(tema);
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -46,9 +46,10 @@ export function AmbienteLeitura({ book, tema }: { book: BookMeta; tema: TemaLeit
         }}
       />
 
-      {/* Grão fino: tira o aspecto de gradiente digital e disfarça banding. */}
+      {/* Grão fino: tira o aspecto de gradiente digital e disfarça banding. No
+          papel ele fica mais marcado, para lembrar a textura de uma folha. */}
       <div
-        className="absolute inset-0 opacity-[0.045]"
+        className={`absolute inset-0 ${tema === "papel" ? "opacity-[0.09]" : "opacity-[0.045]"}`}
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\")",
