@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Search, X } from "lucide-react";
 import { GROUP_THEME } from "@/lib/catalog";
 import type { BibleIndex, BookMeta } from "@/lib/bible";
@@ -27,6 +27,17 @@ export function EscolherLivros({
   aoMudar: (novo: string[]) => void;
 }) {
   const [busca, setBusca] = useState("");
+  const trilhaRef = useRef<HTMLDivElement>(null);
+  const quantos = selecionados.length;
+  const anterior = useRef(quantos);
+
+  // Livro novo entra no fim da trilha: rola até ele, para ver que entrou.
+  useEffect(() => {
+    if (quantos > anterior.current) {
+      trilhaRef.current?.scrollTo({ left: trilhaRef.current.scrollWidth, behavior: "smooth" });
+    }
+    anterior.current = quantos;
+  }, [quantos]);
 
   const posicao = useMemo(() => {
     const mapa = new Map<string, number>();
@@ -74,20 +85,30 @@ export function EscolherLivros({
 
   return (
     <div>
-      {/* A ordem escolhida, como uma trilha de chips. Fica vazia até o
-          primeiro toque, e some de novo se a lista esvaziar. */}
+      {/* A ordem escolhida, numa trilha de uma linha só que rola para o
+          lado. Quebrando linha, cada livro a mais empurrava a lista para
+          baixo — com 13 livros ela já ocupava meia tela. */}
       {selecionados.length > 0 && (
-        <div className="mb-3 rounded-xl border border-white/8 bg-white/[0.03] p-3">
-          <div className="mb-2 flex items-baseline justify-between">
+        <div className="mb-3 rounded-xl border border-white/8 bg-white/[0.03] py-3">
+          <div className="mb-2 flex items-baseline justify-between gap-3 px-3">
             <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
               Sua ordem
             </p>
-            <p className="font-mono text-[10px] text-ink-500">
+            <p className="flex items-baseline gap-2 font-mono text-[10px] text-ink-500">
               {selecionados.length} {selecionados.length === 1 ? "livro" : "livros"} ·{" "}
               {totalCapitulos} cap.
+              <button
+                onClick={() => aoMudar([])}
+                className="font-sans text-[11px] font-semibold text-ink-400 hover:text-white"
+              >
+                Limpar
+              </button>
             </p>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div
+            ref={trilhaRef}
+            className="flex gap-1.5 overflow-x-auto px-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {selecionados.map((slug, i) => {
               const livro = livroPorSlug.get(slug);
               if (!livro) return null;
@@ -96,7 +117,7 @@ export function EscolherLivros({
                 <button
                   key={slug}
                   onClick={() => alternar(slug)}
-                  className="inline-flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2.5 text-[12px] font-semibold transition-colors hover:opacity-80"
+                  className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full py-1 pl-1 pr-2.5 text-[12px] font-semibold transition-colors hover:opacity-80"
                   style={{ backgroundColor: `${tema.accent}22`, color: tema.accent }}
                 >
                   <span
@@ -146,11 +167,29 @@ export function EscolherLivros({
                 aoTocar={() => alternar(l.slug)}
               />
             ))
-          : grupos.map((g) => (
+          : grupos.map((g) => {
+              const slugs = g.livros.map((l) => l.slug);
+              const todos = slugs.every((s) => posicao.has(s));
+              return (
               <div key={g.id}>
-                <p className="bg-ink-900 px-3 py-1.5 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
-                  {g.label}
-                </p>
+                {/* Grupo inteiro de uma vez: o Pentateuco são 5 toques a menos. */}
+                <div className="sticky top-0 z-10 flex items-center justify-between gap-2 bg-ink-900 px-3 py-1.5">
+                  <p className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-500">
+                    {g.label}
+                  </p>
+                  <button
+                    onClick={() =>
+                      aoMudar(
+                        todos
+                          ? selecionados.filter((s) => !slugs.includes(s))
+                          : [...selecionados, ...slugs.filter((s) => !posicao.has(s))],
+                      )
+                    }
+                    className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold text-ink-400 transition-colors hover:bg-white/8 hover:text-white"
+                  >
+                    {todos ? "Tirar todos" : "+ Todos"}
+                  </button>
+                </div>
                 {g.livros.map((l) => (
                   <LinhaLivro
                     key={l.slug}
@@ -160,7 +199,8 @@ export function EscolherLivros({
                   />
                 ))}
               </div>
-            ))}
+              );
+            })}
       </div>
     </div>
   );
