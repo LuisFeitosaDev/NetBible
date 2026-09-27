@@ -135,6 +135,58 @@ async function planoDeAlgumMembro(grupo: Grupo): Promise<PlanoDoGrupo | null> {
   return { nome: p.nome, ordem: p.ordem, dias: p.dias, livros: p.livros, inicioEm: p.inicioEm };
 }
 
+const mesmoPlano = (
+  a: Pick<PlanoDoGrupo, "ordem" | "dias" | "livros">,
+  b: Pick<PlanoSalvo, "ordem" | "dias" | "livros">,
+) =>
+  a.ordem === b.ordem &&
+  a.dias === b.dias &&
+  (a.livros ?? []).join(",") === (b.livros ?? []).join(",");
+
+/**
+ * Planos criados antes da v2 não guardavam a que grupo pertencem, e sem
+ * `grupoId` o card do grupo não aparece. Religa o plano ao grupo de leitura
+ * em que a pessoa está, se for o mesmo plano (mesma ordem, prazo e livros) que
+ * o grupo ou alguém dele segue. Sendo líder de um grupo antigo sem plano
+ * dentro, grava o plano no grupo para quem entrar depois.
+ *
+ * Nunca liga um plano solo a um grupo com outro plano: sem correspondência,
+ * não faz nada.
+ */
+export async function religarPlanoAntigo(plano: PlanoSalvo): Promise<boolean> {
+  if (plano.grupoId) return false;
+  const id = await meuIdSemCriar();
+  if (!id) return false;
+
+  for (const v of await meusVinculos(id)) {
+    const { data: grupo } = await sb().from("grupos").select("*").eq("id", v.grupoId).maybeSingle();
+    if (!grupo) continue;
+
+    let corresponde = grupo.plano ? mesmoPlano(grupo.plano, plano) : false;
+    if (!grupo.plano) {
+      const { data } = await sb().rpc("planos_do_grupo", { p_grupo_id: grupo.id });
+      corresponde = ((data ?? []) as (LinhaPlanoRemota & { perfil_id: string })[]).some(
+        (l) => l.perfil_id !== id && mesmoPlano(planoDeLinhaRemota(l), plano),
+      );
+    }
+    if (!corresponde) continue;
+
+    if (!grupo.plano && v.papel === "lider") {
+      const planoDoGrupo: PlanoDoGrupo = {
+        nome: plano.nome,
+        ordem: plano.ordem,
+        dias: plano.dias,
+        livros: plano.livros,
+        inicioEm: plano.inicioEm,
+      };
+      await sb().from("grupos").update({ plano: planoDoGrupo }).eq("id", grupo.id);
+    }
+    await salvarPlano({ ...plano, grupoId: grupo.id });
+    return true;
+  }
+  return false;
+}
+
 export type ResultadoDeEntrada = { grupo: Grupo; adotouPlano: boolean };
 
 /**

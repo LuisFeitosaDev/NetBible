@@ -31,6 +31,7 @@ import {
   criarPlanoSozinho,
   desfazerVinculo,
   entrarNoGrupoComPlano,
+  religarPlanoAntigo,
   type GrupoDoPlano,
 } from "@/lib/leituraGrupo";
 import { publicarEvento } from "@/lib/grupoEventos";
@@ -143,6 +144,15 @@ export function PainelPlano({
   useEffect(() => {
     void carregarGrupo();
   }, [carregarGrupo]);
+
+  // Plano de antes da v2, sem `grupoId`: religa ao grupo, se for o mesmo plano.
+  // Uma tentativa por plano; ao religar, o `grupoId` novo recarrega o card.
+  const idDoPlano = plano?.criadoEm;
+  useEffect(() => {
+    if (!plano || plano.grupoId) return;
+    void religarPlanoAntigo(plano).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idDoPlano]);
 
   const acoes: AcoesDoPlano = {
     sozinho: (escolha) => criarPlanoSozinho(escolha),
