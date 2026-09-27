@@ -44,10 +44,10 @@ export function TopNav() {
         <Link href="/" className="group flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/icon.png"
+            src="/marca.png"
             alt=""
             aria-hidden
-            className="h-8 w-8 rounded-lg"
+            className="h-9 w-auto drop-shadow-[0_2px_10px_rgba(245,196,94,0.25)]"
           />
           <span className="leading-none">
             <span className="block font-display text-lg font-extrabold tracking-tight">

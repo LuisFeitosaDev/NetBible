@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: "Bora ler a Bíblia junto?",
     description:
       "Entre no grupo de leitura no Genipse Bible e acompanhem a meta um do outro todo dia.",
-    images: ["/icon.png"],
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

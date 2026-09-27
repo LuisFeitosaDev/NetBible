@@ -158,6 +158,12 @@ function quebrarLinhas(ctx: CanvasRenderingContext2D, texto: string, largura: nu
   return linhas;
 }
 
+type Imagens = {
+  arte: HTMLImageElement | null;
+  logo: HTMLImageElement | null;
+  logoEscuro: HTMLImageElement | null;
+};
+
 type Opcoes = {
   formato: Formato;
   modelo: Modelo;
@@ -170,7 +176,7 @@ function desenhar(
   canvas: HTMLCanvasElement,
   o: Opcoes,
   conteudo: { texto: string; referencia: string },
-  imagens: { arte: HTMLImageElement | null; logo: HTMLImageElement | null },
+  imagens: Imagens,
 ) {
   const { l: L, a: A } = TAMANHOS[o.formato];
   canvas.width = L;
@@ -275,31 +281,28 @@ function desenhar(
   ctx.fillText(conteudo.referencia.toUpperCase(), x, y);
   if ("letterSpacing" in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "0px";
 
-  // ---- assinatura
+  // ---- assinatura: a marca (G-livro) + "Genipse Bible"
   const tamanhoDaMarca = Math.round(L * 0.03);
-  const logo = Math.round(tamanhoDaMarca * 1.7);
+  const logo = fundoClaro(m) ? imagens.logoEscuro : imagens.logo;
+  const alturaDoLogo = Math.round(tamanhoDaMarca * 1.9);
+  const larguraDoLogo = logo ? Math.round((alturaDoLogo / logo.height) * logo.width) : 0;
   const texto = "Genipse Bible";
   ctx.font = `700 ${tamanhoDaMarca}px ${familiaDaMarca}`;
-  const larguraDaMarca = logo + tamanhoDaMarca * 0.6 + ctx.measureText(texto).width;
+  const espaco = logo ? tamanhoDaMarca * 0.55 : 0;
+  const larguraDaMarca = larguraDoLogo + espaco + ctx.measureText(texto).width;
   const yMarca = A - rodape / 2;
   const xMarca = centro ? (L - larguraDaMarca) / 2 : margem;
-  ctx.globalAlpha = 0.85;
-  if (imagens.logo) {
-    ctx.save();
-    const raio = logo * 0.22;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(xMarca, yMarca - logo / 2, logo, logo, raio);
-    else ctx.rect(xMarca, yMarca - logo / 2, logo, logo);
-    ctx.clip();
-    ctx.drawImage(imagens.logo, xMarca, yMarca - logo / 2, logo, logo);
-    ctx.restore();
-  }
+  ctx.globalAlpha = 0.9;
+  if (logo) ctx.drawImage(logo, xMarca, yMarca - alturaDoLogo / 2, larguraDoLogo, alturaDoLogo);
   ctx.fillStyle = m.texto;
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
-  ctx.fillText(texto, xMarca + logo + tamanhoDaMarca * 0.6, yMarca + 1);
+  ctx.fillText(texto, xMarca + larguraDoLogo + espaco, yMarca + 1);
   ctx.globalAlpha = 1;
 }
+
+/** Papel e Claro pedem a marca em dourado profundo; o dourado claro some. */
+const fundoClaro = (m: Modelo) => m.id === "papel" || m.id === "claro";
 
 export function CompartilharImagem({
   texto,
@@ -337,10 +340,7 @@ export function CompartilharImagem({
       escala: 1,
     };
   });
-  const [imagens, setImagens] = useState<{ arte: HTMLImageElement | null; logo: HTMLImageElement | null }>({
-    arte: null,
-    logo: null,
-  });
+  const [imagens, setImagens] = useState<Imagens>({ arte: null, logo: null, logoEscuro: null });
   const [pronto, setPronto] = useState(false);
   const [ocupado, setOcupado] = useState(false);
   const [falha, setFalha] = useState<string | null>(null);
@@ -349,8 +349,9 @@ export function CompartilharImagem({
   useEffect(() => {
     let vivo = true;
     (async () => {
-      const [logo, arte] = await Promise.all([
-        carregarImagem("/icon.png"),
+      const [logo, logoEscuro, arte] = await Promise.all([
+        carregarImagem("/marca.png"),
+        carregarImagem("/marca-escura.png"),
         // `?canvas=1`: endereço à parte da arte que o leitor já exibiu. Aquela
         // pode estar no cache do service worker sem permissão de CORS, e o
         // canvas se recusaria a exportar.
@@ -368,7 +369,7 @@ export function CompartilharImagem({
         ]),
       );
       if (!vivo) return;
-      setImagens({ logo, arte });
+      setImagens({ logo, logoEscuro, arte });
       setPronto(true);
     })();
     return () => {

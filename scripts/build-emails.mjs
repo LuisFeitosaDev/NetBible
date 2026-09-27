@@ -6,9 +6,8 @@
  * traduzidas nem renomeadas.
  *
  * O layout é table-based e com estilo inline de propósito: cliente de e-mail
- * não tem flexbox, grid, nem <style> confiável. A marca é desenhada em HTML
- * puro, sem imagem, porque imagem em e-mail exige URL pública absoluta e
- * costuma vir bloqueada por padrão.
+ * não tem flexbox, grid, nem <style> confiável. A marca é uma imagem do site
+ * publicado, com o "G" no `alt` para quem bloqueia imagens.
  *
  * Rode com:  npm run emails
  */
@@ -25,6 +24,10 @@ const BORDA = "#272733";
 const TEXTO = "#ececf2";
 const SUAVE = "#8a8a9e";
 const OURO = "#f5c45e";
+
+// A marca vem como imagem do site publicado. Quem bloqueia imagens vê o
+// "G" do `alt`, em dourado sobre preto, no mesmo lugar.
+const SITE = "https://net-bible.vercel.app";
 
 const fonte =
   "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -53,7 +56,7 @@ function layout({ preheader, titulo, corpo }) {
           <td align="center" style="padding-bottom:24px;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td style="width:40px;height:40px;background:${OURO};border-radius:11px;text-align:center;vertical-align:middle;font-family:${fonte};font-size:24px;font-weight:800;color:#0a0a0c;line-height:40px;">G</td>
+                <td style="width:40px;height:40px;"><img src="${SITE}/icon-email.png" width="40" height="40" alt="G" style="display:block;width:40px;height:40px;border:0;border-radius:11px;background:#0b0a0e;color:${OURO};font-family:${fonte};font-size:22px;font-weight:800;text-align:center;line-height:40px;"></td>
                 <td style="padding-left:11px;font-family:${fonte};text-align:left;">
                   <div style="font-size:17px;font-weight:700;color:${TEXTO};line-height:1.1;">Genipse</div>
                   <div style="font-size:9px;font-weight:700;letter-spacing:2.6px;color:${OURO};line-height:1.4;">BIBLE</div>

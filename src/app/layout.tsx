@@ -27,21 +27,33 @@ const atkinson = Atkinson_Hyperlegible({
 });
 
 export const metadata: Metadata = {
+  // Base para as URLs absolutas da prévia de link (WhatsApp, Instagram).
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "https://net-bible.vercel.app",
+  ),
   title: "Genipse Bible",
   description:
     "Leia, marque e comente a Bíblia, e estude em grupo com quem você quiser.",
   manifest: "/manifest.webmanifest",
-  // Aba do navegador usa a marca monocromática: o G branco em fundo preto
-  // continua legível a 16px, onde o degradê dourado vira uma mancha.
-  // O ícone de app (home screen, PWA) segue dourado, no manifest.
+  // Todos gerados por `npm run marca` a partir de "Logo Nova.jpeg".
   icons: {
     icon: [
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
     ],
-    apple: "/icon.png",
+    apple: "/apple-touch-icon.png",
   },
+  openGraph: {
+    title: "Genipse Bible",
+    description: "Leia, marque e acompanhe a Bíblia junto com quem você quiser.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", images: ["/og-image.png"] },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

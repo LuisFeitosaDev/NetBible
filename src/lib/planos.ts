@@ -370,28 +370,49 @@ export function progressoDoPlano(
       ? atrasadosLista.length
       : Math.max(1, Math.ceil(atrasadosLista.length / diasRestantes));
 
-  const fatiaDeHoje = doDia(dia);
-  const calculado: CapituloDeHoje[] = [
-    ...atrasadosLista.slice(0, extraPorDia).map((c) => ({ ...c, atrasado: true })),
-    ...fatiaDeHoje.map((c) => ({ ...c, atrasado: false })),
-  ];
-
   // Posição de cada capítulo na divisão: antes do começo da fatia de hoje é
   // atraso; depois do fim dela, é de um dia que ainda não chegou.
   const posicaoNaDivisao = new Map(divisao.map((c, i) => [chaveDe(c), i]));
+  const posicao = (c: CapituloDoPlano) => posicaoNaDivisao.get(chaveDe(c)) ?? 0;
   const comecoDeHoje = dia > dias ? divisao.length : inicioDoDiaN(Math.max(dia, 1));
   const fimDeHoje = dia > dias ? divisao.length : inicioDoDiaN(Math.max(dia, 1) + 1);
 
   /*
-   * Uma lista gravada só pode ter atraso e a fatia de hoje. Capítulo de dia
-   * futuro nela é sinal de lista montada pela regra antiga ("os próximos não
-   * lidos"): refaz. Sem isto, quem estava adiantado via capítulos da frente
-   * marcados como "de antes".
+   * A cota de hoje é a fatia do dia mais a parte do atraso; o QUE entra nela
+   * segue a ordem do roteiro. Atrasou Romanos 1 e 2 com cota de 3? Hoje é
+   * 1, 2 e 3 — nunca 1, 3 e 4, pulando o 2. Os capítulos são os próximos não
+   * lidos de tudo que já devia estar lido até o fim de hoje.
+   *
+   * Quem está em dia ou adiantado vê a fatia de hoje, lida ou não: sem isso a
+   * lista de quem leu adiantado viria vazia e a meta nunca contaria.
    */
-  const listaGravadaValida = (plano.atribuicao ?? []).every((k) => {
-    const i = posicaoNaDivisao.get(k);
-    return i !== undefined && i < fimDeHoje;
-  });
+  const fatiaDeHoje = doDia(dia);
+  const cota = fatiaDeHoje.length + extraPorDia;
+  const pendentes = divisao.slice(0, fimDeHoje).filter((c) => !lido(c));
+  const escolhidos = pendentes.length ? pendentes.slice(0, cota) : fatiaDeHoje;
+  const calculado: CapituloDeHoje[] = escolhidos.map((c) => ({
+    ...c,
+    atrasado: posicao(c) < comecoDeHoje,
+  }));
+
+  /*
+   * A lista gravada só vale se ainda seguir essa regra: nada de dia futuro
+   * (a regra antiga pegava "os próximos não lidos" da Bíblia toda) e nenhum
+   * buraco — um capítulo não lido entre dois da lista significa que ela foi
+   * montada fora de ordem, e é refeita.
+   */
+  const gravados = (plano.atribuicao ?? []).map((k) => posicaoNaDivisao.get(k));
+  const semDiaFuturo = gravados.every((i) => i !== undefined && i < fimDeHoje);
+  const semBuraco = (() => {
+    if (!semDiaFuturo || gravados.length < 2) return semDiaFuturo;
+    const naLista = new Set(plano.atribuicao);
+    const de = Math.min(...(gravados as number[]));
+    const ate = Math.max(...(gravados as number[]));
+    return divisao
+      .slice(de, ate + 1)
+      .every((c) => naLista.has(chaveDe(c)) || lido(c));
+  })();
+  const listaGravadaValida = semDiaFuturo && semBuraco;
 
   const precisaAtribuir =
     plano.diaAtribuido !== dia || !plano.atribuicao || !listaGravadaValida;
@@ -402,10 +423,7 @@ export function progressoDoPlano(
     : (plano.atribuicao ?? [])
         .map((k) => naOrdem.get(k))
         .filter((c): c is CapituloDoPlano => Boolean(c))
-        .map((c) => ({
-          ...c,
-          atrasado: (posicaoNaDivisao.get(chaveDe(c)) ?? 0) < comecoDeHoje,
-        }));
+        .map((c) => ({ ...c, atrasado: posicao(c) < comecoDeHoje }));
 
   const hojeFeitos = hoje.filter(lido).length;
   const concluido = total > 0 && faltam === 0;
