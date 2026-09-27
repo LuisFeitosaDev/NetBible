@@ -189,23 +189,18 @@ export function PainelPlano({
 
   const podeRecomecar = !plano.grupoId && p.extraPorDia >= Math.max(3, p.ritmoBase);
 
-  const confirmacao = !plano.grupoId
+  // Só o líder chega aqui com plano de grupo: para os outros o botão nem aparece.
+  const confirmacao = plano.grupoId
     ? {
+        titulo: "Apagar o plano do grupo?",
+        aviso: `"${plano.nome}" some para todo mundo do grupo e o código para de funcionar. As marcações de cada um na Bíblia continuam.`,
+        rotulo: "Apagar para todos",
+      }
+    : {
         titulo: "Apagar o plano?",
         aviso: `"${plano.nome}" sai da sua jornada. Suas marcações, comentários e a leitura na Bíblia continuam salvos.`,
         rotulo: "Apagar plano",
-      }
-    : grupo?.souLider
-      ? {
-          titulo: "Apagar o plano do grupo?",
-          aviso: `"${plano.nome}" some para todo mundo do grupo e o código para de funcionar. As marcações de cada um na Bíblia continuam.`,
-          rotulo: "Apagar para todos",
-        }
-      : {
-          titulo: "Apagar seu plano?",
-          aviso: `Você sai do grupo e "${plano.nome}" sai da sua jornada. O plano continua para o resto do grupo.`,
-          rotulo: "Sair e apagar",
-        };
+      };
 
   return (
     <div className="space-y-4 pb-16">
@@ -213,6 +208,10 @@ export function PainelPlano({
         plano={plano}
         p={p}
         emGrupo={Boolean(grupo)}
+        // Plano do grupo só o líder troca ou apaga. Quem entrou pelo código
+        // tem só "Sair do grupo", no card do grupo. Enquanto o grupo carrega,
+        // não dá para saber quem é quem: os botões esperam.
+        podeGerenciar={!plano.grupoId || grupo?.souLider === true}
         aoTrocar={() => setCriando(true)}
         aoApagar={() => setConfirmando(true)}
       />
@@ -267,12 +266,14 @@ function Resumo({
   plano,
   p,
   emGrupo,
+  podeGerenciar,
   aoTrocar,
   aoApagar,
 }: {
   plano: PlanoSalvo;
   p: ProgressoDoPlano;
   emGrupo: boolean;
+  podeGerenciar: boolean;
   aoTrocar: () => void;
   aoApagar: () => void;
 }) {
@@ -323,22 +324,24 @@ function Resumo({
           </div>
         </div>
 
-        <div className="-mr-1 -mt-1 flex shrink-0 flex-col">
-          <button
-            onClick={aoTrocar}
-            aria-label="Trocar de plano"
-            className="grid h-9 w-9 place-items-center rounded-full text-ink-400 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            <Settings2 size={17} />
-          </button>
-          <button
-            onClick={aoApagar}
-            aria-label="Apagar plano"
-            className="grid h-9 w-9 place-items-center rounded-full text-ink-400 transition-colors hover:bg-red-500/15 hover:text-red-400"
-          >
-            <Trash2 size={17} />
-          </button>
-        </div>
+        {podeGerenciar && (
+          <div className="-mr-1 -mt-1 flex shrink-0 flex-col">
+            <button
+              onClick={aoTrocar}
+              aria-label="Trocar de plano"
+              className="grid h-9 w-9 place-items-center rounded-full text-ink-400 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <Settings2 size={17} />
+            </button>
+            <button
+              onClick={aoApagar}
+              aria-label={emGrupo ? "Apagar o plano do grupo" : "Apagar plano"}
+              className="grid h-9 w-9 place-items-center rounded-full text-ink-400 transition-colors hover:bg-red-500/15 hover:text-red-400"
+            >
+              <Trash2 size={17} />
+            </button>
+          </div>
+        )}
       </div>
 
       {p.concluido ? (

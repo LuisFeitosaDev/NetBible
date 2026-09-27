@@ -102,9 +102,6 @@ export default function HomePage() {
             Caravaggio, El Greco, Rafael e outros, via Wikimedia Commons. O crédito de
             cada livro está em <code>/capas/creditos.json</code>.
           </p>
-          <p className="mt-2">
-            Suas marcações e notas ficam só neste dispositivo até você entrar em Conta.
-          </p>
         </footer>
       </div>
     </div>

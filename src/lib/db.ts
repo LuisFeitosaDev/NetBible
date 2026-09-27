@@ -6,9 +6,8 @@ import { refOf, type VersionId } from "./bible";
 import { chaveDoCapitulo, type PlanoSalvo } from "./planos";
 
 /**
- * Tudo que é do usuário vive aqui, no IndexedDB do próprio dispositivo.
- * Nenhuma requisição sai da máquina. `exportAll`/`importAll` cobrem backup
- * e são o ponto de entrada caso um dia entre sincronização na nuvem.
+ * Tudo que é do usuário é escrito primeiro aqui, no IndexedDB: é o que deixa
+ * o app instantâneo e funcionando offline. `lib/sync.ts` leva para a conta.
  */
 
 export type Mark = {
@@ -297,67 +296,4 @@ export async function getPref<T>(key: string, fallback: T): Promise<T> {
 
 export async function setPref(key: string, value: unknown) {
   await db.prefs.put({ key, value });
-}
-
-/* -------------------------- backup / restauração ------------------------ */
-
-export type Backup = {
-  app: "lumen";
-  version: 1;
-  exportedAt: string;
-  marks: Mark[];
-  notes: Note[];
-  reading: Reading[];
-  favorites: Favorite[];
-  prefs: Pref[];
-  /** Ausente nos backups gerados antes dos planos de leitura. */
-  planos?: PlanoSalvo[];
-};
-
-export async function exportAll(): Promise<Backup> {
-  const [marks, notes, reading, favorites, prefs, planos] = await Promise.all([
-    db.marks.toArray(),
-    db.notes.toArray(),
-    db.reading.toArray(),
-    db.favorites.toArray(),
-    db.prefs.toArray(),
-    db.planos.toArray(),
-  ]);
-  return {
-    app: "lumen",
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    marks,
-    notes,
-    reading,
-    favorites,
-    prefs,
-    planos,
-  };
-}
-
-/** Importação aditiva: nunca apaga o que já existe, só sobrescreve conflitos. */
-export async function importAll(backup: Backup) {
-  // "lumen" é o nome antigo do app; backups gerados antes continuam válidos.
-  if (backup?.app !== "lumen") {
-    throw new Error("Esse arquivo não é um backup do Genipse Bible.");
-  }
-  // Lista e não argumentos soltos: a sobrecarga variádica do Dexie para em
-  // cinco tabelas, e com `planos` passamos de seis.
-  await db.transaction(
-    "rw",
-    [db.marks, db.notes, db.reading, db.favorites, db.prefs, db.planos],
-    async () => {
-      if (backup.marks?.length) await db.marks.bulkPut(backup.marks);
-      if (backup.notes?.length) await db.notes.bulkPut(backup.notes);
-      if (backup.reading?.length) await db.reading.bulkPut(backup.reading);
-      if (backup.favorites?.length) await db.favorites.bulkPut(backup.favorites);
-      if (backup.prefs?.length) await db.prefs.bulkPut(backup.prefs);
-      if (backup.planos?.length) await db.planos.bulkPut(backup.planos);
-    },
-  );
-  return {
-    marks: backup.marks?.length ?? 0,
-    notes: backup.notes?.length ?? 0,
-  };
 }

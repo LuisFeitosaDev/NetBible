@@ -44,7 +44,7 @@ export default function JornadaPage() {
         Minha jornada
       </h1>
       <p className="mt-1.5 text-sm text-ink-400">
-        Seu caminho pela Bíblia, guardado neste dispositivo.
+        Seu caminho pela Bíblia.
       </p>
 
       {/* Uma faixa só, e não quatro cartões: empilhados em duas linhas eles
