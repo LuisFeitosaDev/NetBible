@@ -371,13 +371,30 @@ export function progressoDoPlano(
       : Math.max(1, Math.ceil(atrasadosLista.length / diasRestantes));
 
   const fatiaDeHoje = doDia(dia);
-  const daFatiaDeHoje = new Set(fatiaDeHoje.map(chaveDe));
   const calculado: CapituloDeHoje[] = [
     ...atrasadosLista.slice(0, extraPorDia).map((c) => ({ ...c, atrasado: true })),
     ...fatiaDeHoje.map((c) => ({ ...c, atrasado: false })),
   ];
 
-  const precisaAtribuir = plano.diaAtribuido !== dia || !plano.atribuicao;
+  // Posição de cada capítulo na divisão: antes do começo da fatia de hoje é
+  // atraso; depois do fim dela, é de um dia que ainda não chegou.
+  const posicaoNaDivisao = new Map(divisao.map((c, i) => [chaveDe(c), i]));
+  const comecoDeHoje = dia > dias ? divisao.length : inicioDoDiaN(Math.max(dia, 1));
+  const fimDeHoje = dia > dias ? divisao.length : inicioDoDiaN(Math.max(dia, 1) + 1);
+
+  /*
+   * Uma lista gravada só pode ter atraso e a fatia de hoje. Capítulo de dia
+   * futuro nela é sinal de lista montada pela regra antiga ("os próximos não
+   * lidos"): refaz. Sem isto, quem estava adiantado via capítulos da frente
+   * marcados como "de antes".
+   */
+  const listaGravadaValida = (plano.atribuicao ?? []).every((k) => {
+    const i = posicaoNaDivisao.get(k);
+    return i !== undefined && i < fimDeHoje;
+  });
+
+  const precisaAtribuir =
+    plano.diaAtribuido !== dia || !plano.atribuicao || !listaGravadaValida;
   const naOrdem = new Map(roteiro.map((c) => [chaveDe(c), c]));
 
   const hoje: CapituloDeHoje[] = precisaAtribuir
@@ -385,9 +402,10 @@ export function progressoDoPlano(
     : (plano.atribuicao ?? [])
         .map((k) => naOrdem.get(k))
         .filter((c): c is CapituloDoPlano => Boolean(c))
-        // Um atrasado já lido some de `atrasadosLista`; o que marca o rótulo
-        // é não ser da fatia de hoje.
-        .map((c) => ({ ...c, atrasado: !daFatiaDeHoje.has(chaveDe(c)) }));
+        .map((c) => ({
+          ...c,
+          atrasado: (posicaoNaDivisao.get(chaveDe(c)) ?? 0) < comecoDeHoje,
+        }));
 
   const hojeFeitos = hoje.filter(lido).length;
   const concluido = total > 0 && faltam === 0;
@@ -395,11 +413,17 @@ export function progressoDoPlano(
 
   // Sequência: dias seguidos com a meta batida. Dia sem nada separado (plano
   // esparso) não quebra nem soma.
-  const cumpridos = new Set(plano.diasCumpridos ?? []);
-  if (metaCumprida) cumpridos.add(dia);
+  const registrados = new Set(plano.diasCumpridos ?? []);
+  if (metaCumprida) registrados.add(dia);
+  // Dia passado conta como cumprido também quando todos os capítulos dele
+  // estão lidos no plano: cobre os dias de antes do registro existir, e quem
+  // leu tudo de um dia um pouco depois não fica com a bolinha apagada.
+  const cumprido = (d: number) =>
+    registrados.has(d) || (d < dia && doDia(d).length > 0 && doDia(d).every(lido));
+
   let sequencia = 0;
   for (let d = metaCumprida ? dia : dia - 1; d >= 1; d--) {
-    if (cumpridos.has(d)) sequencia++;
+    if (cumprido(d)) sequencia++;
     else if (doDia(d).length === 0) continue;
     else break;
   }
@@ -408,7 +432,7 @@ export function progressoDoPlano(
   for (let d = Math.max(1, diaVisivel - 6); d <= diaVisivel; d++) {
     semana.push({
       dia: d,
-      estado: cumpridos.has(d)
+      estado: cumprido(d)
         ? "cumprido"
         : d === dia
           ? "hoje"
