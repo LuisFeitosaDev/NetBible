@@ -11,7 +11,7 @@ import {
   type OrdemDoPlano,
 } from "@/lib/planos";
 import type { BibleIndex } from "@/lib/bible";
-import { ComoVaiLer } from "./ComoVaiLer";
+import { ComoVaiLer, type VinculoAtual } from "./ComoVaiLer";
 import { EscolherLivros } from "./EscolherLivros";
 
 export type EscolhaDePlano = {
@@ -41,15 +41,25 @@ const COR_DA_ORDEM: Record<OrdemDoPlano, string> = {
  * criado depois desse terceiro passo, para "criar grupo" e "criar plano"
  * nunca virarem dois fluxos separados.
  */
+export type AcoesDoPlano = {
+  sozinho: (escolha: EscolhaDePlano) => Promise<void>;
+  /** Cria o grupo com o plano e devolve o código de convite. */
+  emGrupo: (escolha: EscolhaDePlano) => Promise<string>;
+  /** Entra no plano de um grupo existente. `false` se o grupo não tem plano. */
+  comCodigo: (codigo: string) => Promise<boolean>;
+};
+
 export function CriarPlano({
   index,
-  aoCriar,
-  aoSalvar,
+  vinculoAtual,
+  acoes,
+  aoConcluir,
   aoCancelar,
 }: {
   index: BibleIndex;
-  aoCriar: (escolha: EscolhaDePlano) => void;
-  aoSalvar?: (escolha: EscolhaDePlano) => Promise<void>;
+  vinculoAtual: VinculoAtual;
+  acoes: AcoesDoPlano;
+  aoConcluir: () => void;
   aoCancelar?: () => void;
 }) {
   const [ordem, setOrdem] = useState<OrdemDoPlano | null>(null);
@@ -102,9 +112,14 @@ export function CriarPlano({
           </button>
         </div>
         <ComoVaiLer
-          nomeDoPlano={escolhaPendente.nome}
-          aoContinuar={() => aoCriar(escolhaPendente)}
-          aoSalvarPlano={aoSalvar ? () => aoSalvar(escolhaPendente) : undefined}
+          vinculoAtual={vinculoAtual}
+          aoSozinho={async () => {
+            await acoes.sozinho(escolhaPendente);
+            aoConcluir();
+          }}
+          aoCriarGrupo={() => acoes.emGrupo(escolhaPendente)}
+          aoEntrarComCodigo={acoes.comCodigo}
+          aoConcluir={aoConcluir}
         />
       </div>
     );

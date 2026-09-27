@@ -109,6 +109,12 @@ const planoParaRemoto = (p: PlanoSalvo, perfil: string) => ({
   // Só tem valor em planos "personalizado"; nas outras ordens fica null, e o
   // roteiro continua vindo da função fixa daquela ordem.
   livros: p.livros ?? null,
+  grupo_id: p.grupoId ?? null,
+  lidos_no_plano: p.lidosNoPlano ?? [],
+  dia_atribuido: p.diaAtribuido ?? null,
+  atribuicao: p.atribuicao ?? null,
+  dias_cumpridos: p.diasCumpridos ?? [],
+  reinicio_lidos: p.reinicioLidos ?? null,
   criado_em: new Date(p.criadoEm).toISOString(),
   atualizado_em: new Date(p.atualizadoEm ?? p.criadoEm).toISOString(),
 });
@@ -132,9 +138,9 @@ function conferirTabelaDePlanos(erro: { code?: string; message?: string } | null
   if (!faltando) return;
   jaAvisouDoSchema = true;
   console.warn(
-    "O plano de leitura não está sincronizando: a tabela `planos` não existe " +
-      "na conta. Rode supabase/schema-planos.sql no SQL Editor do Supabase. " +
-      "O resto (marcações, notas, progresso) continua normal.",
+    "O plano de leitura não está sincronizando: falta tabela ou coluna em " +
+      "`planos`. Rode supabase/schema-leitura-grupo-v2.sql no SQL Editor do " +
+      "Supabase. O resto (marcações, notas, progresso) continua normal.",
   );
 }
 
@@ -189,35 +195,41 @@ async function executar(): Promise<void> {
   }
 
   /*
-   * O plano é uma linha só por pessoa, então não entra no laço acima, que casa
-   * chaves. A regra é direta: existindo plano local, ele manda e sobrescreve o
-   * remoto. Não existindo, e havendo lápide na janela, a linha remota cai.
+   * O plano é uma linha só por pessoa: vence o mais recente, local ou remoto.
+   * Sobrescrever o remoto sempre faria um segundo aparelho, com o plano
+   * parado, apagar a cada sincronização os capítulos marcados no primeiro.
    *
-   * A ordem importa: quem encerrou um plano e escolheu outro no mesmo intervalo
-   * tem lápide e plano ao mesmo tempo, e aí o que vale é o plano novo.
+   * Lápide sem plano local apaga a linha remota. Quem encerrou um plano e
+   * escolheu outro no mesmo intervalo tem lápide e plano ao mesmo tempo, e aí
+   * o que vale é o plano novo.
    */
+  // `maybeSingle` e não `single`: conta sem plano é o estado normal.
+  const rPlano = await c.from("planos").select("*").eq("perfil_id", perfil).maybeSingle();
+  conferirTabelaDePlanos(rPlano.error);
+  let planoRemotoParaBaixar: typeof rPlano.data = null;
+
   if (plano) {
-    const { error } = await c.from("planos").upsert(planoParaRemoto(plano, perfil));
-    conferirTabelaDePlanos(error);
-  } else if (!plano && removidos.some((r) => r.tabela === "planos")) {
+    const localEm = plano.atualizadoEm ?? plano.criadoEm;
+    const remotoEm = rPlano.data ? ms(rPlano.data.atualizado_em) : 0;
+    if (localEm >= remotoEm) {
+      const { error } = await c.from("planos").upsert(planoParaRemoto(plano, perfil));
+      conferirTabelaDePlanos(error);
+    } else {
+      planoRemotoParaBaixar = rPlano.data;
+    }
+  } else if (removidos.some((r) => r.tabela === "planos")) {
     const { error } = await c.from("planos").delete().eq("perfil_id", perfil);
     conferirTabelaDePlanos(error);
+  } else {
+    planoRemotoParaBaixar = rPlano.data;
   }
 
   // ---------------------------------------------------------------- PULL --
-  const [rMarcas, rNotas, rLeitura, rFav, rPlano] = await Promise.all([
+  const [rMarcas, rNotas, rLeitura, rFav] = await Promise.all([
     c.from("marcacoes").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
     c.from("notas").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
     c.from("leitura").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
     c.from("favoritos").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
-    // `maybeSingle` e não `single`: conta sem plano é o estado normal, e o
-    // `single` transformaria isso num erro que derrubaria a sincronização toda.
-    c
-      .from("planos")
-      .select("*")
-      .eq("perfil_id", perfil)
-      .gt("atualizado_em", janela)
-      .maybeSingle(),
   ]);
 
   const apagadas = new Set(removidos.map((r) => `${r.tabela}:${r.chave}`));
@@ -291,8 +303,7 @@ async function executar(): Promise<void> {
         });
       }
 
-      conferirTabelaDePlanos(rPlano.error);
-      const p = rPlano.data;
+      const p = planoRemotoParaBaixar;
       if (p && !apagadas.has("planos:atual")) {
         const local = await db.planos.get("atual");
         const remotoEm = ms(p.atualizado_em);
@@ -311,21 +322,37 @@ async function executar(): Promise<void> {
   avisar("ocioso");
 }
 
-/** Roda uma sincronização, sem nunca deixar duas correrem ao mesmo tempo. */
-export async function sincronizar(): Promise<void> {
-  if (!supabaseConfigurado) return;
-  if (emCurso) return emCurso;
+let proxima: Promise<void> | null = null;
 
-  emCurso = executar()
-    .catch((e) => {
-      console.error("sync falhou", e);
-      avisar(navigator.onLine ? "erro" : "offline");
-    })
-    .finally(() => {
-      emCurso = null;
+/**
+ * Roda uma sincronização, sem nunca deixar duas correrem ao mesmo tempo.
+ *
+ * Chamada com uma já em curso, encadeia UMA rodada a mais em vez de devolver a
+ * que está rodando: aquela pode ter lido o banco local antes da escrita que
+ * motivou esta chamada, e quem espera o `await` precisa ver essa escrita no ar.
+ */
+export function sincronizar(): Promise<void> {
+  if (!supabaseConfigurado) return Promise.resolve();
+
+  if (!emCurso) {
+    emCurso = executar()
+      .catch((e) => {
+        console.error("sync falhou", e);
+        avisar(navigator.onLine ? "erro" : "offline");
+      })
+      .finally(() => {
+        emCurso = null;
+      });
+    return emCurso;
+  }
+
+  if (!proxima) {
+    proxima = emCurso.then(() => {
+      proxima = null;
+      return sincronizar();
     });
-
-  return emCurso;
+  }
+  return proxima;
 }
 
 /** Agrupa rajadas de escrita numa subida só. */
@@ -349,5 +376,22 @@ export function iniciarSync() {
   void sincronizar();
   window.addEventListener("online", () => void sincronizar());
   window.addEventListener("focus", () => agendarSincronizacao(500));
+  /*
+   * No celular, o timer do agendamento congela quando o app vai para segundo
+   * plano — e é exatamente o que acontece quando alguém marca um capítulo e
+   * troca para o WhatsApp. Sem isto, a marcação só subia na próxima abertura
+   * e o grupo via o progresso atrasado.
+   */
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      if (agendado) {
+        clearTimeout(agendado);
+        agendado = null;
+        void sincronizar();
+      }
+    } else {
+      agendarSincronizacao(500);
+    }
+  });
   sb().auth.onAuthStateChange(() => void sincronizar());
 }

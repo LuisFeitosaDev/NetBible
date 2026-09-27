@@ -56,9 +56,12 @@ estudo liberando uma etapa por vez enquanto as respostas aparecem ao vivo.
    [`supabase/schema-conta.sql`](supabase/schema-conta.sql),
    [`supabase/schema-planos.sql`](supabase/schema-planos.sql),
    [`supabase/schema-leitura-grupo.sql`](supabase/schema-leitura-grupo.sql),
-   [`supabase/schema-plano-personalizado.sql`](supabase/schema-plano-personalizado.sql) e
-   [`supabase/schema-grupo-tipo-restrito.sql`](supabase/schema-grupo-tipo-restrito.sql).
+   [`supabase/schema-plano-personalizado.sql`](supabase/schema-plano-personalizado.sql),
+   [`supabase/schema-grupo-tipo-restrito.sql`](supabase/schema-grupo-tipo-restrito.sql) e
+   [`supabase/schema-leitura-grupo-v2.sql`](supabase/schema-leitura-grupo-v2.sql).
    Todos são idempotentes; a ordem importa porque cada um depende do anterior.
+   **Nunca rode `desativar-rls.sql`**: sem RLS, a chave pública do app dá acesso
+   aos dados de todo mundo.
 3. **Authentication → Sign In / Providers** → ligue **Anonymous sign-ins**.
 4. Copie `.env.example` para `.env.local` e preencha a URL e a chave pública
    (**Project Settings → API**).

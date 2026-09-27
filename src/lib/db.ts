@@ -3,7 +3,7 @@
 import Dexie, { type Table } from "dexie";
 import type { HighlightColor } from "./catalog";
 import { refOf, type VersionId } from "./bible";
-import type { PlanoSalvo } from "./planos";
+import { chaveDoCapitulo, type PlanoSalvo } from "./planos";
 
 /**
  * Tudo que é do usuário vive aqui, no IndexedDB do próprio dispositivo.
@@ -218,6 +218,26 @@ export async function desmarcarCapitulo(slug: string, chapter: number) {
 }
 
 /* -------------------------- plano de leitura --------------------------- */
+
+/**
+ * Marca (ou desmarca) um capítulo no plano ativo e na Bíblia, juntos.
+ *
+ * Os dois registros são separados de propósito — o plano começa em 0% mesmo
+ * com capítulos já lidos na Bíblia — mas ler durante o plano conta nos dois.
+ */
+export async function marcarNoPlano(slug: string, chapter: number, lido: boolean) {
+  if (lido) await markChapterRead(slug, chapter);
+  else await desmarcarCapitulo(slug, chapter);
+
+  const plano = await db.planos.get("atual");
+  if (!plano) return;
+  const chave = chaveDoCapitulo(slug, chapter);
+  const conjunto = new Set(plano.lidosNoPlano ?? []);
+  if (lido === conjunto.has(chave)) return;
+  if (lido) conjunto.add(chave);
+  else conjunto.delete(chave);
+  await salvarPlano({ ...plano, lidosNoPlano: [...conjunto] });
+}
 
 export async function salvarPlano(plano: PlanoSalvo) {
   await db.transaction("rw", db.planos, db.removidos, async () => {

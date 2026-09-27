@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { VersionSwitch } from "./VersionSwitch";
+import { ouvirNaoVistos } from "@/lib/grupoEventos";
 
 /** Mesma ordem da barra do celular, para o app não trocar de mapa por tamanho de tela. */
 const LINKS = [
@@ -18,6 +19,8 @@ const LINKS = [
 export function TopNav() {
   const pathname = usePathname();
   const [solid, setSolid] = useState(false);
+  const [novidades, setNovidades] = useState(0);
+  useEffect(() => ouvirNaoVistos(setNovidades), []);
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 24);
@@ -63,13 +66,19 @@ export function TopNav() {
               <Link
                 key={href}
                 href={href}
-                className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${
+                className={`relative rounded-full px-3.5 py-1.5 text-sm transition-colors ${
                   active
                     ? "bg-white/10 font-semibold text-white"
                     : "text-ink-300 hover:text-white"
                 }`}
               >
                 {label}
+                {href === "/biblioteca" && novidades > 0 && (
+                  <span
+                    aria-label={`${novidades} novidades no grupo`}
+                    className="absolute right-1 top-1 h-2 w-2 rounded-full bg-gold-400"
+                  />
+                )}
               </Link>
             );
           })}

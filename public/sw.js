@@ -18,6 +18,26 @@ const ARTE_MAX = 300;
 
 self.addEventListener("install", () => self.skipWaiting());
 
+/* Toque no aviso do grupo ("fulano grifou"): abre o app onde o aviso aponta,
+   reaproveitando a janela que já estiver aberta. */
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || "/biblioteca";
+  event.waitUntil(
+    (async () => {
+      const janelas = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      for (const janela of janelas) {
+        if ("focus" in janela) {
+          await janela.focus();
+          if ("navigate" in janela) await janela.navigate(url).catch(() => {});
+          return;
+        }
+      }
+      await self.clients.openWindow(url);
+    })(),
+  );
+});
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches

@@ -1,13 +1,11 @@
 /**
  * Planos de leitura.
  *
- * A ideia é que o plano some do caminho. Ele não guarda uma lista própria de
- * "capítulos lidos": o progresso sai da tabela `reading`, a mesma que o leitor
- * já alimenta quando alguém chega ao fim de um capítulo. Quem lê, avança, sem
- * precisar voltar aqui para confirmar nada.
- *
- * Consequência boa disso: trocar de plano não perde nada, e um capítulo lido
- * antes de começar o plano já entra contado.
+ * O plano guarda o PRÓPRIO progresso (`lidosNoPlano`), separado do histórico
+ * da Bíblia (`reading`). Assim um plano novo sempre começa em 0%, mesmo que a
+ * pessoa já tenha lido aqueles capítulos um dia — e o histórico nunca precisa
+ * ser apagado para isso. Marcar um capítulo como lido durante o plano grava
+ * nos dois lugares.
  */
 
 import type { BibleIndex } from "./bible";
@@ -119,14 +117,22 @@ export type PlanoSalvo = {
   dias: number;
   /** Meia-noite local do dia 1. */
   inicioEm: number;
-  /**
-   * Quantos capítulos do roteiro já estavam lidos quando o plano começou.
-   *
-   * Sem esse ponto de partida, a previsão de término divide tudo que a pessoa
-   * já leu na vida pelos dias de plano: quem começa tendo lido 298 capítulos vê
-   * "no seu ritmo, termina em 3 dias". Ausente nos planos criados antes disto.
-   */
+  /** Legado: o crédito de capítulos lidos antes do plano. Não é mais usado. */
   lidosAoComecar?: number;
+  /**
+   * Capítulos lidos DENTRO deste plano, como "rm.1". Ausente só em planos
+   * criados antes desta versão, que ganham uma semente na primeira abertura.
+   */
+  lidosNoPlano?: string[];
+  /** Dias do plano em que a meta foi batida, para a sequência. */
+  diasCumpridos?: number[];
+  /**
+   * O que já estava lido quando a pessoa tocou em "recomeçar a contagem": fica
+   * fora da divisão dos dias, para o prazo novo cobrir só o que falta.
+   */
+  reinicioLidos?: string[];
+  /** Grupo de leitura a que este plano pertence. Ausente quando se lê sozinho. */
+  grupoId?: string;
   /**
    * A que dia do plano a atribuição abaixo se refere.
    *
@@ -152,10 +158,17 @@ export function inicioDoDia(quando: number | Date = Date.now()) {
   return d.getTime();
 }
 
+export type EscolhaDoPlano = {
+  nome: string;
+  ordem: OrdemDoPlano;
+  dias: number;
+  livros?: string[];
+};
+
+/** Plano novo: sempre em 0%, com `lidosNoPlano` vazio. */
 export function montarPlano(
-  escolha: { nome: string; ordem: OrdemDoPlano; dias: number; livros?: string[] },
-  lidosAoComecar = 0,
-  inicioEm = inicioDoDia(),
+  escolha: EscolhaDoPlano,
+  opcoes: { inicioEm?: number; grupoId?: string } = {},
 ): PlanoSalvo {
   return {
     id: "atual",
@@ -163,9 +176,12 @@ export function montarPlano(
     nome: escolha.nome,
     ordem: escolha.ordem,
     dias: escolha.dias,
-    inicioEm,
-    lidosAoComecar,
+    inicioEm: opcoes.inicioEm ?? inicioDoDia(),
+    lidosAoComecar: 0,
+    lidosNoPlano: [],
+    diasCumpridos: [],
     livros: escolha.livros,
+    grupoId: opcoes.grupoId,
     criadoEm: Date.now(),
     atualizadoEm: Date.now(),
   };
@@ -184,6 +200,12 @@ export type LinhaPlanoRemota = {
   inicio_em: string;
   lidos_ao_comecar: number | null;
   livros: string[] | null;
+  grupo_id?: string | null;
+  lidos_no_plano?: string[] | null;
+  dia_atribuido?: number | null;
+  atribuicao?: string[] | null;
+  dias_cumpridos?: number[] | null;
+  reinicio_lidos?: string[] | null;
   criado_em: string;
   atualizado_em: string;
 };
@@ -198,10 +220,18 @@ export function planoDeLinhaRemota(linha: LinhaPlanoRemota): PlanoSalvo {
     inicioEm: new Date(linha.inicio_em).getTime(),
     lidosAoComecar: linha.lidos_ao_comecar ?? 0,
     livros: linha.livros ?? undefined,
+    grupoId: linha.grupo_id ?? undefined,
+    lidosNoPlano: linha.lidos_no_plano ?? [],
+    diaAtribuido: linha.dia_atribuido ?? undefined,
+    atribuicao: linha.atribuicao ?? undefined,
+    diasCumpridos: linha.dias_cumpridos ?? [],
+    reinicioLidos: linha.reinicio_lidos ?? undefined,
     criadoEm: new Date(linha.criado_em).getTime(),
     atualizadoEm: new Date(linha.atualizado_em).getTime(),
   };
 }
+
+export const chaveDoCapitulo = (slug: string, capitulo: number) => `${slug}.${capitulo}`;
 
 export function roteiroDoPlano(
   plano: Pick<PlanoSalvo, "ordem"> & { livros?: string[] },
@@ -244,30 +274,39 @@ export function diaDeHoje(plano: Pick<PlanoSalvo, "inicioEm">) {
   return Math.floor((inicioDoDia() - plano.inicioEm) / DIA) + 1;
 }
 
+export type CapituloDeHoje = CapituloDoPlano & {
+  /** Veio de um dia que passou sem ser lido, redistribuído para hoje. */
+  atrasado: boolean;
+};
+
 export type ProgressoDoPlano = {
   /** Dia do calendário, sem limite superior. */
   dia: number;
   /** O mesmo, preso ao tamanho do plano, que é o que a tela mostra. */
   diaVisivel: number;
   dias: number;
-  /** Já descontados os capítulos que estavam lidos antes do plano nascer. */
   total: number;
-  /** Idem: só o que foi lido DEPOIS que o plano começou. */
+  /** Só o que foi lido DENTRO do plano. Um plano novo começa em 0. */
   lidos: number;
-  /** Sem desconto — a marca real de quanto do roteiro já foi lido, sempre. */
-  lidosBrutos: number;
+  percentual: number;
   /** Capítulos do roteiro que faltam, em qualquer ponto dele. */
   faltam: number;
-  /** Dias de plano que ainda restam, contando hoje. Nunca menos que 1. */
-  diasRestantes: number;
-  /** Quantos por dia daqui em diante para terminar no prazo. Recalculado. */
-  ritmoNecessario: number;
-  /** O ritmo com que o plano nasceu, para comparar. */
-  ritmoOriginal: number;
-  /** A leitura separada para hoje, já considerando o que ficou para trás. */
-  hoje: CapituloDoPlano[];
+  /** Capítulos de dias que já passaram e ainda não foram lidos. */
+  atrasados: number;
+  /** Quanto do atraso entra em cada dia daqui para frente. */
+  extraPorDia: number;
+  /** A cota "normal" de um dia, sem atraso. */
+  ritmoBase: number;
+  /** A leitura separada para hoje: a do dia mais a parte do atraso. */
+  hoje: CapituloDeHoje[];
   /** Quantos de `hoje` já estão lidos. */
   hojeFeitos: number;
+  /** Tudo de hoje lido (ou nada separado para hoje). */
+  metaCumprida: boolean;
+  /** Dias seguidos batendo a meta, contando hoje se já foi batida. */
+  sequencia: number;
+  /** Os últimos 7 dias do plano, para a faixa da semana. */
+  semana: { dia: number; estado: "cumprido" | "perdido" | "hoje" | "livre" }[];
   /** A atribuição guardada não é a de hoje: quem chama precisa gravar a nova. */
   precisaAtribuir: boolean;
   /** Chaves da atribuição de hoje, prontas para gravar. */
@@ -277,117 +316,150 @@ export type ProgressoDoPlano = {
   vencido: boolean;
   /** A data prometida pelo plano. Sempre existe. */
   terminaPrevisto: number;
-  /**
-   * Projeção pelo ritmo real desde que o plano começou. `null` enquanto não há
-   * dias nem leitura suficientes para a conta significar alguma coisa.
-   */
-  terminaNoRitmo: number | null;
+  /** Chaves lidas no plano, para a tela marcar cada linha. */
+  lidosNoPlano: Set<string>;
 };
 
-const chaveDe = (c: CapituloDoPlano) => `${c.slug}.${c.capitulo}`;
+const chaveDe = (c: CapituloDoPlano) => chaveDoCapitulo(c.slug, c.capitulo);
 
 /**
- * Junta plano, roteiro e o que já foi lido numa única visão para a tela.
+ * Junta plano e roteiro numa única visão para a tela.
  *
- * O ponto central: a cota de hoje não é uma fatia fixa do calendário, é o que
- * falta dividido pelos dias que sobram. Quem pula um dia não fica com um bloco
- * órfão no passado e um "você está atrasado" permanente; o atraso se dilui nos
- * dias seguintes e a conta se refaz sozinha. Quem se adianta vê a cota encolher.
+ * Cada dia tem a sua fatia fixa do roteiro. O que fica para trás NÃO vai todo
+ * para amanhã: espalha um a mais por dia nos dias seguintes. Deixou 2 de
+ * hoje? Amanhã e depois ficam com a cota + 1 cada. Deixou esses também? O
+ * atraso cresce e continua indo um a mais por dia; só quando ele passa do
+ * número de dias que restam é que a cota sobe para + 2, + 3, e assim vai.
  *
- * `lido` é uma função e não um Set pronto porque a tabela `reading` guarda os
- * capítulos por livro; quem chama já tem esse mapa montado e não precisa
- * espalhar 1189 chaves na memória.
+ * A lista de hoje fica gravada (`atribuicao`) quando o dia vira: se fosse
+ * recalculada a cada toque, marcar um atrasado puxaria o próximo para a lista
+ * e ela nunca esvaziaria.
  */
 export function progressoDoPlano(
   plano: PlanoSalvo,
   roteiro: CapituloDoPlano[],
-  lido: (slug: string, capitulo: number) => boolean,
 ): ProgressoDoPlano {
   const total = roteiro.length;
+  const dias = plano.dias;
   const dia = diaDeHoje(plano);
-  const diaVisivel = Math.min(Math.max(dia, 1), plano.dias);
+  const diaVisivel = Math.min(Math.max(dia, 1), dias);
 
-  const restantes: CapituloDoPlano[] = [];
-  for (const c of roteiro) if (!lido(c.slug, c.capitulo)) restantes.push(c);
-  const lidosBrutos = total - restantes.length;
+  const lidosNoPlano = new Set(plano.lidosNoPlano ?? []);
+  const lido = (c: CapituloDoPlano) => lidosNoPlano.has(chaveDe(c));
 
-  /*
-   * O que já estava lido quando o plano nasceu não conta na porcentagem: um
-   * plano recém-criado começa em 0%, não com crédito por capítulos lidos antes
-   * de existir. `restantes`, `ritmoNecessario`, `hoje` e `concluido` continuam
-   * usando a contagem bruta acima — esses precisam saber o que falta ler DE
-   * VERDADE, e reler um capítulo que já foi lido não deveria entrar na cota
-   * de ninguém.
-   */
-  const credito = Math.min(plano.lidosAoComecar ?? 0, total);
-  const totalExibido = total - credito;
-  const lidos = Math.max(0, lidosBrutos - credito);
+  let lidos = 0;
+  for (const c of roteiro) if (lido(c)) lidos++;
+  const faltam = total - lidos;
 
-  const diasRestantes = Math.max(1, plano.dias - diaVisivel + 1);
-  const ritmoNecessario = Math.max(1, Math.ceil(restantes.length / diasRestantes));
-  const ritmoOriginal = total / plano.dias;
+  // A divisão dos dias. Depois de "recomeçar a contagem", o que já estava lido
+  // sai da divisão e o prazo novo cobre só o que falta.
+  const foraDaDivisao = new Set(plano.reinicioLidos ?? []);
+  const divisao = foraDaDivisao.size
+    ? roteiro.filter((c) => !foraDaDivisao.has(chaveDe(c)))
+    : roteiro;
+  const inicioDoDiaN = (d: number) => Math.floor(((d - 1) * divisao.length) / dias);
+  const doDia = (d: number) =>
+    d >= 1 && d <= dias ? divisao.slice(inicioDoDiaN(d), inicioDoDiaN(d + 1)) : [];
 
-  /*
-   * A atribuição do dia fica gravada. Se ela fosse recalculada a cada pintura,
-   * marcar o primeiro capítulo faria os outros pularem para frente e a lista
-   * nunca esvaziaria: sempre "os próximos N não lidos". Gravada, ela é a mesma
-   * do começo ao fim do dia, e os itens vão sendo riscados.
-   */
+  const diaCorte = Math.min(Math.max(dia, 1), dias + 1);
+  const atrasadosLista = divisao.slice(0, inicioDoDiaN(diaCorte)).filter((c) => !lido(c));
+  const diasRestantes = dia <= dias ? dias - Math.max(dia, 1) + 1 : 1;
+  const extraPorDia = !atrasadosLista.length
+    ? 0
+    : dia > dias
+      ? atrasadosLista.length
+      : Math.max(1, Math.ceil(atrasadosLista.length / diasRestantes));
+
+  const fatiaDeHoje = doDia(dia);
+  const daFatiaDeHoje = new Set(fatiaDeHoje.map(chaveDe));
+  const calculado: CapituloDeHoje[] = [
+    ...atrasadosLista.slice(0, extraPorDia).map((c) => ({ ...c, atrasado: true })),
+    ...fatiaDeHoje.map((c) => ({ ...c, atrasado: false })),
+  ];
+
   const precisaAtribuir = plano.diaAtribuido !== dia || !plano.atribuicao;
   const naOrdem = new Map(roteiro.map((c) => [chaveDe(c), c]));
 
-  const hoje = precisaAtribuir
-    ? restantes.slice(0, ritmoNecessario)
+  const hoje: CapituloDeHoje[] = precisaAtribuir
+    ? calculado
     : (plano.atribuicao ?? [])
         .map((k) => naOrdem.get(k))
-        .filter((c): c is CapituloDoPlano => Boolean(c));
+        .filter((c): c is CapituloDoPlano => Boolean(c))
+        // Um atrasado já lido some de `atrasadosLista`; o que marca o rótulo
+        // é não ser da fatia de hoje.
+        .map((c) => ({ ...c, atrasado: !daFatiaDeHoje.has(chaveDe(c)) }));
 
-  const hojeFeitos = hoje.filter((c) => lido(c.slug, c.capitulo)).length;
+  const hojeFeitos = hoje.filter(lido).length;
+  const concluido = total > 0 && faltam === 0;
+  const metaCumprida = hoje.length > 0 && hojeFeitos === hoje.length && dia >= 1 && dia <= dias;
 
-  /*
-   * A projeção só usa o que foi lido depois que o plano começou, e só aparece
-   * depois de alguns dias. Com um ou dois dias de amostra ela oscila de 2027
-   * para 2035 a cada capítulo, o que não informa nada e ainda assusta.
-   * `lidos` já é só o que veio depois do crédito inicial, então é isso mesmo
-   * que a projeção precisa.
-   */
-  const decorridos = Math.max(dia, 1);
-  const porDia = lidos / decorridos;
-  const projecao =
-    decorridos >= 3 && porDia > 0 && restantes.length > 0
-      ? inicioDoDia() + Math.ceil(restantes.length / porDia) * DIA
-      : null;
+  // Sequência: dias seguidos com a meta batida. Dia sem nada separado (plano
+  // esparso) não quebra nem soma.
+  const cumpridos = new Set(plano.diasCumpridos ?? []);
+  if (metaCumprida) cumpridos.add(dia);
+  let sequencia = 0;
+  for (let d = metaCumprida ? dia : dia - 1; d >= 1; d--) {
+    if (cumpridos.has(d)) sequencia++;
+    else if (doDia(d).length === 0) continue;
+    else break;
+  }
 
-  /*
-   * Projeção absurda não é informação, é desânimo. Quem leu 2 capítulos em 60
-   * dias recebe "termina em 2125", que é aritmeticamente correto e não ajuda
-   * ninguém a abrir a Bíblia hoje. Passando de um prazo inteiro além do
-   * combinado, a tela mostra só o ritmo necessário, que é acionável.
-   */
-  const terminaPrevisto = dataDeTermino(plano.dias, plano.inicioEm);
-  const terminaNoRitmo =
-    projecao && projecao <= terminaPrevisto + plano.dias * DIA ? projecao : null;
+  const semana: ProgressoDoPlano["semana"] = [];
+  for (let d = Math.max(1, diaVisivel - 6); d <= diaVisivel; d++) {
+    semana.push({
+      dia: d,
+      estado: cumpridos.has(d)
+        ? "cumprido"
+        : d === dia
+          ? "hoje"
+          : doDia(d).length === 0
+            ? "livre"
+            : "perdido",
+    });
+  }
 
   return {
     dia,
     diaVisivel,
-    dias: plano.dias,
-    total: totalExibido,
+    dias,
+    total,
     lidos,
-    lidosBrutos,
-    faltam: restantes.length,
-    diasRestantes,
-    ritmoNecessario,
-    ritmoOriginal,
+    percentual: total ? Math.round((lidos / total) * 100) : 0,
+    faltam,
+    atrasados: atrasadosLista.length,
+    extraPorDia,
+    ritmoBase: Math.max(1, Math.round(divisao.length / dias)),
     hoje,
     hojeFeitos,
+    metaCumprida,
+    sequencia,
+    semana,
     precisaAtribuir,
     atribuicaoDeHoje: hoje.map(chaveDe),
-    concluido: restantes.length === 0,
-    vencido: dia > plano.dias && restantes.length > 0,
-    terminaPrevisto,
-    terminaNoRitmo,
+    concluido,
+    vencido: dia > dias && faltam > 0,
+    terminaPrevisto: dataDeTermino(dias, plano.inicioEm),
+    lidosNoPlano,
   };
+}
+
+/**
+ * Planos criados antes de existir `lidosNoPlano` ganham uma semente única: o
+ * que já estava marcado como lido nos dias que o plano já percorreu. Leituras
+ * antigas de capítulos lá da frente do roteiro ficam de fora — eram leituras
+ * de antes do plano, não do plano.
+ */
+export function sementeDeLidos(
+  plano: PlanoSalvo,
+  roteiro: CapituloDoPlano[],
+  lidoNaBiblia: (slug: string, capitulo: number) => boolean,
+): string[] {
+  const dia = Math.min(Math.max(diaDeHoje(plano), 1), plano.dias);
+  const ate = Math.floor((dia * roteiro.length) / plano.dias);
+  return roteiro
+    .slice(0, ate)
+    .filter((c) => lidoNaBiblia(c.slug, c.capitulo))
+    .map(chaveDe);
 }
 
 /** "3 capítulos por dia", para o cartão de escolha. */

@@ -6,6 +6,7 @@ import { TopNav } from "@/components/TopNav";
 import { MobileNav } from "@/components/MobileNav";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { Boot } from "@/components/Boot";
+import { AvisosDoGrupo } from "@/components/AvisosDoGrupo";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap" });
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MobileNav />
           <ServiceWorker />
           <Boot />
+          <AvisosDoGrupo />
         </BibleProvider>
       </body>
     </html>

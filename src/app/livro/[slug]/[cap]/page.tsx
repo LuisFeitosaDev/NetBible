@@ -27,11 +27,21 @@ import {
   desmarcarCapitulo,
   getPref,
   markChapterRead,
+  marcarNoPlano,
   setMark,
   setPref,
   touchReading,
 } from "@/lib/db";
-import { NOME_NA_BARRA, type HighlightColor } from "@/lib/catalog";
+import { HIGHLIGHT_COLORS, NOME_NA_BARRA, type HighlightColor } from "@/lib/catalog";
+import { chaveDoCapitulo, roteiroDoPlano } from "@/lib/planos";
+import {
+  grifosDoCapitulo,
+  publicarGrifos,
+  removerGrifos,
+  type EventoDoGrupo,
+} from "@/lib/grupoEventos";
+import { membrosDoGrupo } from "@/lib/grupos/api";
+import { sb, supabaseConfigurado } from "@/lib/grupos/supabase";
 import {
   CHAVE_TEMA_LEITURA,
   TEMA_LEITURA_PADRAO,
@@ -47,6 +57,8 @@ import { ControlesLeitura } from "@/components/ControlesLeitura";
 import { SeletorPassagem } from "@/components/SeletorPassagem";
 
 const TEXT_SIZES = ["text-[15px]", "text-[17px]", "text-[19px]", "text-[21px]", "text-[24px]"];
+
+const COR_DO_GRIFO = new Map<string, string>(HIGHLIGHT_COLORS.map((c) => [c.id, c.hex]));
 
 /**
  * Último capítulo aberto, guardado no módulo.
@@ -174,7 +186,60 @@ export default function ReaderPage() {
    * capítulo (`BotaoCapituloLido`, abaixo).
    */
   const registroDeLeitura = useLiveQuery(() => db.reading.get(slug), [slug]);
-  const capituloLido = registroDeLeitura?.done.includes(chapter) ?? false;
+
+  /*
+   * Com um plano ativo que passa por este capítulo, o botão do fim fala do
+   * PLANO: um capítulo lido meses atrás aparece como "não lido" aqui, porque
+   * no plano ele ainda não foi — e marcar grava no plano e na Bíblia.
+   */
+  const plano = useLiveQuery(() => db.planos.get("atual"), []);
+  const noPlano = useMemo(
+    () =>
+      Boolean(
+        plano &&
+          index &&
+          roteiroDoPlano(plano, index).some((c) => c.slug === slug && c.capitulo === chapter),
+      ),
+    [plano, index, slug, chapter],
+  );
+  const capituloLido = noPlano
+    ? (plano?.lidosNoPlano ?? []).includes(chaveDoCapitulo(slug, chapter))
+    : (registroDeLeitura?.done.includes(chapter) ?? false);
+
+  // Grifos de quem lê o mesmo plano em grupo, para mostrar nos versículos.
+  const grupoDoPlano = noPlano ? plano?.grupoId : undefined;
+  const [grifosDoGrupo, setGrifosDoGrupo] = useState<EventoDoGrupo[]>([]);
+  const [nomesDoGrupo, setNomesDoGrupo] = useState<Map<string, string>>(new Map());
+
+  useEffect(() => {
+    setGrifosDoGrupo([]);
+    if (!grupoDoPlano || !supabaseConfigurado) return;
+    let vivo = true;
+    (async () => {
+      const [grifos, membros, sessao] = await Promise.all([
+        grifosDoCapitulo(grupoDoPlano, slug, chapter),
+        membrosDoGrupo(grupoDoPlano),
+        sb().auth.getSession(),
+      ]);
+      if (!vivo) return;
+      const meuId = sessao.data.session?.user?.id;
+      setGrifosDoGrupo(grifos.filter((g) => g.perfil_id !== meuId));
+      setNomesDoGrupo(new Map(membros.map((m) => [m.perfil_id, m.profiles?.nome ?? "Alguém"])));
+    })().catch(() => {});
+    return () => {
+      vivo = false;
+    };
+  }, [grupoDoPlano, slug, chapter]);
+
+  const grifosPorVersiculo = useMemo(() => {
+    const mapa = new Map<number, EventoDoGrupo[]>();
+    for (const g of grifosDoGrupo) {
+      const v = g.dados.versiculo;
+      if (!v) continue;
+      mapa.set(v, [...(mapa.get(v) ?? []), g]);
+    }
+    return mapa;
+  }, [grifosDoGrupo]);
 
   useEffect(() => {
     if (!focusVerse) return;
@@ -220,11 +285,28 @@ export default function ReaderPage() {
         }),
       ),
     );
+    // Grifou na leitura do plano em grupo: vai para o mural e avisa o grupo.
+    // A marcação na Bíblia já está salva acima, independente disto.
+    if (grupoDoPlano && book) {
+      void publicarGrifos(
+        grupoDoPlano,
+        selected.map((n) => ({
+          slug,
+          capitulo: chapter,
+          versiculo: n,
+          livro: book.name,
+          cor: color,
+          texto: verses[n - 1] ?? "",
+        })),
+      ).catch(() => {});
+    }
     setSelected([]);
   };
 
   const removeMarks = async () => {
-    await clearMarks(selected.map((n) => refOf(slug, chapter, n)));
+    const refs = selected.map((n) => refOf(slug, chapter, n));
+    await clearMarks(refs);
+    if (grupoDoPlano) void removerGrifos(grupoDoPlano, refs).catch(() => {});
     setSelected([]);
   };
 
@@ -381,6 +463,10 @@ export default function ReaderPage() {
             const mark = markByVerse.get(n);
             const note = noteByVerse.get(n);
             const isSelected = selected.includes(n);
+            const grifosDosOutros = grifosPorVersiculo.get(n);
+            const corDoOutro = grifosDosOutros
+              ? COR_DO_GRIFO.get(grifosDosOutros[0].dados.cor ?? "")
+              : undefined;
 
             return (
               <div key={n} id={`v-${n}`} className="scroll-mt-24">
@@ -391,6 +477,11 @@ export default function ReaderPage() {
                   } ${isSelected ? "bg-[var(--rl-selecao)] ring-1 ring-[color:var(--rl-selecao-anel)]" : ""} ${
                     focusVerse === n ? "animate-pulse bg-gold-400/25" : ""
                   }`}
+                  // Grifo de alguém do grupo num versículo que você não marcou:
+                  // um risco na margem, na cor que a pessoa usou.
+                  style={
+                    corDoOutro && !mark ? { boxShadow: `inset 3px 0 0 ${corDoOutro}` } : undefined
+                  }
                 >
                   <sup className="mr-1.5 select-none font-sans text-[0.62em] font-bold text-gold-500">
                     {n}
@@ -401,6 +492,24 @@ export default function ReaderPage() {
                       size={12}
                       className="ml-1.5 inline-block -translate-y-0.5 text-gold-400"
                     />
+                  )}
+                  {grifosDosOutros && (
+                    <span className="ml-1.5 inline-flex -translate-y-0.5 gap-0.5 align-middle">
+                      {grifosDosOutros.map((g) => {
+                        const nome = nomesDoGrupo.get(g.perfil_id) ?? "Alguém";
+                        return (
+                          <span
+                            key={g.id}
+                            title={`${nome} grifou`}
+                            aria-label={`${nome} grifou este versículo`}
+                            className="inline-grid h-[18px] w-[18px] place-items-center rounded-full font-sans text-[10px] font-bold text-ink-950"
+                            style={{ background: COR_DO_GRIFO.get(g.dados.cor ?? "") ?? "#facc15" }}
+                          >
+                            {nome.charAt(0).toUpperCase()}
+                          </span>
+                        );
+                      })}
+                    </span>
                   )}
                 </p>
 
@@ -441,7 +550,11 @@ export default function ReaderPage() {
             versículo não pode contar como "li o capítulo inteiro". */}
         <button
           onClick={() =>
-            capituloLido ? desmarcarCapitulo(slug, chapter) : markChapterRead(slug, chapter)
+            noPlano
+              ? marcarNoPlano(slug, chapter, !capituloLido)
+              : capituloLido
+                ? desmarcarCapitulo(slug, chapter)
+                : markChapterRead(slug, chapter)
           }
           aria-pressed={capituloLido}
           className={`mt-10 flex w-full items-center justify-center gap-2.5 rounded-xl border py-3.5 font-display text-[13.5px] font-bold transition-colors ${
@@ -463,6 +576,11 @@ export default function ReaderPage() {
             ? `${book.name} ${chapter} marcado como lido`
             : `Marcar ${book.name} ${chapter} como lido`}
         </button>
+        {noPlano && (
+          <p className="mt-2 text-center text-[11.5px] text-ink-500">
+            {capituloLido ? "Contou no seu plano de leitura." : "Conta no seu plano de leitura."}
+          </p>
+        )}
 
         {/* Navegação entre capítulos */}
         <nav className="mt-14 flex items-center justify-between gap-3 border-t border-[color:var(--rl-borda-1)] pt-6">

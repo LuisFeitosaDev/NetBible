@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Home, BookOpen, Compass, CircleUser, Users } from "lucide-react";
+import { ouvirNaoVistos } from "@/lib/grupoEventos";
 
 /** A ordem é a do uso: abrir o app, ler, voltar ao que é seu, estudar junto, conta. */
 const ITEMS = [
@@ -15,6 +17,8 @@ const ITEMS = [
 
 export function MobileNav() {
   const pathname = usePathname();
+  const [novidades, setNovidades] = useState(0);
+  useEffect(() => ouvirNaoVistos(setNovidades), []);
   if (/^\/livro\/[^/]+\/\d+/.test(pathname)) return null;
 
   return (
@@ -30,7 +34,15 @@ export function MobileNav() {
                 active ? "text-gold-400" : "text-ink-400"
               }`}
             >
-              <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
+              <span className="relative">
+                <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
+                {href === "/biblioteca" && novidades > 0 && (
+                  <span
+                    aria-label={`${novidades} novidades no grupo`}
+                    className="absolute -right-1.5 -top-1 h-2.5 w-2.5 rounded-full bg-gold-400 ring-2 ring-ink-950"
+                  />
+                )}
+              </span>
               {/* Cinco itens numa tela de 320px: sem `whitespace-nowrap`, um
                   rótulo mais longo quebra em duas linhas e desalinha a barra. */}
               <span className="whitespace-nowrap text-[9.5px] font-medium">{label}</span>

@@ -5,48 +5,37 @@ import { KeyRound, Loader2 } from "lucide-react";
 import { Gate } from "@/components/grupos/Gate";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
 import { entrarNoGrupoComPlano } from "@/lib/leituraGrupo";
-import type { BibleIndex } from "@/lib/bible";
 
 /**
- * Entrar num grupo já existente, pelo código de quem criou.
- *
- * Fica na tela vazia da Jornada, ao lado de "Criar plano de leitura" — sem
- * isso, a única porta de entrada num grupo era criar seu próprio plano
- * primeiro, o que não faz sentido para quem só recebeu um código e quer
- * entrar direto no que já está rolando.
+ * Entrar num grupo já existente, pelo código de quem criou. Fica na tela vazia
+ * da Jornada: quem só recebeu um código não precisa montar plano nenhum.
  */
-export function EntrarComCodigo({
-  index,
-  lido,
-}: {
-  index: BibleIndex;
-  lido: (slug: string, capitulo: number) => boolean;
-}) {
+export function EntrarComCodigo() {
   const [aberto, setAberto] = useState(false);
+
+  if (!supabaseConfigurado) return null;
 
   if (!aberto) {
     return (
       <button
         onClick={() => setAberto(true)}
-        className="mt-2.5 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-400 transition-colors hover:text-white"
+        className="mt-3 inline-flex items-center gap-2 rounded-xl border border-white/12 px-4 py-2.5 text-[13px] font-semibold text-ink-200 transition-colors hover:border-white/25 hover:text-white"
       >
-        <KeyRound size={13} />
+        <KeyRound size={14} />
         Entrar com um código
       </button>
     );
   }
 
-  if (!supabaseConfigurado) return null;
-
   return (
-    <div className="mt-3 rounded-2xl border border-white/8 bg-ink-900 p-4">
+    <div className="mt-4 rounded-2xl border border-white/8 bg-ink-900 p-4 text-left">
       <Gate
         titulo="Entrar com um código"
-        descricao="Entre com a sua conta para entrar no grupo e ver o progresso de cada um em qualquer aparelho."
-        descricaoSemConta="Dá para entrar só com um nome. Mas aí o grupo fica preso a este aparelho: se limpar os dados ou trocar de celular, o resto do grupo para de ver sua leitura."
+        descricao="Entre com a sua conta para o grupo te acompanhar em qualquer aparelho."
+        descricaoSemConta="Dá para entrar só com um nome. Mas aí você fica preso a este aparelho: se limpar os dados ou trocar de celular, o grupo perde você."
         destino="/biblioteca"
       >
-        {() => <Formulario index={index} lido={lido} aoFechar={() => setAberto(false)} />}
+        {() => <Formulario />}
       </Gate>
       <button
         onClick={() => setAberto(false)}
@@ -58,33 +47,21 @@ export function EntrarComCodigo({
   );
 }
 
-function Formulario({
-  index,
-  lido,
-  aoFechar,
-}: {
-  index: BibleIndex;
-  lido: (slug: string, capitulo: number) => boolean;
-  aoFechar: () => void;
-}) {
+function Formulario() {
   const [codigo, setCodigo] = useState("");
   const [ocupado, setOcupado] = useState(false);
   const [falha, setFalha] = useState<string | null>(null);
-  const [semPlanoAinda, setSemPlanoAinda] = useState(false);
 
   const entrar = async () => {
     if (codigo.trim().length < 4) return;
     setOcupado(true);
     setFalha(null);
     try {
-      const { adotouPlano } = await entrarNoGrupoComPlano(codigo, index, lido);
-      if (adotouPlano) {
-        // O plano gravado localmente aparece sozinho: a tela do plano ouve o
-        // banco (useLiveQuery) e troca da vazia para a ativa assim que grava.
-        // Forçamos reload para garantir que o Dexie emita a notificação a tempo.
-        window.location.reload();
-      } else {
-        setSemPlanoAinda(true);
+      // Dando certo, o plano gravado localmente troca a tela sozinho: a
+      // Jornada ouve o banco local.
+      const { adotouPlano } = await entrarNoGrupoComPlano(codigo);
+      if (!adotouPlano) {
+        setFalha("Esse grupo ainda não tem um plano. Peça para quem criou fazer um novo.");
       }
     } catch (e) {
       setFalha(e instanceof Error ? e.message : String(e));
@@ -93,33 +70,15 @@ function Formulario({
     }
   };
 
-  if (semPlanoAinda) {
-    return (
-      <div className="text-center">
-        <p className="text-[13px] leading-relaxed text-ink-300">
-          Você entrou no grupo, mas ainda ninguém criou um plano por lá. Assim
-          que alguém criar, ele aparece aqui — ou crie o seu, que o grupo passa
-          a te acompanhar também.
-        </p>
-        <button
-          onClick={aoFechar}
-          className="mt-3 rounded-lg bg-white/10 px-4 py-2 text-[13px] font-semibold hover:bg-white/16"
-        >
-          Entendi
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-3">
+      <p className="text-[12.5px] leading-relaxed text-ink-400">
+        Digite o código que te mandaram. Você entra no plano do grupo, no mesmo
+        dia de leitura de todo mundo, começando do 0%.
+      </p>
       {falha && (
         <p className="rounded-lg bg-red-500/10 px-3 py-2 text-[12.5px] text-red-300">{falha}</p>
       )}
-      <p className="text-[12.5px] text-ink-400">
-        Digite o código que a outra pessoa te passou. Você entra no grupo e já
-        começa no mesmo dia de leitura que ela.
-      </p>
       <div className="flex gap-2">
         <input
           value={codigo}

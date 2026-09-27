@@ -13,7 +13,19 @@ export type Grupo = {
   lider_id: string;
   /** "estudo" é a aba Grupos (métodos, etapas); "leitura" é o plano em dupla/grupo. */
   tipo: TipoDeGrupo;
+  /** Só em grupos de leitura: o plano que o grupo inteiro segue. */
+  plano?: PlanoDoGrupo | null;
   criado_em: string;
+};
+
+/** A configuração do plano que mora dentro de um grupo de leitura. */
+export type PlanoDoGrupo = {
+  nome: string;
+  ordem: "canonica" | "cronologica" | "iniciante" | "proverbios" | "evangelhos" | "personalizado";
+  dias: number;
+  livros?: string[];
+  /** Meia-noite local do dia 1, igual para todo o grupo. */
+  inicioEm: number;
 };
 
 export type Papel = "lider" | "participante";
