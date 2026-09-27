@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Share2, Eraser, MessageSquarePlus, X, Check } from "lucide-react";
+import {
+  Copy,
+  Share2,
+  Eraser,
+  MessageSquarePlus,
+  X,
+  Check,
+  Image as ImageIcon,
+} from "lucide-react";
 import { HIGHLIGHT_COLORS, type HighlightColor } from "@/lib/catalog";
 
 export function VerseActions({
@@ -14,6 +22,7 @@ export function VerseActions({
   onNote,
   onCopy,
   onShare,
+  onImage,
   onClose,
 }: {
   count: number;
@@ -25,6 +34,7 @@ export function VerseActions({
   onNote: () => void;
   onCopy: () => Promise<void>;
   onShare: () => Promise<void>;
+  onImage: () => void;
   onClose: () => void;
 }) {
   const [copied, setCopied] = useState(false);
@@ -78,14 +88,15 @@ export function VerseActions({
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           <ActionButton icon={MessageSquarePlus} label="Comentar" onClick={onNote} />
           <ActionButton
             icon={copied ? Check : Copy}
             label={copied ? "Copiado" : "Copiar"}
             onClick={copy}
           />
-          <ActionButton icon={Share2} label="Compartilhar" onClick={() => void onShare()} />
+          <ActionButton icon={ImageIcon} label="Imagem" onClick={onImage} destaque />
+          <ActionButton icon={Share2} label="Enviar texto" onClick={() => void onShare()} />
         </div>
       </div>
     </div>
@@ -96,15 +107,21 @@ function ActionButton({
   icon: Icon,
   label,
   onClick,
+  destaque = false,
 }: {
   icon: React.ComponentType<{ size?: number }>;
   label: string;
   onClick: () => void;
+  destaque?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1 rounded-lg bg-[var(--rl-sutil-2)] py-2.5 text-[11px] font-semibold text-ink-100 transition-colors hover:bg-[var(--rl-sutil-3)]"
+      className={`flex flex-col items-center gap-1 rounded-lg py-2.5 text-[11px] font-semibold transition-colors ${
+        destaque
+          ? "bg-gold-400/15 text-gold-400 hover:bg-gold-400/25"
+          : "bg-[var(--rl-sutil-2)] text-ink-100 hover:bg-[var(--rl-sutil-3)]"
+      }`}
     >
       <Icon size={17} />
       {label}

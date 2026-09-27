@@ -52,6 +52,7 @@ import {
   type TemaLeitura,
 } from "@/lib/temaLeitura";
 import { VerseActions } from "@/components/VerseActions";
+import { CompartilharImagem } from "@/components/CompartilharImagem";
 import { NoteSheet, type NoteTarget } from "@/components/NoteSheet";
 import { VersionSwitch } from "@/components/VersionSwitch";
 import { AboutSheet } from "@/components/AboutBook";
@@ -83,6 +84,7 @@ export default function ReaderPage() {
   const [second, setSecond] = useState<BookContent | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
+  const [criandoImagem, setCriandoImagem] = useState(false);
   const [sizeStep, setSizeStep] = useState(1);
   const [temaLeitura, setTemaLeitura] = useState<TemaLeitura>(TEMA_LEITURA_PADRAO);
   const [fonteLeitura, setFonteLeitura] = useState<FonteLeitura>(FONTE_LEITURA_PADRAO);
@@ -273,10 +275,19 @@ export default function ReaderPage() {
   const selectionText = () =>
     selected.map((n) => verses[n - 1]).filter(Boolean).join(" ");
 
-  const shareBody = () => {
-    const short = index?.versions.find((v) => v.id === version)?.short ?? "";
-    return `“${selectionText()}”\n— ${label} (${short})`;
-  };
+  const siglaDaVersao = index?.versions.find((v) => v.id === version)?.short ?? "";
+
+  // Copiar leva só o versículo; enviar leva também o link para abrir no app.
+  const shareBody = () => `“${selectionText()}”\n— ${label} (${siglaDaVersao})`;
+  const textoParaEnviar = () =>
+    [
+      `“${selectionText()}”`,
+      "",
+      `${label} · ${siglaDaVersao}`,
+      "",
+      "Leia no Genipse Bible:",
+      `${window.location.origin}/livro/${slug}/${chapter}?v=${selected[0]}`,
+    ].join("\n");
 
   const applyColor = async (color: HighlightColor) => {
     await Promise.all(
@@ -644,10 +655,10 @@ export default function ReaderPage() {
             await navigator.clipboard.writeText(shareBody());
           }}
           onShare={async () => {
-            const body = shareBody();
+            const body = textoParaEnviar();
             if (navigator.share) {
               try {
-                await navigator.share({ title: label, text: body });
+                await navigator.share({ text: body });
                 return;
               } catch {
                 /* usuário cancelou */
@@ -655,7 +666,19 @@ export default function ReaderPage() {
             }
             await navigator.clipboard.writeText(body);
           }}
+          onImage={() => setCriandoImagem(true)}
           onClose={() => setSelected([])}
+        />
+      )}
+
+      {criandoImagem && selected.length > 0 && (
+        <CompartilharImagem
+          texto={selectionText()}
+          referencia={`${label} · ${siglaDaVersao}`}
+          slug={slug}
+          capitulo={chapter}
+          nomeDoArquivo={`genipse-${slug}-${chapter}-${selected[0]}`}
+          aoFechar={() => setCriandoImagem(false)}
         />
       )}
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Copy, KeyRound, Loader2, Share2, TriangleAlert, User, Users } from "lucide-react";
 import { Gate } from "@/components/grupos/Gate";
 import { supabaseConfigurado } from "@/lib/grupos/supabase";
+import { textoDoConvite } from "@/lib/convite";
 
 export type VinculoAtual = { nome: string; souLider: boolean } | null;
 
@@ -15,12 +16,14 @@ export type VinculoAtual = { nome: string; souLider: boolean } | null;
  * escolhe ler com alguém.
  */
 export function ComoVaiLer({
+  nomeDoPlano,
   vinculoAtual,
   aoSozinho,
   aoCriarGrupo,
   aoEntrarComCodigo,
   aoConcluir,
 }: {
+  nomeDoPlano: string;
   vinculoAtual: VinculoAtual;
   aoSozinho: () => Promise<void>;
   aoCriarGrupo: () => Promise<string>;
@@ -113,7 +116,11 @@ export function ComoVaiLer({
         >
           {() =>
             modo === "grupo" ? (
-              <CriarGrupo aoCriarGrupo={aoCriarGrupo} aoConcluir={aoConcluir} />
+              <CriarGrupo
+                nomeDoPlano={nomeDoPlano}
+                aoCriarGrupo={aoCriarGrupo}
+                aoConcluir={aoConcluir}
+              />
             ) : (
               <EntrarComCodigoNoPasso aoEntrar={aoEntrarComCodigo} aoConcluir={aoConcluir} />
             )
@@ -131,9 +138,11 @@ export function ComoVaiLer({
 }
 
 function CriarGrupo({
+  nomeDoPlano,
   aoCriarGrupo,
   aoConcluir,
 }: {
+  nomeDoPlano: string;
   aoCriarGrupo: () => Promise<string>;
   aoConcluir: () => void;
 }) {
@@ -174,7 +183,7 @@ function CriarGrupo({
     );
   }
 
-  const texto = `Bora ler a Bíblia junto? Entra com esse código no Genipse Bible (Jornada > Entrar com um código): ${codigo}`;
+  const texto = textoDoConvite(codigo, nomeDoPlano);
   return (
     <div className="space-y-3 text-center">
       <p className="text-[12px] text-ink-400">Mande este código para quem vai ler com você</p>

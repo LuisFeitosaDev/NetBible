@@ -30,6 +30,7 @@ import {
 import { apagarPlano } from "@/lib/db";
 import { inicioDoDia, type PlanoSalvo, type ProgressoDoPlano } from "@/lib/planos";
 import { HIGHLIGHT_COLORS } from "@/lib/catalog";
+import { textoDoConvite } from "@/lib/convite";
 import type { Grupo } from "@/lib/grupos/tipos";
 import type { BibleIndex } from "@/lib/bible";
 import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
@@ -168,7 +169,7 @@ export function GrupoDeLeitura({
         </button>
       </div>
 
-      {convidando && <PainelDoCodigo codigo={grupo.codigo} />}
+      {convidando && <PainelDoCodigo codigo={grupo.codigo} nomeDoPlano={plano.nome} />}
 
       {cutucadaPraMim && !eu?.plano?.metaCumprida && (
         <div className="mx-4 mt-3 flex animate-rise items-center gap-2.5 rounded-2xl bg-amber-400/12 px-3 py-2.5">
@@ -466,9 +467,9 @@ function ItemDoMural({
   );
 }
 
-function PainelDoCodigo({ codigo }: { codigo: string }) {
+function PainelDoCodigo({ codigo, nomeDoPlano }: { codigo: string; nomeDoPlano: string }) {
   const [copiado, setCopiado] = useState(false);
-  const texto = `Bora ler a Bíblia junto? Entra com esse código no Genipse Bible (Jornada > Entrar com um código): ${codigo}`;
+  const texto = textoDoConvite(codigo, nomeDoPlano);
 
   return (
     <div className="mx-4 mt-3 animate-rise rounded-2xl border border-gold-500/25 bg-gold-500/[0.06] p-4 text-center">

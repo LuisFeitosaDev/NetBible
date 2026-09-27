@@ -112,6 +112,7 @@ export function CriarPlano({
           </button>
         </div>
         <ComoVaiLer
+          nomeDoPlano={escolhaPendente.nome}
           vinculoAtual={vinculoAtual}
           aoSozinho={async () => {
             await acoes.sozinho(escolhaPendente);
