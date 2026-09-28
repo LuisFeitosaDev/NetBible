@@ -216,10 +216,10 @@
   "licenca": "Public domain"
  },
  "at-9": {
-  "titulo": "Bowyer Bible Luke The converted Saul now Paul Acts cap 9 vv 3-6 Perelle",
-  "page": "https://commons.wikimedia.org/wiki/File:Bowyer_Bible_Luke_The_converted_Saul_now_Paul_Acts_cap_9_vv_3-6_Perelle.jpg",
-  "artista": "Phidev74",
-  "licenca": "CC BY-SA 3.0"
+  "titulo": "Saulo no caminho de Damasco",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131911).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
  },
  "dn-1": {
   "titulo": "128.Daniel among the Exiles",
@@ -948,63 +948,75 @@
   "licenca": "Domínio público"
  },
  "rm-1": {
-  "titulo": "Romanos 1",
-  "artista": "Desconhecido",
+  "titulo": "Trocaram a glória de Deus por ídolos",
+  "page": "https://commons.wikimedia.org/wiki/File:Nicolas_Poussin_-_The_Adoration_of_the_Golden_Calf_alt.jpg",
+  "artista": "Nicolas Poussin",
   "licenca": "Domínio público"
  },
  "rm-2": {
-  "titulo": "Romanos 2",
-  "artista": "Desconhecido",
+  "titulo": "O justo juízo de Deus",
+  "page": "https://commons.wikimedia.org/wiki/File:Jugement_de_Salomon,_Guillaume_Chasteau,_d%27apr%C3%A8s_Poussin,_vers_1670_CROP.jpg",
+  "artista": "Guillaume Chasteau, segundo Poussin",
   "licenca": "Domínio público"
  },
  "rm-3": {
-  "titulo": "Romanos 3",
-  "artista": "Desconhecido",
+  "titulo": "Todos pecaram",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_-_The_Woman_taken_in_Adultery_(1644).jpg",
+  "artista": "Rembrandt",
   "licenca": "Domínio público"
  },
  "rm-4": {
-  "titulo": "Romanos 4",
-  "artista": "Desconhecido",
+  "titulo": "Abraão creu na promessa",
+  "page": "https://commons.wikimedia.org/wiki/File:(Venice)_The_Three_Angels_appearing_to_Abraham_by_Giandomenico_Tiepolo_-_Gallerie_Accademia.jpg",
+  "artista": "Giandomenico Tiepolo",
   "licenca": "Domínio público"
  },
  "rm-5": {
-  "titulo": "Romanos 5",
-  "artista": "Desconhecido",
+  "titulo": "Por um só homem entrou o pecado",
+  "page": "https://commons.wikimedia.org/wiki/File:Sistine_Chapel_ceiling_-_Fall_and_Expulsion_from_Garden_of_Eden_(5387852246).jpg",
+  "artista": "Michelangelo",
   "licenca": "Domínio público"
  },
  "rm-6": {
-  "titulo": "Romanos 6",
-  "artista": "Desconhecido",
+  "titulo": "Sepultados com ele no batismo",
+  "page": "https://commons.wikimedia.org/wiki/File:Piero_della_Francesca_-_Battesimo_di_Cristo_(National_Gallery,_London).jpg",
+  "artista": "Piero della Francesca",
   "licenca": "Domínio público"
  },
  "rm-7": {
-  "titulo": "Romanos 7",
-  "artista": "Desconhecido",
+  "titulo": "A luta interior",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_-_Jacob_Wrestling_with_the_Angel_-_Google_Art_Project_(cropped_for_emotional_interaction).jpg",
+  "artista": "Rembrandt",
   "licenca": "Domínio público"
  },
  "rm-8": {
-  "titulo": "Romanos 8",
-  "artista": "Desconhecido",
+  "titulo": "O Espírito que ressuscitou Jesus",
+  "page": "https://commons.wikimedia.org/wiki/File:Matthias_Gr%C3%BCnewald_-_Resurrection.jpg",
+  "artista": "Matthias Grünewald",
   "licenca": "Domínio público"
  },
  "rm-9": {
-  "titulo": "Romanos 9",
-  "artista": "Desconhecido",
+  "titulo": "Jacó e Esaú",
+  "page": "https://commons.wikimedia.org/wiki/File:Hendrick_ter_Brugghen_(1588_-_1.11.1629)_-_Esau_Sells_his_Birthright_-_1982_-_Gem%C3%A4ldegalerie.jpg",
+  "artista": "Hendrick ter Brugghen",
   "licenca": "Domínio público"
  },
  "rm-10": {
-  "titulo": "Romanos 10",
-  "artista": "Desconhecido",
+  "titulo": "Como são belos os pés dos que anunciam",
+  "page": "https://commons.wikimedia.org/wiki/File:Sermon_of_Saint_Stephen_by_Carpaccio.jpg",
+  "artista": "Vittore Carpaccio",
   "licenca": "Domínio público"
  },
  "rm-12": {
-  "titulo": "Romanos 12",
-  "artista": "Desconhecido",
+  "titulo": "Vence o mal com o bem",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_(Domenikos_Theotokopoulos),_Saint_Martin_and_the_Beggar,_1597-1599,_NGA_1164.jpg",
+  "artista": "El Greco",
   "licenca": "Domínio público"
  },
  "1co-1": {
-  "titulo": "1 CO 1",
-  "artista": "Desconhecido",
+  "titulo": "A mensagem da cruz",
+  "page": "https://commons.wikimedia.org/wiki/File:Crucifixion_-_Andrea_Mantegna_-_Louvre_INV_368.jpg",
+  "artista": "Andrea Mantegna",
   "licenca": "Domínio público"
  },
  "1co-10": {
@@ -1013,98 +1025,117 @@
   "licenca": "Domínio público"
  },
  "1co-11": {
-  "titulo": "1 CO 11",
-  "artista": "Desconhecido",
+  "titulo": "A ceia do Senhor",
+  "page": "https://commons.wikimedia.org/wiki/File:Tintoretto,_Jacopo_-_Ultima_cena_-_San_Giorgio_Maggiore.jpg",
+  "artista": "Tintoretto",
   "licenca": "Domínio público"
  },
  "1co-12": {
-  "titulo": "1 CO 12",
-  "artista": "Desconhecido",
+  "titulo": "Um só corpo, muitos membros",
+  "page": "https://commons.wikimedia.org/wiki/File:Hosios_Loukas_Katholikon_(sanctuary_vault)_-_Pentecost_01.jpg",
+  "artista": "Mosaico de Hosios Loukas",
   "licenca": "Domínio público"
  },
  "1co-13": {
-  "titulo": "1 CO 13",
-  "artista": "Desconhecido",
+  "titulo": "O amor",
+  "page": "https://commons.wikimedia.org/wiki/File:Holy_family_with_angels.jpeg",
+  "artista": "Rembrandt",
   "licenca": "Domínio público"
  },
  "1co-14": {
-  "titulo": "1 CO 14",
-  "artista": "Desconhecido",
+  "titulo": "O dom de línguas",
+  "page": "https://commons.wikimedia.org/wiki/File:Bruegel,_Tower_of_Babel_(Kunsthistorisches_Museum,_Vienna).jpg",
+  "artista": "Pieter Bruegel, o Velho",
   "licenca": "Domínio público"
  },
  "1co-15": {
-  "titulo": "1 CO 15",
-  "artista": "Desconhecido",
+  "titulo": "A ressurreição",
+  "page": "https://commons.wikimedia.org/wiki/File:Piero_della_Francesca_-_Resurrection_-_WGA17609.jpg",
+  "artista": "Piero della Francesca",
   "licenca": "Domínio público"
  },
  "1co-2": {
-  "titulo": "1 CO 2",
-  "artista": "Desconhecido",
+  "titulo": "A sabedoria deste mundo",
+  "page": "https://commons.wikimedia.org/wiki/File:Raphael_School_of_Athens.jpg",
+  "artista": "Rafael",
   "licenca": "Domínio público"
  },
  "1co-3": {
-  "titulo": "1 CO 3",
-  "artista": "Desconhecido",
+  "titulo": "Edifício de Deus",
+  "page": "https://commons.wikimedia.org/wiki/File:Construction_du_Temple_de_J%C3%A9rusalem.jpg",
+  "artista": "Jean Fouquet",
   "licenca": "Domínio público"
  },
  "1co-4": {
-  "titulo": "1 CO 4",
-  "artista": "Desconhecido",
+  "titulo": "Despenseiros dos mistérios de Deus",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Apostle_Paul,_made_1627-1629,_by_Jan_Lievens_(1607-1674)._Nationalmuseum,_Stockholm,_Sweden.jpg",
+  "artista": "Jan Lievens",
   "licenca": "Domínio público"
  },
  "1co-5": {
-  "titulo": "1 CO 5",
-  "artista": "Desconhecido",
+  "titulo": "Cristo, nossa Páscoa",
+  "page": "https://commons.wikimedia.org/wiki/File:Dieric_Bouts_-_The_Feast_of_the_Passover_-_WGA03013.jpg",
+  "artista": "Dieric Bouts",
   "licenca": "Domínio público"
  },
  "1co-6": {
-  "titulo": "1 CO 6",
-  "artista": "Desconhecido",
+  "titulo": "Fugi da imoralidade",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_Workshop,_Joseph_Accused_by_Potiphar%27s_Wife,_1655,_NGA_86.jpg",
+  "artista": "Ateliê de Rembrandt",
   "licenca": "Domínio público"
  },
  "1co-7": {
-  "titulo": "1 CO 7",
-  "artista": "Desconhecido",
+  "titulo": "O casamento",
+  "page": "https://commons.wikimedia.org/wiki/File:Raffaello_-_Spozalizio_-_Web_Gallery_of_Art.jpg",
+  "artista": "Rafael",
   "licenca": "Domínio público"
  },
  "1co-8": {
-  "titulo": "1 CO 8",
-  "artista": "Desconhecido",
+  "titulo": "O que é sacrificado aos ídolos",
+  "page": "https://commons.wikimedia.org/wiki/File:Frans_Francken_the_Younger_-_The_Idolatry_of_Solomon_-_71.PB.42_-_J._Paul_Getty_Museum.jpg",
+  "artista": "Frans Francken, o Jovem",
   "licenca": "Domínio público"
  },
  "1co-9": {
-  "titulo": "1 CO 9",
-  "artista": "Desconhecido",
+  "titulo": "Correi de tal maneira que o alcanceis",
+  "page": "https://commons.wikimedia.org/wiki/File:Greek_vase_with_runners_at_the_panathenaic_games_530_bC.jpg",
+  "artista": "Vaso grego (c. 530 a.C.)",
   "licenca": "Domínio público"
  },
  "2co-2": {
-  "titulo": "2 CO 2",
-  "artista": "Desconhecido",
+  "titulo": "Levados em triunfo",
+  "page": "https://commons.wikimedia.org/wiki/File:Andrea_Mantegna_(1431-1506)_-_The_Triumphs_of_Caesar,_2._The_Bearers_of_Standards_and_Siege_Equipment_-_RCIN_403959_-_Royal_Collection.jpg",
+  "artista": "Andrea Mantegna",
   "licenca": "Domínio público"
  },
  "rm-11": {
-  "titulo": "RM 11",
-  "artista": "Desconhecido",
+  "titulo": "A oliveira",
+  "page": "https://commons.wikimedia.org/wiki/File:Vincent_van_Gogh_-_Olive_Trees_-_Google_Art_Project.jpg",
+  "artista": "Vincent van Gogh",
   "licenca": "Domínio público"
  },
  "rm-13": {
-  "titulo": "RM 13",
-  "artista": "Desconhecido",
+  "titulo": "A quem tributo, tributo",
+  "page": "https://commons.wikimedia.org/wiki/File:Titian_-_The_Tribute_Money_-_Google_Art_Project_(715452).jpg",
+  "artista": "Ticiano",
   "licenca": "Domínio público"
  },
  "rm-14": {
-  "titulo": "RM 14",
-  "artista": "Desconhecido",
+  "titulo": "O reino não é comida nem bebida",
+  "page": "https://commons.wikimedia.org/wiki/File:Caravaggio_-_Supper_at_Emmaus_-_National_Gallery_London.jpeg",
+  "artista": "Caravaggio",
   "licenca": "Domínio público"
  },
  "rm-15": {
-  "titulo": "RM 15",
-  "artista": "Desconhecido",
+  "titulo": "Louvai o Senhor, todos os gentios",
+  "page": "https://commons.wikimedia.org/wiki/File:Gentile_da_fabriano,_adorazione_dei_magi.jpg",
+  "artista": "Gentile da Fabriano",
   "licenca": "Domínio público"
  },
  "rm-16": {
-  "titulo": "RM 16",
-  "artista": "Desconhecido",
+  "titulo": "Saudações aos irmãos",
+  "page": "https://commons.wikimedia.org/wiki/File:Two_Old_Men_Disputing_(%E2%80%9CSt._Peter_and_St._Paul%E2%80%9D).jpg",
+  "artista": "Rembrandt",
   "licenca": "Domínio público"
  },
  "mt-2": {
@@ -1765,6 +1796,630 @@
   "titulo": "As planícies do céu",
   "page": "https://commons.wikimedia.org/wiki/File:John_Martin_-_The_Plains_of_Heaven_-_Google_Art_Project.jpg",
   "artista": "John Martin",
+  "licenca": "Domínio público"
+ },
+ "at-1": {
+  "titulo": "A ascensão de Cristo",
+  "page": "https://commons.wikimedia.org/wiki/File:Jesus_ascending_to_heaven.jpg",
+  "artista": "John Singleton Copley",
+  "licenca": "Domínio público"
+ },
+ "at-2": {
+  "titulo": "A descida do Espírito Santo",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131814).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "at-3": {
+  "titulo": "Pedro e João curam o coxo",
+  "page": "https://commons.wikimedia.org/wiki/File:V%26A_-_Raphael,_The_Healing_of_the_Lame_Man_(1515).jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "at-4": {
+  "titulo": "Os apóstolos anunciam o evangelho",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131839).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "at-5": {
+  "titulo": "A morte de Ananias",
+  "page": "https://commons.wikimedia.org/wiki/File:Raphael_-_The_Death_of_Ananias_c.1515-6.jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "at-6": {
+  "titulo": "Estêvão é consagrado diácono",
+  "page": "https://commons.wikimedia.org/wiki/File:Vittore_Carpaccio_(um_1460-65_-_1525-26)_-_The_Ordination_of_St._Stephen_-_23_-_Gem%C3%A4ldegalerie.jpg",
+  "artista": "Vittore Carpaccio",
+  "licenca": "Domínio público"
+ },
+ "at-7": {
+  "titulo": "O martírio de Estêvão",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131888).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "at-8": {
+  "titulo": "Filipe batiza o eunuco etíope",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt,_The_Baptism_of_the_Eunuch,_1626,_Museum_Catharijneconvent,_Utrecht.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "at-10": {
+  "titulo": "Pedro na casa de Cornélio",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131941).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "at-11": {
+  "titulo": "A visão de Pedro",
+  "page": "https://commons.wikimedia.org/wiki/File:Domenico_Fetti_-_Peter%27s_vision_of_a_sheet_with_animals_-_Kunsthistorisches_Museum_Wien.jpg",
+  "artista": "Domenico Fetti",
+  "licenca": "Domínio público"
+ },
+ "at-12": {
+  "titulo": "A libertação de Pedro",
+  "page": "https://commons.wikimedia.org/wiki/File:Raphael_-_Deliverance_of_Saint_Peter.jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "at-13": {
+  "titulo": "A conversão do procônsul",
+  "page": "https://commons.wikimedia.org/wiki/File:Raphael_-_The_Conversion_of_the_Proconsul_c.1515-6.jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "at-14": {
+  "titulo": "O sacrifício em Listra",
+  "page": "https://commons.wikimedia.org/wiki/File:V%26A_-_Raphael,_The_Sacrifice_at_Lystra_(1515).jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "at-15": {
+  "titulo": "O concílio de Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:Koelner_Dom_Petrusfenster_Apostelkonzil.jpg",
+  "artista": "Vitral da Catedral de Colônia",
+  "licenca": "Domínio público"
+ },
+ "at-16": {
+  "titulo": "A conversão do carcereiro de Filipos",
+  "page": "https://commons.wikimedia.org/wiki/File:Philip_Galle_after_Jan_van_der_Straet,_The_Jailer_about_to_Kill_Himself,_Converted_by_Saint_Paul,_NGA_54327.jpg",
+  "artista": "Philip Galle, segundo Jan van der Straet",
+  "licenca": "Domínio público"
+ },
+ "at-17": {
+  "titulo": "Paulo prega em Atenas",
+  "page": "https://commons.wikimedia.org/wiki/File:Raphael_-_St_Paul_Preaching_at_Athens_c.1515-6.jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "at-18": {
+  "titulo": "Paulo na casa de Áquila e Priscila",
+  "page": "https://commons.wikimedia.org/wiki/File:St._Paul_is_staying_in_the_house_of_Aquila_and_his_wife_Pris_Wellcome_V0039575.jpg",
+  "artista": "Gravura da Wellcome Collection",
+  "licenca": "Domínio público"
+ },
+ "at-19": {
+  "titulo": "Paulo em Éfeso",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94132012).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "at-20": {
+  "titulo": "Paulo devolve a vida a Êutico",
+  "page": "https://commons.wikimedia.org/wiki/File:Saint_Paul_Restoring_Eutychus_to_Life_MET_DP812361.jpg",
+  "artista": "Gravura do Met",
+  "licenca": "Domínio público"
+ },
+ "at-21": {
+  "titulo": "O povo se levanta contra Paulo",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94132075).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "at-22": {
+  "titulo": "A prisão de Paulo",
+  "page": "https://commons.wikimedia.org/wiki/File:Philip_Galle_after_Jan_van_der_Straet,_The_Arrest_of_Saint_Paul,_NGA_54330.jpg",
+  "artista": "Philip Galle, segundo Jan van der Straet",
+  "licenca": "Domínio público"
+ },
+ "at-23": {
+  "titulo": "Paulo diante do Sinédrio",
+  "page": "https://commons.wikimedia.org/wiki/File:Paulus_voor_het_Sanhedrin_Handelingen_van_de_apostelen_(serietitel)_Acta_Apostolorum_(serietitel),_RP-P-OB-6572.jpg",
+  "artista": "Gravura do Rijksmuseum",
+  "licenca": "Domínio público"
+ },
+ "at-24": {
+  "titulo": "Paulo diante de Félix",
+  "page": "https://commons.wikimedia.org/wiki/File:Hogarth_-_Paul_Before_Felix,_1747-1751.jpg",
+  "artista": "William Hogarth",
+  "licenca": "Domínio público"
+ },
+ "at-25": {
+  "titulo": "Paulo diante de Festo",
+  "page": "https://commons.wikimedia.org/wiki/File:Philip_Galle_after_Jan_van_der_Straet,_Saint_Paul_before_Festus_and_Agrippa,_NGA_54332.jpg",
+  "artista": "Philip Galle, segundo Jan van der Straet",
+  "licenca": "Domínio público"
+ },
+ "at-26": {
+  "titulo": "Paulo diante do rei Agripa",
+  "page": "https://commons.wikimedia.org/wiki/File:Paul_and_King_Agrippa_by_Hendrick_Bloemaert_Centraal_Museum_2570.jpg",
+  "artista": "Hendrick Bloemaert",
+  "licenca": "Domínio público"
+ },
+ "at-27": {
+  "titulo": "Paulo chega à ilha de Malta",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94132116).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "at-28": {
+  "titulo": "Paulo e a víbora em Malta",
+  "page": "https://commons.wikimedia.org/wiki/File:Adam_Elsheimer_-_St._Paulus_auf_Malta.jpg",
+  "artista": "Adam Elsheimer",
+  "licenca": "Domínio público"
+ },
+ "2co-1": {
+  "titulo": "O Deus de toda consolação",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_van_Rijn_(and_Workshop%3F),_The_Apostle_Paul,_c._1657,_NGA_1198.jpg",
+  "artista": "Rembrandt e ateliê",
+  "licenca": "Domínio público"
+ },
+ "2co-3": {
+  "titulo": "Moisés e as tábuas de pedra",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_-_Moses_with_the_Ten_Commandments_-_Google_Art_Project.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "2co-4": {
+  "titulo": "Um tesouro em vasos de barro",
+  "page": "https://commons.wikimedia.org/wiki/File:Gideon_overvalt_de_Midjanieten_Geschiedenis_van_Gideon_(serietitel)_Thesaurus_sacrarum_historiarum_veteris_testamenti_(..)_(serietitel),_RP-P-1904-3568.jpg",
+  "artista": "Gravura do Thesaurus Sacrarum Historiarum",
+  "licenca": "Domínio público"
+ },
+ "2co-5": {
+  "titulo": "Uma nova criação",
+  "page": "https://commons.wikimedia.org/wiki/File:Michelangelo_-_Creation_of_Adam_(cropped).jpg",
+  "artista": "Michelangelo",
+  "licenca": "Domínio público"
+ },
+ "2co-6": {
+  "titulo": "Em prisões, em trabalhos, em vigílias",
+  "page": "https://commons.wikimedia.org/wiki/File:1627_Rembrandt_Paulus_im_Gef%C3%A4ngnis_Staatsgalerie_Stuttgart_anagoria.JPG",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "2co-7": {
+  "titulo": "A tristeza que leva ao arrependimento",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_Saint_Peter_in_Tears_-_Google_Art_Project.jpg",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "2co-8": {
+  "titulo": "As obras de misericórdia",
+  "page": "https://commons.wikimedia.org/wiki/File:Caravaggio_-_The_Seven_Works_of_Mercy_-_Google_Art_Project.jpg",
+  "artista": "Caravaggio",
+  "licenca": "Domínio público"
+ },
+ "2co-9": {
+  "titulo": "Quem semeia com fartura",
+  "page": "https://commons.wikimedia.org/wiki/File:Jean-Fran%C3%A7ois_Millet_-_The_Sower_-_Google_Art_Project.jpg",
+  "artista": "Jean-François Millet",
+  "licenca": "Domínio público"
+ },
+ "2co-10": {
+  "titulo": "Fortalezas que caem",
+  "page": "https://commons.wikimedia.org/wiki/File:Jean_Fouquet_001.jpg",
+  "artista": "Jean Fouquet",
+  "licenca": "Domínio público"
+ },
+ "2co-11": {
+  "titulo": "A fuga de Damasco num cesto",
+  "page": "https://commons.wikimedia.org/wiki/File:Paulus%27_vlucht_uit_Damascus_Handelingen_van_de_apostelen_(serietitel)_Acta_Apostolorum_(serietitel),_RP-P-OB-6552.jpg",
+  "artista": "Gravura do Rijksmuseum",
+  "licenca": "Domínio público"
+ },
+ "2co-12": {
+  "titulo": "Arrebatado ao terceiro céu",
+  "page": "https://commons.wikimedia.org/wiki/File:Le_Ravissement_de_saint_Paul_-_Nicolas_Poussin_-_Mus%C3%A9e_du_Louvre_Peintures_INV_7288_;_MR_2325.jpg",
+  "artista": "Nicolas Poussin",
+  "licenca": "Domínio público"
+ },
+ "2co-13": {
+  "titulo": "A despedida de Pedro e Paulo",
+  "page": "https://commons.wikimedia.org/wiki/File:Giovanni_Domenico_Tiepolo,_The_Parting_of_Saints_Peter_and_Paul,_1785-1795,_NGA_75775.jpg",
+  "artista": "Giovanni Domenico Tiepolo",
+  "licenca": "Domínio público"
+ },
+ "gl-1": {
+  "titulo": "A conversão de Paulo",
+  "page": "https://commons.wikimedia.org/wiki/File:Conversion_on_the_Way_to_Damascus-Caravaggio_(c.1600-1).jpg",
+  "artista": "Caravaggio",
+  "licenca": "Domínio público"
+ },
+ "gl-2": {
+  "titulo": "Pedro e Paulo",
+  "page": "https://commons.wikimedia.org/wiki/File:Guido_Reni_044.jpg",
+  "artista": "Guido Reni",
+  "licenca": "Domínio público"
+ },
+ "gl-3": {
+  "titulo": "A aliança com Abraão",
+  "page": "https://commons.wikimedia.org/wiki/File:Gods_verbond_met_Abraham_Figurae_et_imagines_bibliorum_(serietitel),_RP-P-1886-A-11029.jpg",
+  "artista": "Gravura do Rijksmuseum",
+  "licenca": "Domínio público"
+ },
+ "gl-4": {
+  "titulo": "Agar e Ismael",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_van_Rijn,_Abraham_Casting_Out_Hagar_and_Ishmael,_1637,_NGA_10033.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "gl-5": {
+  "titulo": "Andai no Espírito",
+  "page": "https://commons.wikimedia.org/wiki/File:Pentecost%C3%A9s_(El_Greco,_c._1600)_Prado.jpg",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "gl-6": {
+  "titulo": "Levai as cargas uns dos outros",
+  "page": "https://commons.wikimedia.org/wiki/File:Vincent_van_Gogh_-_The_Good_Samaritan,_1890_-_Google_Art_Project.jpg",
+  "artista": "Vincent van Gogh",
+  "licenca": "Domínio público"
+ },
+ "ef-1": {
+  "titulo": "Cristo, cabeça sobre todas as coisas",
+  "page": "https://commons.wikimedia.org/wiki/File:Duomo_(Cefal%C3%B9)_-_Apse-2025-msu-0358-.jpg",
+  "artista": "Mosaico da Catedral de Cefalù",
+  "licenca": "Domínio público"
+ },
+ "ef-2": {
+  "titulo": "Vivificados com Cristo",
+  "page": "https://commons.wikimedia.org/wiki/File:Anastasis_fresco_(Chora_Church).jpg",
+  "artista": "Afresco da Igreja de Chora",
+  "licenca": "Domínio público"
+ },
+ "ef-3": {
+  "titulo": "Paulo, prisioneiro de Cristo",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt,_Harmensz._van_Rijn_-_Apostel_Paulus_am_Schreibpult,_Gm392.tif",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "ef-4": {
+  "titulo": "Um só corpo e um só Espírito",
+  "page": "https://commons.wikimedia.org/wiki/File:Giusto_di_gand,_comunione_degli_apostoli,_1473-1474.jpg",
+  "artista": "Justo de Gand",
+  "licenca": "Domínio público"
+ },
+ "ef-5": {
+  "titulo": "O mistério do casamento",
+  "page": "https://commons.wikimedia.org/wiki/File:Veronese,_The_Marriage_at_Cana_(1563).jpg",
+  "artista": "Paolo Veronese",
+  "licenca": "Domínio público"
+ },
+ "ef-6": {
+  "titulo": "A armadura de Deus",
+  "page": "https://commons.wikimedia.org/wiki/File:Le_Grand_Saint_Michel,_by_Raffaello_Sanzio,_from_C2RMFFXD.jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "fp-1": {
+  "titulo": "Paulo escreve da prisão",
+  "page": "https://commons.wikimedia.org/wiki/File:Valentin_de_Boulogne_-_Saint_Paul_Writing_His_Epistles_-_BF.1991.4_-_Museum_of_Fine_Arts.jpg",
+  "artista": "Valentin de Boulogne",
+  "licenca": "Domínio público"
+ },
+ "fp-2": {
+  "titulo": "Todo joelho se dobrará",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_The_Adoration_of_the_Name_of_Jesus_-_WGA10433.jpg",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "fp-3": {
+  "titulo": "Prossigo para o alvo",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_Harmensz._van_Rijn_-_Zelfportret_als_de_apostel_Paulus_-_Google_Art_Project.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "fp-4": {
+  "titulo": "Alegrai-vos sempre no Senhor",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_Saint_Peter_and_Saint_Paul_-_Google_Art_Project.jpg",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "cl-1": {
+  "titulo": "Nele foram criadas todas as coisas",
+  "page": "https://commons.wikimedia.org/wiki/File:Michelangelo_-_Creation_of_Sun_Moon_and_Planets_post_restoration_crop.jpg",
+  "artista": "Michelangelo",
+  "licenca": "Domínio público"
+ },
+ "cl-2": {
+  "titulo": "Cravado na cruz",
+  "page": "https://commons.wikimedia.org/wiki/File:Diego_Vel%C3%A1zquez_007.jpg",
+  "artista": "Diego Velázquez",
+  "licenca": "Domínio público"
+ },
+ "cl-3": {
+  "titulo": "A família em Cristo",
+  "page": "https://commons.wikimedia.org/wiki/File:Sagrada_Familia_del_pajarito_(Murillo).jpg",
+  "artista": "Bartolomé Esteban Murillo",
+  "licenca": "Domínio público"
+ },
+ "cl-4": {
+  "titulo": "Lucas, o médico amado",
+  "page": "https://commons.wikimedia.org/wiki/File:Saint_Luke_Drawing_the_Virgin_MFA_Boston.jpg",
+  "artista": "Rogier van der Weyden",
+  "licenca": "Domínio público"
+ },
+ "1ts-1": {
+  "titulo": "Paulo na sinagoga de Tessalônica",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131988).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "1ts-2": {
+  "titulo": "O cuidado de Paulo com a igreja",
+  "page": "https://commons.wikimedia.org/wiki/File:Pieter_Verelst_-_Saint_Paul_-_Walters_37272.jpg",
+  "artista": "Pieter Verelst",
+  "licenca": "Domínio público"
+ },
+ "1ts-3": {
+  "titulo": "Firmes no meio das aflições",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_Saint_Paul.JPG",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "1ts-4": {
+  "titulo": "Os mortos em Cristo ressuscitarão",
+  "page": "https://commons.wikimedia.org/wiki/File:Luca_signorelli,_resurrezione_della_carne,_1499-1502,_04.jpg",
+  "artista": "Luca Signorelli",
+  "licenca": "Domínio público"
+ },
+ "1ts-5": {
+  "titulo": "O dia do Senhor",
+  "page": "https://commons.wikimedia.org/wiki/File:Fra_Angelico_-_The_Last_Judgement_(Winged_Altar)_-_Google_Art_Project.jpg",
+  "artista": "Fra Angelico",
+  "licenca": "Domínio público"
+ },
+ "2ts-1": {
+  "titulo": "A vinda do Senhor com os seus anjos",
+  "page": "https://commons.wikimedia.org/wiki/File:Last_Judgement_(Michelangelo).jpg",
+  "artista": "Michelangelo",
+  "licenca": "Domínio público"
+ },
+ "2ts-2": {
+  "titulo": "O homem da iniquidade",
+  "page": "https://commons.wikimedia.org/wiki/File:Luca_signorelli,_predica_e_fatti_dell%27anticristo,_1499-1502,_02.jpg",
+  "artista": "Luca Signorelli",
+  "licenca": "Domínio público"
+ },
+ "2ts-3": {
+  "titulo": "Quem não trabalha, não coma",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Harvesters.jpg",
+  "artista": "Pieter Bruegel, o Velho",
+  "licenca": "Domínio público"
+ },
+ "1tm-1": {
+  "titulo": "O principal dos pecadores",
+  "page": "https://commons.wikimedia.org/wiki/File:Conversion_of_Saul,_from_Michelangelo%27s_fresco_in_the_Pauline_Chapel_at_the_Vatican_MET_DP844274.jpg",
+  "artista": "Gravura segundo Michelangelo",
+  "licenca": "Domínio público"
+ },
+ "1tm-2": {
+  "titulo": "Orações por todos",
+  "page": "https://commons.wikimedia.org/wiki/File:Jean-Fran%C3%A7ois_Millet_-_The_Angelus_-_Google_Art_Project.jpg",
+  "artista": "Jean-François Millet",
+  "licenca": "Domínio público"
+ },
+ "1tm-3": {
+  "titulo": "A ordenação dos diáconos",
+  "page": "https://commons.wikimedia.org/wiki/File:Angelico,_niccolina_10.jpg",
+  "artista": "Fra Angelico",
+  "licenca": "Domínio público"
+ },
+ "1tm-4": {
+  "titulo": "Timóteo",
+  "page": "https://commons.wikimedia.org/wiki/File:Saint_Timothy_(Menologion_of_Basil_II).jpg",
+  "artista": "Menológio de Basílio II",
+  "licenca": "Domínio público"
+ },
+ "1tm-5": {
+  "titulo": "A viúva que persevera em oração",
+  "page": "https://commons.wikimedia.org/wiki/File:Oude_lezende_vrouw,_waarschijnlijk_de_profetes_Hanna_Rijksmuseum_SK-A-3066.jpeg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "1tm-6": {
+  "titulo": "O amor ao dinheiro",
+  "page": "https://commons.wikimedia.org/wiki/File:Massysm_Quentin_%E2%80%94_The_Moneylender_and_his_Wife_%E2%80%94_1514.jpg",
+  "artista": "Quentin Matsys",
+  "licenca": "Domínio público"
+ },
+ "2tm-1": {
+  "titulo": "Timóteo e sua avó Loide",
+  "page": "https://commons.wikimedia.org/wiki/File:Timothy-and-Lois.jpg",
+  "artista": "Willem Drost",
+  "licenca": "Domínio público"
+ },
+ "2tm-2": {
+  "titulo": "O lavrador que trabalha",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Sower_-_Vincent_Van_Gogh.jpg",
+  "artista": "Vincent van Gogh",
+  "licenca": "Domínio público"
+ },
+ "2tm-3": {
+  "titulo": "Toda Escritura é inspirada por Deus",
+  "page": "https://commons.wikimedia.org/wiki/File:Michelangelo_Caravaggio_045.jpg",
+  "artista": "Caravaggio",
+  "licenca": "Domínio público"
+ },
+ "2tm-4": {
+  "titulo": "Combati o bom combate",
+  "page": "https://commons.wikimedia.org/wiki/File:Lorenzo_Monaco,_Beheading_of_Saint_Paul,_1398%E2%80%931400_Princeton_University_Art_Museum.jpg",
+  "artista": "Lorenzo Monaco",
+  "licenca": "Domínio público"
+ },
+ "tt-1": {
+  "titulo": "Tito em Creta",
+  "page": "https://commons.wikimedia.org/wiki/File:Fresco_of_Saints_Titos_and_Kyrillos_of_Gortyna.jpg",
+  "artista": "Afresco de Gortina",
+  "licenca": "Domínio público"
+ },
+ "tt-2": {
+  "titulo": "A graça de Deus se manifestou",
+  "page": "https://commons.wikimedia.org/wiki/File:Adoration_of_the_shepherds,_by_Gerard_van_Honthorst.jpg",
+  "artista": "Gerard van Honthorst",
+  "licenca": "Domínio público"
+ },
+ "tt-3": {
+  "titulo": "O lavar da regeneração",
+  "page": "https://commons.wikimedia.org/wiki/File:Nicolas_Poussin,_The_Baptism_of_Christ,_1641-1642,_NGA_32692.jpg",
+  "artista": "Nicolas Poussin",
+  "licenca": "Domínio público"
+ },
+ "fm-1": {
+  "titulo": "Recebe-o como a mim mesmo",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_Harmensz._van_Rijn_-_The_Return_of_the_Prodigal_Son.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "1co-16": {
+  "titulo": "Saudai-vos uns aos outros",
+  "page": "https://commons.wikimedia.org/wiki/File:Saint_Peter_and_Saint_Paul_Jusepe_de_Ribera.jpg",
+  "artista": "Jusepe de Ribera",
+  "licenca": "Domínio público"
+ },
+ "hb-1": {
+  "titulo": "O Filho, superior aos anjos",
+  "page": "https://commons.wikimedia.org/wiki/File:Beato_angelico,_cristo_glorificato_nella_corte_del_paradiso,_1423-24,_da_s._domenico,_fiesole_04.jpg",
+  "artista": "Fra Angelico",
+  "licenca": "Domínio público"
+ },
+ "hb-2": {
+  "titulo": "Feito um pouco menor que os anjos",
+  "page": "https://commons.wikimedia.org/wiki/File:1470_Bellini_Der_tote_Christus,_von_vier_Engeln_gest%C3%BCtzt_City_Museum_of_Rimini_anagoria.jpg",
+  "artista": "Giovanni Bellini",
+  "licenca": "Domínio público"
+ },
+ "hb-3": {
+  "titulo": "Moisés, fiel em toda a casa",
+  "page": "https://commons.wikimedia.org/wiki/File:Eventos_de_la_vida_de_Mois%C3%A9s_(Sandro_Botticelli).jpg",
+  "artista": "Sandro Botticelli",
+  "licenca": "Domínio público"
+ },
+ "hb-4": {
+  "titulo": "O descanso do povo de Deus",
+  "page": "https://commons.wikimedia.org/wiki/File:Rest_on_the_Flight_into_Egypt-Caravaggio_(c.1597).jpg",
+  "artista": "Caravaggio",
+  "licenca": "Domínio público"
+ },
+ "hb-5": {
+  "titulo": "Com forte clamor e lágrimas",
+  "page": "https://commons.wikimedia.org/wiki/File:Mantegna,_Andrea_-_Agony_in_the_Garden_-_National_Gallery,_London.jpg",
+  "artista": "Andrea Mantegna",
+  "licenca": "Domínio público"
+ },
+ "hb-6": {
+  "titulo": "A promessa jurada a Abraão",
+  "page": "https://commons.wikimedia.org/wiki/File:Sacrifice_of_Isaac-Caravaggio_(Uffizi).jpg",
+  "artista": "Caravaggio",
+  "licenca": "Domínio público"
+ },
+ "hb-7": {
+  "titulo": "Abraão e Melquisedeque",
+  "page": "https://commons.wikimedia.org/wiki/File:Sir_Peter_Paul_Rubens,_The_Meeting_of_Abraham_and_Melchizedek,_c._1626,_NGA_45640.jpg",
+  "artista": "Peter Paul Rubens",
+  "licenca": "Domínio público"
+ },
+ "hb-8": {
+  "titulo": "O tabernáculo, sombra das coisas celestes",
+  "page": "https://commons.wikimedia.org/wiki/File:Holman_The_Tabernacle_in_the_Wilderness.jpg",
+  "artista": "Bíblia Holman",
+  "licenca": "Domínio público"
+ },
+ "hb-9": {
+  "titulo": "O sumo sacerdote no Santo dos Santos",
+  "page": "https://commons.wikimedia.org/wiki/File:Hogepriester_in_witte_liturgische_kleding_behorend_bij_de_Grote_Verzoendag_II_(variant_B),_RP-P-OB-44.141.jpg",
+  "artista": "Gravura do Rijksmuseum",
+  "licenca": "Domínio público"
+ },
+ "hb-10": {
+  "titulo": "Um só sacrifício, para sempre",
+  "page": "https://commons.wikimedia.org/wiki/File:Agnus_Dei_Zurbar%C3%A1n.jpg",
+  "artista": "Francisco de Zurbarán",
+  "licenca": "Domínio público"
+ },
+ "hb-11": {
+  "titulo": "Pela fé atravessaram o mar Vermelho",
+  "page": "https://commons.wikimedia.org/wiki/File:Nicolas_Poussin_-_Le_Passage_de_la_mer_Rouge.jpg",
+  "artista": "Nicolas Poussin",
+  "licenca": "Domínio público"
+ },
+ "hb-12": {
+  "titulo": "Uma grande nuvem de testemunhas",
+  "page": "https://commons.wikimedia.org/wiki/File:(Venice)_Tintoretto_-_Paradiso_(modello,_1592-94)_-_Pinacoteca_Querini_Stampalia.jpg",
+  "artista": "Tintoretto",
+  "licenca": "Domínio público"
+ },
+ "hb-13": {
+  "titulo": "Alguns hospedaram anjos",
+  "page": "https://commons.wikimedia.org/wiki/File:Aert_de_Gelder_009.jpg",
+  "artista": "Aert de Gelder",
+  "licenca": "Domínio público"
+ },
+ "tg-1": {
+  "titulo": "Tiago",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_St._James_the_Less_-_Google_Art_Project.jpg",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "tg-2": {
+  "titulo": "Raabe e os espias",
+  "page": "https://commons.wikimedia.org/wiki/File:Tissot_The_Harlot_of_Jericho_and_the_Two_Spies.jpg",
+  "artista": "James Tissot",
+  "licenca": "Domínio público"
+ },
+ "tg-3": {
+  "titulo": "O leme que guia o navio",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "tg-4": {
+  "titulo": "A vida é um vapor",
+  "page": "https://commons.wikimedia.org/wiki/File:Pieter_Claesz_-_Vanitas_Still_Life_-_943_-_Mauritshuis.jpg",
+  "artista": "Pieter Claesz",
+  "licenca": "Domínio público"
+ },
+ "tg-5": {
+  "titulo": "A paciência de Jó",
+  "page": "https://commons.wikimedia.org/wiki/File:Job_and_his_friends.jpg",
+  "artista": "Ilya Repin",
+  "licenca": "Domínio público"
+ },
+ "1pe-1": {
+  "titulo": "Uma viva esperança",
+  "page": "https://commons.wikimedia.org/wiki/File:Angelico,_noli_me_tangere.jpg",
+  "artista": "Fra Angelico",
+  "licenca": "Domínio público"
+ },
+ "1pe-2": {
+  "titulo": "Para que sigais os seus passos",
+  "page": "https://commons.wikimedia.org/wiki/File:El_Greco_-_Christ_Carrying_the_Cross_-_Google_Art_Project.jpg",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "1pe-3": {
+  "titulo": "A arca de Noé",
+  "page": "https://commons.wikimedia.org/wiki/File:Edward_Hicks,_American_-_Noah%27s_Ark_-_Google_Art_Project.jpg",
+  "artista": "Edward Hicks",
+  "licenca": "Domínio público"
+ },
+ "1pe-4": {
+  "titulo": "O fogo ardente da provação",
+  "page": "https://commons.wikimedia.org/wiki/File:Jean-L%C3%A9on_G%C3%A9r%C3%B4me_-_The_Christian_Martyrs%27_Last_Prayer_-_Walters_37113.jpg",
+  "artista": "Jean-Léon Gérôme",
   "licenca": "Domínio público"
  }
 }
