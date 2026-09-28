@@ -49,13 +49,8 @@ export function TopNav() {
             aria-hidden
             className="h-9 w-auto drop-shadow-[0_2px_10px_rgba(245,196,94,0.25)]"
           />
-          <span className="leading-none">
-            <span className="block font-display text-lg font-extrabold tracking-tight">
-              Genipse
-            </span>
-            <span className="block text-[9px] font-bold uppercase tracking-[0.28em] text-gold-400">
-              Bible
-            </span>
+          <span className="whitespace-nowrap font-display text-lg font-extrabold leading-none tracking-tight">
+            Genipse <span className="text-gold-400">Bible</span>
           </span>
         </Link>
 
