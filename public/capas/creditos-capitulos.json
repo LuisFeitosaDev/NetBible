@@ -973,8 +973,8 @@
  },
  "rm-5": {
   "titulo": "Por um só homem entrou o pecado",
-  "page": "https://commons.wikimedia.org/wiki/File:Sistine_Chapel_ceiling_-_Fall_and_Expulsion_from_Garden_of_Eden_(5387852246).jpg",
-  "artista": "Michelangelo",
+  "page": "https://commons.wikimedia.org/wiki/File:Thomas_Cole_-_Expulsion_from_the_Garden_of_Eden_-_Google_Art_Project.jpg",
+  "artista": "Thomas Cole",
   "licenca": "Domínio público"
  },
  "rm-6": {
@@ -1020,8 +1020,9 @@
   "licenca": "Domínio público"
  },
  "1co-10": {
-  "titulo": "1 CO 10",
-  "artista": "Desconhecido",
+  "titulo": "O maná no deserto",
+  "page": "https://commons.wikimedia.org/wiki/File:La_Manne_-_Nicolas_Poussin_-_Mus%C3%A9e_du_Louvre_Peintures_INV_7275.jpg",
+  "artista": "Nicolas Poussin",
   "licenca": "Domínio público"
  },
  "1co-11": {
@@ -1032,8 +1033,8 @@
  },
  "1co-12": {
   "titulo": "Um só corpo, muitos membros",
-  "page": "https://commons.wikimedia.org/wiki/File:Hosios_Loukas_Katholikon_(sanctuary_vault)_-_Pentecost_01.jpg",
-  "artista": "Mosaico de Hosios Loukas",
+  "page": "https://commons.wikimedia.org/wiki/File:Restout_-_La_Pentec%C3%B4te_01.jpg",
+  "artista": "Jean Restout",
   "licenca": "Domínio público"
  },
  "1co-13": {
@@ -1050,7 +1051,7 @@
  },
  "1co-15": {
   "titulo": "A ressurreição",
-  "page": "https://commons.wikimedia.org/wiki/File:Piero_della_Francesca_-_Resurrection_-_WGA17609.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Piero_della_Francesca_The_Resurrection_detail_VlRan.jpg",
   "artista": "Piero della Francesca",
   "licenca": "Domínio público"
  },
@@ -2310,8 +2311,8 @@
  },
  "hb-4": {
   "titulo": "O descanso do povo de Deus",
-  "page": "https://commons.wikimedia.org/wiki/File:Rest_on_the_Flight_into_Egypt-Caravaggio_(c.1597).jpg",
-  "artista": "Caravaggio",
+  "page": "https://commons.wikimedia.org/wiki/File:Gerard_David,_The_Rest_on_the_Flight_into_Egypt,_c._1510,_NGA_50.jpg",
+  "artista": "Gerard David",
   "licenca": "Domínio público"
  },
  "hb-5": {
@@ -2450,6 +2451,48 @@
   "titulo": "O que vimos e ouvimos",
   "page": "https://commons.wikimedia.org/wiki/File:Zampieri_St_John_Evangelist.jpg",
   "artista": "Domenichino",
+  "licenca": "Domínio público"
+ },
+ "1jo-2": {
+  "titulo": "Filhinhos, não pequeis",
+  "page": "https://commons.wikimedia.org/wiki/File:1488_Bosch_Der_Evangelist_Johannes_auf_der_Insel_Patmos_anagoria.JPG",
+  "artista": "Hieronymus Bosch",
+  "licenca": "Domínio público"
+ },
+ "1jo-3": {
+  "titulo": "Chamados filhos de Deus",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Holy_Family_-_Rembrandt_(unframed).jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "1jo-4": {
+  "titulo": "Deus é amor",
+  "page": "https://commons.wikimedia.org/wiki/File:Giovanni_Bellini_-_Madonna_of_the_Meadow_(Madonna_del_Prato)_-_WGA01755.jpg",
+  "artista": "Giovanni Bellini",
+  "licenca": "Domínio público"
+ },
+ "1jo-5": {
+  "titulo": "Por água e sangue",
+  "page": "https://commons.wikimedia.org/wiki/File:Bo%C3%ABtius_Adams_Bolswert_after_Sir_Peter_Paul_Rubens,_Le_Coup_de_Lance,_1631,_NGA_126853.jpg",
+  "artista": "Boëtius Bolswert, segundo Rubens",
+  "licenca": "Domínio público"
+ },
+ "2jo-1": {
+  "titulo": "Andar na verdade",
+  "page": "https://commons.wikimedia.org/wiki/File:Diego_Vel%C3%A1zquez_018_(John_the_Evangelist_from_Patmos).jpg",
+  "artista": "Diego Velázquez",
+  "licenca": "Domínio público"
+ },
+ "3jo-1": {
+  "titulo": "A hospitalidade",
+  "page": "https://commons.wikimedia.org/wiki/File:Johannes_(Jan)_Vermeer_-_Christ_in_the_House_of_Martha_and_Mary_-_Google_Art_Project.jpg",
+  "artista": "Johannes Vermeer",
+  "licenca": "Domínio público"
+ },
+ "jd-1": {
+  "titulo": "Sodoma e Gomorra",
+  "page": "https://commons.wikimedia.org/wiki/File:John_Martin_-_Sodom_and_Gomorrah.jpg",
+  "artista": "John Martin",
   "licenca": "Domínio público"
  }
 }
