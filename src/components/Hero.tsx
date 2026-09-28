@@ -4,20 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Play, Info } from "lucide-react";
 import { loadBook, type BookMeta } from "@/lib/bible";
-import { DAILY, GROUP_THEME } from "@/lib/catalog";
+import { GROUP_THEME } from "@/lib/catalog";
+import { versiculoDoDia } from "@/lib/versiculoDoDia";
 import { useBible } from "@/lib/store";
-
-/** Um versículo por dia, estável durante as 24h e igual para todo mundo. */
-function pickOfTheDay() {
-  const now = new Date();
-  const start = Date.UTC(now.getFullYear(), 0, 0);
-  const day = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - start) / 86_400_000);
-  return DAILY[day % DAILY.length];
-}
 
 export function Hero() {
   const { bySlug, version } = useBible();
-  const [pick] = useState(pickOfTheDay);
+  const [pick] = useState(versiculoDoDia);
   const [text, setText] = useState<string | null>(null);
 
   const book: BookMeta | undefined = bySlug.get(pick.slug);

@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/avisos/versiculo", "schedule": "30 10 * * *" }
+  ]
+}
