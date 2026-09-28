@@ -15,6 +15,8 @@
  * reprocessar nada, e para voltar atrás se o Storage cair.
  */
 
+import { versaoDaArte } from "./capitulos.generated";
+
 /** Base pública da arte, sem barra no fim. */
 const BASE = (process.env.NEXT_PUBLIC_ARTE_CDN ?? "/capas").replace(/\/+$/, "");
 
@@ -25,9 +27,16 @@ export type FontesDaArte = {
   webp: string;
 };
 
+/**
+ * As URLs levam `?v=` com a versão da arte. O arquivo é servido com cache de um
+ * ano e o caminho não muda quando a gravura é trocada, então é a versão que faz
+ * a arte nova chegar a quem já tinha aberto o capítulo.
+ */
 export function arteDeCapitulo(slug: string, capitulo: number): FontesDaArte {
   const nome = `${BASE}/capitulo/${slug}-${capitulo}`;
-  return { avif: `${nome}.avif`, webp: `${nome}.webp` };
+  const versao = versaoDaArte(slug, capitulo);
+  const v = versao ? `?v=${versao}` : "";
+  return { avif: `${nome}.avif${v}`, webp: `${nome}.webp${v}` };
 }
 
 /** Verdadeiro quando a arte está vindo do Storage, e não de `public/`. */

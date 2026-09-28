@@ -130,6 +130,9 @@ const VARIAVEL_DA_FONTE: Record<FonteLeitura, [string, string]> = {
   inter: ["--font-inter", "system-ui, sans-serif"],
 };
 
+const comParametro = (url: string, parametro: string) =>
+  `${url}${url.includes("?") ? "&" : "?"}${parametro}`;
+
 function carregarImagem(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image();
@@ -352,11 +355,11 @@ export function CompartilharImagem({
       const [logo, logoEscuro, arte] = await Promise.all([
         carregarImagem("/marca.png"),
         carregarImagem("/marca-escura.png"),
-        // `?canvas=1`: endereço à parte da arte que o leitor já exibiu. Aquela
+        // `canvas=1`: endereço à parte da arte que o leitor já exibiu. Aquela
         // pode estar no cache do service worker sem permissão de CORS, e o
-        // canvas se recusaria a exportar.
+        // canvas se recusaria a exportar. A URL já pode trazer `?v=`.
         temArte
-          ? carregarImagem(`${arteDeCapitulo(slug, capitulo).webp}?canvas=1`)
+          ? carregarImagem(comParametro(arteDeCapitulo(slug, capitulo).webp, "canvas=1"))
           : Promise.resolve(null),
       ]);
       await Promise.all(

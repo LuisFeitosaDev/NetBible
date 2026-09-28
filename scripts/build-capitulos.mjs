@@ -16,6 +16,7 @@ import { mkdir, readFile, writeFile, access } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { faixa, gravar } from "./lib/tratamento-capitulo.mjs";
+import { regenerarListaDeArte } from "./lib/lista-de-arte.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CACHE = join(ROOT, "sources", "capitulos");
@@ -358,19 +359,9 @@ async function main() {
     JSON.stringify(creditos, null, 1),
   );
 
-  await writeFile(
-    join(ROOT, "src", "lib", "capitulos.generated.ts"),
-    `// Gerado por scripts/build-capitulos.mjs — não edite à mão.\n` +
-      `export const CAPITULOS_COM_ARTE: ReadonlySet<string> = new Set(${JSON.stringify(prontos.sort())});\n\n` +
-      `export const temArteDeCapitulo = (slug: string, capitulo: number) =>\n` +
-      `  CAPITULOS_COM_ARTE.has(\`\${slug}-\${capitulo}\`);\n\n` +
-      `/** Reserva: o que o <img> carrega quando o navegador não abre AVIF. */\n` +
-      `export const arteDoCapitulo = (slug: string, capitulo: number) =>\n` +
-      `  \`/capas/capitulo/\${slug}-\${capitulo}.webp\`;\n\n` +
-      `/** Preferida: perto da metade do peso da reserva. */\n` +
-      `export const arteAvifDoCapitulo = (slug: string, capitulo: number) =>\n` +
-      `  \`/capas/capitulo/\${slug}-\${capitulo}.avif\`;\n`,
-  );
+  // Do disco, não de `prontos`: assim a arte adicionada à mão (adicionar-arte)
+  // continua na lista depois de uma rodada deste script.
+  await regenerarListaDeArte(OUT, join(ROOT, "src", "lib", "capitulos.generated.ts"));
 
   console.log(`\n${prontos.length} geradas, ${faltando.length} sem arte.`);
   if (faltando.length) console.log(`Sem arte: ${faltando.join(", ")}`);
