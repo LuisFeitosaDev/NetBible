@@ -378,7 +378,7 @@ export default function ReaderPage() {
       <AmbienteLeitura book={book} tema={temaLeitura} />
 
       {/* Barra do leitor. Fundo semitransparente para o halo passar por trás. */}
-      <header className="sticky top-0 z-40 border-b border-[color:var(--rl-borda-1)] bg-[var(--rl-header)] backdrop-blur-xl">
+      <header className="sticky top-0 z-40 pt-[env(safe-area-inset-top)] border-b border-[color:var(--rl-borda-1)] bg-[var(--rl-header)] backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-1 px-2.5 sm:px-3">
           <Link
             href={vindoDoPlano ? "/biblioteca" : `/livro/${slug}`}

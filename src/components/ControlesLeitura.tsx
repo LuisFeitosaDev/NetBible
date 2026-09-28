@@ -86,7 +86,7 @@ export function ControlesLeitura({
         // No celular o painel ocupa a largura toda, logo abaixo da barra. Preso
         // ao botão, ele vazava pela esquerda quando a leitura paralela põe a
         // segunda versão na barra e empurra o botão para o meio da tela.
-        <div className="fixed inset-x-3 top-[3.75rem] z-50 max-h-[calc(100dvh-5rem)] overflow-y-auto sm:absolute sm:inset-x-auto sm:right-0 sm:top-10 sm:w-64 animate-fade rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-900/98 p-3 shadow-2xl shadow-black/60 backdrop-blur-xl">
+        <div className="fixed inset-x-3 top-[calc(3.75rem+env(safe-area-inset-top))] z-50 max-h-[calc(100dvh-5rem-env(safe-area-inset-top))] overflow-y-auto sm:absolute sm:inset-x-auto sm:right-0 sm:top-10 sm:w-64 animate-fade rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-900/98 p-3 shadow-2xl shadow-black/60 backdrop-blur-xl">
           <p className="mb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-[color:var(--rl-texto-mudo)]">
             Tamanho do texto
           </p>

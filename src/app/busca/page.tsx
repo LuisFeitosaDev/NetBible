@@ -116,7 +116,7 @@ export default function SearchPage() {
         Bíblia
       </h1>
 
-      <div className="sticky top-16 z-30 -mx-4 bg-ink-950/95 px-4 py-3 backdrop-blur-xl md:-mx-6 md:px-6">
+      <div className="sticky top-[calc(4rem+env(safe-area-inset-top))] z-30 -mx-4 bg-ink-950/95 px-4 py-3 backdrop-blur-xl md:-mx-6 md:px-6">
         <div className="relative">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-400" />
           <input

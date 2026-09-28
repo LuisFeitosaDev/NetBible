@@ -32,9 +32,12 @@ export function TopNav() {
   // O leitor tem a própria barra: some daqui para o texto respirar.
   if (/^\/livro\/[^/]+\/\d+/.test(pathname)) return null;
 
+  // `safe-area-inset-top`: no iPhone instalado o app desenha por baixo da barra
+  // de status (relógio, bateria), e a barra do app precisa descer esse tanto.
+  // No PC e no Android esse valor é 0, então nada muda lá.
   return (
     <header
-      className={`sticky top-0 z-40 transition-colors duration-300 ${
+      className={`sticky top-0 z-40 pt-[env(safe-area-inset-top)] transition-colors duration-300 ${
         solid
           ? "border-b border-white/5 bg-ink-950/85 backdrop-blur-xl"
           : "bg-gradient-to-b from-ink-950 to-transparent"
