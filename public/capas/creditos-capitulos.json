@@ -1106,5 +1106,665 @@
   "titulo": "RM 16",
   "artista": "Desconhecido",
   "licenca": "Domínio público"
+ },
+ "mt-2": {
+  "titulo": "A estrela guia os magos",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94130756).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-19": {
+  "titulo": "Jesus abençoa as crianças",
+  "page": "https://commons.wikimedia.org/wiki/File:Pismo_Swiete_w_obrazach_Gustawa_Dore_1930_(92784464).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-23": {
+  "titulo": "Cristo chora sobre Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:L._Eastlake_-_Le_Christ_pleurant_-_Steel_Engraving.jpg",
+  "artista": "Charles Eastlake",
+  "licenca": "Domínio público"
+ },
+ "lc-19": {
+  "titulo": "Jesus chora sobre Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:Enrique_Simonet_-_Flevit_super_illam_-_1892.jpg",
+  "artista": "Enrique Simonet",
+  "licenca": "Domínio público"
+ },
+ "jo-20": {
+  "titulo": "A incredulidade de Tomé",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Incredulity_of_Saint_Thomas-Caravaggio_(1601-2).jpg",
+  "artista": "Caravaggio",
+  "licenca": "Domínio público"
+ },
+ "mt-4": {
+  "titulo": "A tentação de Jesus",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94130939).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-4": {
+  "titulo": "Jesus acalma a tempestade",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131277).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-1": {
+  "titulo": "O sonho de José",
+  "page": "https://commons.wikimedia.org/wiki/File:Philippe_de_Champaigne_(1602-1674)_-_The_Dream_of_Saint_Joseph_-_NG6276_-_National_Gallery.jpg",
+  "artista": "Philippe de Champaigne",
+  "licenca": "Domínio público"
+ },
+ "mt-3": {
+  "titulo": "João Batista prega no deserto",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94130865).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-6": {
+  "titulo": "O Sermão da Montanha",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131027).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-7": {
+  "titulo": "O Sermão da Montanha",
+  "page": "https://commons.wikimedia.org/wiki/File:Lorrain,_Claude_-_The_Sermon_on_the_Mount_(Frick_Collection;_c._1656).jpg",
+  "artista": "Claude Lorrain",
+  "licenca": "Domínio público"
+ },
+ "mt-8": {
+  "titulo": "Jesus cura os enfermos",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94130993).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-9": {
+  "titulo": "Jesus cura o mudo",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131058).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-10": {
+  "titulo": "O chamado dos apóstolos",
+  "page": "https://commons.wikimedia.org/wiki/File:Domenico_Ghirlandaio_-_Llamada_a_los_primeros_ap%C3%B3stoles_(Capilla_Sixtina,_Roma,_1481-82).jpg",
+  "artista": "Domenico Ghirlandaio",
+  "licenca": "Domínio público"
+ },
+ "mt-11": {
+  "titulo": "Cristo consolador",
+  "page": "https://commons.wikimedia.org/wiki/File:Ary_Scheffer_-_Christus_Consolator_-_Google_Art_Project.jpg",
+  "artista": "Ary Scheffer",
+  "licenca": "Domínio público"
+ },
+ "mt-12": {
+  "titulo": "Os discípulos colhem espigas no sábado",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131086).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-13": {
+  "titulo": "Jesus ensina do barco",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131400).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-14": {
+  "titulo": "Jesus anda sobre o mar",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131112).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-15": {
+  "titulo": "A multiplicação dos pães",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131149).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-16": {
+  "titulo": "A entrega das chaves a Pedro",
+  "page": "https://commons.wikimedia.org/wiki/File:Pietro_Perugino_-_Entrega_de_las_llaves_a_San_Pedro_(Capilla_Sixtina,_Roma,_1481-82).jpg",
+  "artista": "Pietro Perugino",
+  "licenca": "Domínio público"
+ },
+ "mt-17": {
+  "titulo": "A transfiguração",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131164).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-18": {
+  "titulo": "A parábola do servo impiedoso",
+  "page": "https://commons.wikimedia.org/wiki/File:Jan_van_Hemessen_-_The_Parable_of_the_Unmerciful_Servant.jpg",
+  "artista": "Jan van Hemessen",
+  "licenca": "Domínio público"
+ },
+ "mt-20": {
+  "titulo": "A parábola dos trabalhadores da vinha",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_-_Parable_of_the_Laborers_in_the_Vineyard.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "mt-21": {
+  "titulo": "A entrada em Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131183).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-22": {
+  "titulo": "O tributo a César",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131197).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-24": {
+  "titulo": "A destruição do templo de Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:(Venice)_La_distruzione_del_tempio_di_Gerusalemme_-Francesco_Hayez_-_gallerie_Accademia_Venice.jpg",
+  "artista": "Francesco Hayez",
+  "licenca": "Domínio público"
+ },
+ "mt-25": {
+  "titulo": "A parábola das dez virgens",
+  "page": "https://commons.wikimedia.org/wiki/File:Francken,_Hieronymus_the_Younger_-_Parable_of_the_Wise_and_Foolish_Virgins_-_c._1616.jpg",
+  "artista": "Hieronymus Francken, o Jovem",
+  "licenca": "Domínio público"
+ },
+ "mt-26": {
+  "titulo": "A última ceia",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131206).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-27": {
+  "titulo": "Cristo escarnecido",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131259).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mt-28": {
+  "titulo": "O anjo e as mulheres no sepulcro",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131320).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-1": {
+  "titulo": "O batismo de Jesus",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94130910).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-2": {
+  "titulo": "Cristo cura o paralítico",
+  "page": "https://commons.wikimedia.org/wiki/File:Anthony_van_Dyck_(1599-1641)_-_Christ_Healing_the_Paralytic_-_RCIN_405325_-_Royal_Collection.jpg",
+  "artista": "Anthony van Dyck",
+  "licenca": "Domínio público"
+ },
+ "mc-3": {
+  "titulo": "Jesus cura o homem da mão ressequida",
+  "page": "https://commons.wikimedia.org/wiki/File:Christus_geneest_een_man_met_een_verschrompelde_hand_Wonderen_van_Christus_(serietitel)_Thesaurus_sacrarum_historiarum_veteris_testamenti_(..)_(serietitel),_RP-P-OB-9345.jpg",
+  "artista": "Gravura do Thesaurus Sacrarum Historiarum",
+  "licenca": "Domínio público"
+ },
+ "mc-5": {
+  "titulo": "A ressurreição da filha de Jairo",
+  "page": "https://commons.wikimedia.org/wiki/File:Voskreshenie_docheri_Iaira_(1871)_by_Vasiliy_Polenov.jpg",
+  "artista": "Vasily Polenov",
+  "licenca": "Domínio público"
+ },
+ "mc-6": {
+  "titulo": "A multiplicação para os cinco mil",
+  "page": "https://commons.wikimedia.org/wiki/File:Domenico_Fiasella_-_Feeding_the_five_thousand_-_371_-_Gem%C3%A4ldegalerie.jpg",
+  "artista": "Domenico Fiasella",
+  "licenca": "Domínio público"
+ },
+ "mc-7": {
+  "titulo": "Cristo e a mulher cananeia",
+  "page": "https://commons.wikimedia.org/wiki/File:Annibale_Carracci,_Cristo_e_la_Cananea,_1595,_Parma.jpg",
+  "artista": "Annibale Carracci",
+  "licenca": "Domínio público"
+ },
+ "mc-8": {
+  "titulo": "Cristo cura o cego",
+  "page": "https://commons.wikimedia.org/wiki/File:Christ_Healing_the_Blind_MET_DT407.jpg",
+  "artista": "El Greco",
+  "licenca": "Domínio público"
+ },
+ "mc-9": {
+  "titulo": "A cura do menino possesso",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131175).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-10": {
+  "titulo": "Cristo abençoa as crianças",
+  "page": "https://commons.wikimedia.org/wiki/File:Lucas_Cranach_d.%C3%84._-_Christ_Blessing_the_Children_-_KMS2087_-_Statens_Museum_for_Kunst.jpg",
+  "artista": "Lucas Cranach, o Velho",
+  "licenca": "Domínio público"
+ },
+ "mc-11": {
+  "titulo": "Jesus expulsa os vendilhões do templo",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131300).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-12": {
+  "titulo": "A oferta da viúva",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131309).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-13": {
+  "titulo": "O cerco e a destruição de Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:David_Roberts_-_The_Siege_and_Destruction_of_Jerusalem_by_the_Romans_Under_the_Command_of_Titus,_A.D._70.jpg",
+  "artista": "David Roberts",
+  "licenca": "Domínio público"
+ },
+ "mc-14": {
+  "titulo": "O beijo de Judas",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131215).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-15": {
+  "titulo": "A elevação da cruz",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131760).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "mc-16": {
+  "titulo": "A ascensão",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131337).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-1": {
+  "titulo": "A anunciação",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131349).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-2": {
+  "titulo": "O nascimento de Jesus",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131359).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-3": {
+  "titulo": "O sermão de João Batista",
+  "page": "https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_the_Elder_-_The_Sermon_of_Saint_John_the_Baptist_-_Google_Art_Project.jpg",
+  "artista": "Pieter Bruegel, o Velho",
+  "licenca": "Domínio público"
+ },
+ "lc-4": {
+  "titulo": "Jesus na sinagoga",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131383).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-5": {
+  "titulo": "A pesca maravilhosa",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131391).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-6": {
+  "titulo": "O sermão",
+  "page": "https://commons.wikimedia.org/wiki/File:Jan_Brueghel_the_Elder_-_The_Sermon_on_the_Mount_-_Google_Art_Project.jpg",
+  "artista": "Jan Brueghel, o Velho",
+  "licenca": "Domínio público"
+ },
+ "lc-7": {
+  "titulo": "A mulher pecadora aos pés de Jesus",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131409).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-8": {
+  "titulo": "A ressurreição da filha de Jairo",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131422).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-9": {
+  "titulo": "A transfiguração",
+  "page": "https://commons.wikimedia.org/wiki/File:Raphael_-_The_Transfiguration_-_Google_Art_Project.jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "lc-10": {
+  "titulo": "O bom samaritano",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131438).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-11": {
+  "titulo": "Cristo na casa do fariseu",
+  "page": "https://commons.wikimedia.org/wiki/File:Lucas_Cranach_(der_%C3%84ltere)_(1472-1553)_-_Christ_in_the_Pharisee%27s_house_-_568_-_Gem%C3%A4ldegalerie.jpg",
+  "artista": "Lucas Cranach, o Velho",
+  "licenca": "Domínio público"
+ },
+ "lc-12": {
+  "titulo": "A parábola do rico insensato",
+  "page": "https://commons.wikimedia.org/wiki/File:Rembrandt_-_The_Parable_of_the_Rich_Fool.jpg",
+  "artista": "Rembrandt",
+  "licenca": "Domínio público"
+ },
+ "lc-13": {
+  "titulo": "Jesus cura a mulher encurvada",
+  "page": "https://commons.wikimedia.org/wiki/File:In_de_synagoge_geneest_Christus_een_gebogen_vrouw,_RP-P-OB-46.017.jpg",
+  "artista": "Gravura do Rijksmuseum",
+  "licenca": "Domínio público"
+ },
+ "lc-14": {
+  "titulo": "A parábola do grande banquete",
+  "page": "https://commons.wikimedia.org/wiki/File:Brunswick_Monogrammist_Great_Banquet.jpg",
+  "artista": "Monogramista de Brunswick",
+  "licenca": "Domínio público"
+ },
+ "lc-15": {
+  "titulo": "A volta do filho pródigo",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131483).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-16": {
+  "titulo": "O rico e Lázaro",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131523).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-18": {
+  "titulo": "O fariseu e o publicano",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131543).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-20": {
+  "titulo": "O tributo",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Tribute_Money_Masaccio_Cappella_Brancacci.jpg",
+  "artista": "Masaccio",
+  "licenca": "Domínio público"
+ },
+ "lc-21": {
+  "titulo": "O óbolo da viúva",
+  "page": "https://commons.wikimedia.org/wiki/File:Jo%C3%A3o_Zeferino_da_Costa_-_O_%C3%B3bolo_da_vi%C3%BAva,_1876.jpg",
+  "artista": "João Zeferino da Costa",
+  "licenca": "Domínio público"
+ },
+ "lc-22": {
+  "titulo": "Jesus no Getsêmani",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131570).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-23": {
+  "titulo": "Jesus cai sob a cruz",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131589).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "lc-24": {
+  "titulo": "Os discípulos de Emaús",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131624).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-2": {
+  "titulo": "As bodas de Caná",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131646).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-4": {
+  "titulo": "Jesus e a samaritana",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131656).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-5": {
+  "titulo": "O tanque de Betesda",
+  "page": "https://commons.wikimedia.org/wiki/File:Robert_Bateman_-_The_Pool_of_Bethesda_-_Google_Art_Project.jpg",
+  "artista": "Robert Bateman",
+  "licenca": "Domínio público"
+ },
+ "jo-8": {
+  "titulo": "Jesus perdoa a mulher adúltera",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131665).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-9": {
+  "titulo": "A cura do cego de nascença",
+  "page": "https://commons.wikimedia.org/wiki/File:Annibale_Carracci_-_Healing_the_Man_Born_Blind_-_Google_Art_Project.jpg",
+  "artista": "Annibale Carracci",
+  "licenca": "Domínio público"
+ },
+ "jo-11": {
+  "titulo": "A ressurreição de Lázaro",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131686).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-13": {
+  "titulo": "Jesus lava os pés dos discípulos",
+  "page": "https://commons.wikimedia.org/wiki/File:Tintoretto,_Jacopo_-_Christ_washing_the_Feet_of_the_Disciples_-_National_Gallery_London.jpg",
+  "artista": "Tintoretto",
+  "licenca": "Domínio público"
+ },
+ "jo-14": {
+  "titulo": "A última ceia",
+  "page": "https://commons.wikimedia.org/wiki/File:Leonardo_da_Vinci_-_The_Last_Supper_high_res.jpg",
+  "artista": "Leonardo da Vinci",
+  "licenca": "Domínio público"
+ },
+ "jo-17": {
+  "titulo": "Jesus ora ao Pai",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131225).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-18": {
+  "titulo": "A negação de Pedro",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131239).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-19": {
+  "titulo": "A crucificação",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94131739).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-21": {
+  "titulo": "A pesca maravilhosa",
+  "page": "https://commons.wikimedia.org/wiki/File:Raphael_-_The_Miraculous_Draft_of_Fishes_-_Google_Art_Project.jpg",
+  "artista": "Rafael",
+  "licenca": "Domínio público"
+ },
+ "lc-17": {
+  "titulo": "A cura dos dez leprosos",
+  "page": "https://commons.wikimedia.org/wiki/File:Healing_of_the_ten_lepers_by_Christ,_who_stands_at_right_Met_DP885641.jpg",
+  "artista": "Gravura do Met",
+  "licenca": "Domínio público"
+ },
+ "jo-1": {
+  "titulo": "O chamado de Pedro e André",
+  "page": "https://commons.wikimedia.org/wiki/File:Michelangelo_Merisi_da_Caravaggio_(Milan_1571-Port%27_Ercole_1610)_-_The_Calling_of_Saints_Peter_and_Andrew_-_RCIN_402824_-_Hampton_Court_Palace.jpg",
+  "artista": "Caravaggio",
+  "licenca": "Domínio público"
+ },
+ "jo-3": {
+  "titulo": "Nicodemos visita Jesus",
+  "page": "https://commons.wikimedia.org/wiki/File:Nicodemus_Visiting_Jesus,_by_Henry_Ossawa_Tanner.jpg",
+  "artista": "Henry Ossawa Tanner",
+  "licenca": "Domínio público"
+ },
+ "jo-6": {
+  "titulo": "A multiplicação para os cinco mil",
+  "page": "https://commons.wikimedia.org/wiki/File:John_Martin_-_Feeding_the_Five_Thousand_-_B1977.14.4260_-_Yale_Center_for_British_Art.jpg",
+  "artista": "John Martin",
+  "licenca": "Domínio público"
+ },
+ "jo-7": {
+  "titulo": "Jesus ensina no templo",
+  "page": "https://commons.wikimedia.org/wiki/File:John_Martin_-_Christ_Preaching_to_the_Elders_in_the_Temple_-_B1977.14.4255_-_Yale_Center_for_British_Art.jpg",
+  "artista": "John Martin",
+  "licenca": "Domínio público"
+ },
+ "jo-10": {
+  "titulo": "O bom pastor",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Lord_is_my_Good_Shepherd.jpg",
+  "artista": "Bernhard Plockhorst",
+  "licenca": "Domínio público"
+ },
+ "jo-12": {
+  "titulo": "A entrada de Cristo em Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:Gustave_Dor%C3%A9_-_Christ%27s_Entry_into_Jerusalem.jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "jo-15": {
+  "titulo": "Jesus fala aos discípulos à mesa",
+  "page": "https://commons.wikimedia.org/wiki/File:Duccio_di_Buoninsegna_029.jpg",
+  "artista": "Duccio di Buoninsegna",
+  "licenca": "Domínio público"
+ },
+ "jo-16": {
+  "titulo": "A despedida de Cristo aos apóstolos",
+  "page": "https://commons.wikimedia.org/wiki/File:Duccio_di_Buoninsegna_034.jpg",
+  "artista": "Duccio di Buoninsegna",
+  "licenca": "Domínio público"
+ },
+ "ap-1": {
+  "titulo": "João na ilha de Patmos",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94132138).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "ap-2": {
+  "titulo": "A visão dos sete candelabros",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_The_Vision_of_the_Seven_Candlesticks,_1498,_NGA_142350.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-3": {
+  "titulo": "Eis que estou à porta e bato",
+  "page": "https://commons.wikimedia.org/wiki/File:Hunt-light-of-the-world.jpeg",
+  "artista": "William Holman Hunt",
+  "licenca": "Domínio público"
+ },
+ "ap-4": {
+  "titulo": "João diante do trono e dos anciãos",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_Saint_John_before_God_and_the_Elders,_1498,_NGA_142351.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-5": {
+  "titulo": "A adoração do Cordeiro",
+  "page": "https://commons.wikimedia.org/wiki/File:Ghent_Altarpiece_-_Adoration_of_the_Mystic_Lamb.jpg",
+  "artista": "Jan e Hubert van Eyck",
+  "licenca": "Domínio público"
+ },
+ "ap-6": {
+  "titulo": "Os quatro cavaleiros",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_The_Four_Horsemen,_1498,_NGA_142352.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-7": {
+  "titulo": "Os quatro anjos que seguram os ventos",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_The_Four_Angels_Holding_the_Winds,_1498,_NGA_142354.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-8": {
+  "titulo": "Os sete anjos com as trombetas",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_The_Seven_Angels_with_the_Trumpets,_1498,_NGA_142355.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-9": {
+  "titulo": "Os quatro anjos do Eufrates",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_The_Four_Avenging_Angels,_1498,_NGA_142356.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-10": {
+  "titulo": "João come o livrinho",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_Saint_John_Devouring_the_Book,_1498,_NGA_142357.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-11": {
+  "titulo": "As duas testemunhas",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Unburied_Bodies_of_the_Two_Witnesses_and_the_Rejoicing_People,_Ms._Ludwig_III_1_(83.MC.72),_fol._17v.jpg",
+  "artista": "Apocalipse iluminado (Getty, Ms. Ludwig III 1)",
+  "licenca": "Domínio público"
+ },
+ "ap-12": {
+  "titulo": "O grande dragão e a mulher vestida de sol",
+  "page": "https://commons.wikimedia.org/wiki/File:William_Blake_-_The_Great_Red_Dragon_and_the_Woman_Clothed_with_the_Sun_-_Google_Art_Project.jpg",
+  "artista": "William Blake",
+  "licenca": "Domínio público"
+ },
+ "ap-13": {
+  "titulo": "A besta com chifres de cordeiro",
+  "page": "https://commons.wikimedia.org/wiki/File:Albrecht_D%C3%BCrer,_The_Beast_with_Two_Horns_LIke_a_Lamb,_1498,_NGA_142360.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-14": {
+  "titulo": "O Cordeiro sobre o monte Sião",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Adoration_of_the_Lamb,_from_the_Apocalypse_series_MET_DP816940.jpg",
+  "artista": "Albrecht Dürer",
+  "licenca": "Domínio público"
+ },
+ "ap-15": {
+  "titulo": "Os sete anjos com as taças",
+  "page": "https://commons.wikimedia.org/wiki/File:Leaf_from_a_Beatus_Manuscript-_Seven_Angels_Hold_the_Cups_of_the_Seven_Last_Plagues;_The_Hymn_of_the_Lamb_MET_DT6710_crop2.jpg",
+  "artista": "Beato de Liébana (folha iluminada)",
+  "licenca": "Domínio público"
+ },
+ "ap-16": {
+  "titulo": "O grande dia da sua ira",
+  "page": "https://commons.wikimedia.org/wiki/File:John_Martin_-_The_Great_Day_of_His_Wrath_-_Google_Art_Project.jpg",
+  "artista": "John Martin",
+  "licenca": "Domínio público"
+ },
+ "ap-17": {
+  "titulo": "A grande Babilônia",
+  "page": "https://commons.wikimedia.org/wiki/File:Whore-of-babylon-blake-1809.jpg",
+  "artista": "William Blake",
+  "licenca": "Domínio público"
+ },
+ "ap-18": {
+  "titulo": "A queda da Babilônia",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94132175).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "ap-19": {
+  "titulo": "O cavaleiro Fiel e Verdadeiro",
+  "page": "https://commons.wikimedia.org/wiki/File:The_Horseman_Faithful_and_True,_the_Army_of_Heaven_on_White_Horses_and_the_Horseman_in_the_Winepre..._-_Google_Art_Project_crop.jpg",
+  "artista": "Apocalipse iluminado (Getty, Ms. Ludwig III 1)",
+  "licenca": "Domínio público"
+ },
+ "ap-20": {
+  "titulo": "O juízo final",
+  "page": "https://commons.wikimedia.org/wiki/File:John_Martin_-_The_Last_Judgement_-_Google_Art_Project.jpg",
+  "artista": "John Martin",
+  "licenca": "Domínio público"
+ },
+ "ap-21": {
+  "titulo": "O anjo mostra a Nova Jerusalém",
+  "page": "https://commons.wikimedia.org/wiki/File:Nowy_Testament_Pana_naszego_Jezusa_Chrystusa_1892_(94132193).jpg",
+  "artista": "Gustave Doré",
+  "licenca": "Domínio público"
+ },
+ "ap-22": {
+  "titulo": "As planícies do céu",
+  "page": "https://commons.wikimedia.org/wiki/File:John_Martin_-_The_Plains_of_Heaven_-_Google_Art_Project.jpg",
+  "artista": "John Martin",
+  "licenca": "Domínio público"
  }
 }
