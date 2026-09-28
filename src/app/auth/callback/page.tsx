@@ -15,6 +15,26 @@ import { sincronizar } from "@/lib/sync";
  * perfil existe com o nome vindo do provedor, sincroniza e devolve a pessoa
  * para onde ela estava.
  */
+/**
+ * Login normal no Google, para a conta que já existe. `relogin` na volta evita
+ * repetir isto em loop se o segundo login também falhar.
+ */
+async function entrarNaContaExistente(proximo: string) {
+  const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(proximo)}&relogin=1`;
+  // Sem `prompt`: a pessoa acabou de escolher a conta, então o Google pode
+  // seguir direto em vez de mostrar a lista de novo.
+  const { error } = await sb().auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
+  if (error) throw error;
+}
+
+function traduzirErro(mensagem: string) {
+  if (/access[_ ]denied|cancel/i.test(mensagem)) return "O login foi cancelado.";
+  if (/already linked to another user/i.test(mensagem)) {
+    return "Esse Google já está ligado a outra conta. Saia e entre de novo com ele.";
+  }
+  return mensagem;
+}
+
 export default function CallbackPage() {
   const router = useRouter();
   const [falha, setFalha] = useState<string | null>(null);
@@ -28,10 +48,26 @@ export default function CallbackPage() {
     const params = new URLSearchParams(window.location.search);
     const proximo = params.get("next") || "/grupos";
 
-    // O Google devolve o erro na query quando a pessoa cancela ou nega acesso.
+    // O erro volta na query ou no fragmento (#), conforme o fluxo do Supabase.
+    const fragmento = new URLSearchParams(window.location.hash.slice(1));
+    fragmento.forEach((valor, chave) => {
+      if (!params.has(chave)) params.set(chave, valor);
+    });
     const erroProvedor = params.get("error_description") || params.get("error");
     if (erroProvedor) {
-      setFalha(decodeURIComponent(erroProvedor));
+      // Quem saiu da conta volta para uma sessão anônima, e o "Entrar com
+      // Google" tenta VINCULAR o Google a ela. Se esse Google já é de uma conta,
+      // o vínculo falha: aí o certo é simplesmente entrar nessa conta.
+      const jaTemConta =
+        params.get("error_code") === "identity_already_exists" ||
+        /already linked to another user/i.test(erroProvedor);
+      if (jaTemConta && !params.get("relogin")) {
+        void entrarNaContaExistente(proximo).catch((e) =>
+          setFalha(e instanceof Error ? e.message : "Não consegui entrar na sua conta."),
+        );
+        return;
+      }
+      setFalha(traduzirErro(decodeURIComponent(erroProvedor)));
       return;
     }
 
@@ -68,6 +104,7 @@ export default function CallbackPage() {
 
   return (
     <div className="grid min-h-[60vh] place-items-center px-6">
+      {/* Enquanto refaz o login na conta existente, segue mostrando "Entrando". */}
       {falha ? (
         <div className="max-w-sm text-center">
           <TriangleAlert size={26} className="mx-auto text-amber-400" />

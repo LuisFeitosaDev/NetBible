@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Info } from "lucide-react";
 import { useBible } from "@/lib/store";
@@ -76,6 +77,16 @@ export default function SettingsPage() {
           você publicar o app, remova-a ou obtenha licença.
         </p>
       </Section>
+
+      <p className="mt-8 text-center text-[12.5px] text-ink-400">
+        <Link href="/privacidade" className="hover:text-ink-100">
+          Política de Privacidade
+        </Link>
+        {" · "}
+        <Link href="/termos" className="hover:text-ink-100">
+          Termos de Uso
+        </Link>
+      </p>
 
       <div className="h-20" />
     </div>
