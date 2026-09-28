@@ -18,6 +18,26 @@ const ARTE_MAX = 300;
 
 self.addEventListener("install", () => self.skipWaiting());
 
+/* Aviso do grupo vindo do servidor (/api/avisos). Chega mesmo com o app
+   fechado, que é o caso da cutucada: é justamente quando a pessoa não abriu. */
+self.addEventListener("push", (event) => {
+  let aviso = {};
+  try {
+    aviso = event.data ? event.data.json() : {};
+  } catch {
+    aviso = { body: event.data ? event.data.text() : "" };
+  }
+  event.waitUntil(
+    self.registration.showNotification(aviso.title || "Genipse Bible", {
+      body: aviso.body || "Novidade no seu grupo de leitura",
+      icon: "/icon-192.png",
+      badge: "/icon-mono.png",
+      tag: aviso.tag,
+      data: { url: aviso.url || "/biblioteca" },
+    }),
+  );
+});
+
 /* Toque no aviso do grupo ("fulano grifou"): abre o app onde o aviso aponta,
    reaproveitando a janela que já estiver aberta. */
 self.addEventListener("notificationclick", (event) => {

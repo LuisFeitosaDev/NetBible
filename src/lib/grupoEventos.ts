@@ -10,8 +10,11 @@
 import { sb } from "./grupos/supabase";
 import { garantirSessao } from "./grupos/api";
 import { refOf } from "./bible";
+import { avisarPorPush } from "./push";
+import type { DadosDoEvento, TipoDeEvento } from "./avisoTexto";
 
-export type TipoDeEvento = "grifo" | "meta" | "cutucada" | "entrou";
+export type { TipoDeEvento } from "./avisoTexto";
+export { textoDoAviso, destinoDoAviso, etiquetaDoAviso } from "./avisoTexto";
 
 export type EventoDoGrupo = {
   id: string;
@@ -20,15 +23,7 @@ export type EventoDoGrupo = {
   tipo: TipoDeEvento;
   alvo_id: string | null;
   ref: string | null;
-  dados: {
-    slug?: string;
-    capitulo?: number;
-    versiculo?: number;
-    livro?: string;
-    cor?: string;
-    texto?: string;
-    dia?: number;
-  };
+  dados: DadosDoEvento;
   criado_em: string;
 };
 
@@ -47,7 +42,7 @@ export async function publicarEvento(
   extra: { alvoId?: string; ref?: string; dados?: EventoDoGrupo["dados"] } = {},
 ) {
   const id = await garantirSessao();
-  const { error } = await sb()
+  const { data, error } = await sb()
     .from("grupo_eventos")
     .insert({
       grupo_id: grupoId,
@@ -56,8 +51,11 @@ export async function publicarEvento(
       alvo_id: extra.alvoId ?? null,
       ref: extra.ref ?? null,
       dados: extra.dados ?? {},
-    });
+    })
+    .select("id")
+    .single();
   if (error) throw error;
+  avisarPorPush([data.id]);
 }
 
 /** Publica grifos, trocando os que eu já tinha nos mesmos versículos (mudou a cor). */
@@ -66,7 +64,7 @@ export async function publicarGrifos(grupoId: string, grifos: Grifo[]) {
   const id = await garantirSessao();
   const refs = grifos.map((g) => refOf(g.slug, g.capitulo, g.versiculo));
   await removerGrifos(grupoId, refs);
-  const { error } = await sb()
+  const { data, error } = await sb()
     .from("grupo_eventos")
     .insert(
       grifos.map((g, i) => ({
@@ -76,8 +74,10 @@ export async function publicarGrifos(grupoId: string, grifos: Grifo[]) {
         ref: refs[i],
         dados: g,
       })),
-    );
+    )
+    .select("id");
   if (error) throw error;
+  avisarPorPush((data ?? []).map((e) => e.id as string));
 }
 
 export async function removerGrifos(grupoId: string, refs: string[]) {
@@ -168,21 +168,6 @@ export function somarNaoVisto() {
 export function eventoParaMim(e: EventoDoGrupo, meuId: string | undefined) {
   if (e.perfil_id === meuId) return false;
   return e.tipo !== "cutucada" || e.alvo_id === meuId;
-}
-
-export function textoDoAviso(e: EventoDoGrupo, nome: string) {
-  const quem = nome.trim().split(/\s+/)[0] || nome;
-  const d = e.dados;
-  if (e.tipo === "grifo") return `${quem} grifou ${d.livro} ${d.capitulo}:${d.versiculo}`;
-  if (e.tipo === "meta") return `${quem} bateu a meta de hoje`;
-  if (e.tipo === "cutucada") return `${quem} te cutucou: bora ler hoje?`;
-  return `${quem} entrou no seu grupo de leitura`;
-}
-
-export function destinoDoAviso(e: EventoDoGrupo) {
-  return e.tipo === "grifo" && e.dados.slug
-    ? `/livro/${e.dados.slug}/${e.dados.capitulo}?v=${e.dados.versiculo}`
-    : "/biblioteca";
 }
 
 export function definirNaoVistos(n: number) {

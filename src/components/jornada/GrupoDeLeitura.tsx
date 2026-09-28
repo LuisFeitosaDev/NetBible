@@ -31,6 +31,7 @@ import { apagarPlano } from "@/lib/db";
 import { inicioDoDia, type PlanoSalvo, type ProgressoDoPlano } from "@/lib/planos";
 import { HIGHLIGHT_COLORS } from "@/lib/catalog";
 import { textoDoConvite } from "@/lib/convite";
+import { inscreverPush } from "@/lib/push";
 import type { Grupo } from "@/lib/grupos/tipos";
 import type { BibleIndex } from "@/lib/bible";
 import { ConfirmarExclusao } from "@/components/ConfirmarExclusao";
@@ -519,7 +520,11 @@ function AtivarAvisos() {
 
   return (
     <button
-      onClick={async () => setPermissao(await Notification.requestPermission())}
+      onClick={async () => {
+        const nova = await Notification.requestPermission();
+        setPermissao(nova);
+        if (nova === "granted") void inscreverPush().catch(() => {});
+      }}
       className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-white/12 p-3 text-left transition-colors hover:border-white/25"
     >
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gold-400/12 text-gold-400">

@@ -11,6 +11,7 @@ import { sb, supabaseConfigurado } from "@/lib/grupos/supabase";
 import {
   definirNaoVistos,
   destinoDoAviso,
+  etiquetaDoAviso,
   eventoParaMim,
   eventosDoGrupo,
   ouvirEventos,
@@ -18,13 +19,15 @@ import {
   textoDoAviso,
   vistoEm,
 } from "@/lib/grupoEventos";
+import { inscreverPush } from "@/lib/push";
 
 type Aviso = { id: string; texto: string; destino: string };
 
 /**
  * Os avisos do grupo de leitura, em qualquer tela do app: um balão quando
  * alguém grifa, bate a meta ou te cutuca, e uma notificação do sistema se o
- * app estiver em segundo plano (e a pessoa tiver deixado).
+ * app estiver em segundo plano (e a pessoa tiver deixado). Com o app fechado
+ * quem avisa é o push (`lib/push.ts`), que este componente mantém inscrito.
  */
 export function AvisosDoGrupo() {
   const plano = useLiveQuery(() => db.planos.get("atual"), []);
@@ -44,6 +47,10 @@ export function AvisosDoGrupo() {
       const membros = await membrosDoGrupo(grupoId);
       membros.forEach((m) => nomes.set(m.perfil_id, m.profiles?.nome ?? "Alguém"));
     };
+
+    // Quem já liberou os avisos antes do push existir, ou trocou de aparelho,
+    // passa a receber com o app fechado sem precisar tocar em nada.
+    void inscreverPush().catch(() => {});
 
     (async () => {
       meuId = (await sb().auth.getSession()).data.session?.user?.id;
@@ -78,7 +85,8 @@ export function AvisosDoGrupo() {
         void registro?.showNotification("Genipse Bible", {
           body: texto,
           icon: "/icon.png",
-          tag: e.id,
+          // Mesma etiqueta do push: se os dois chegarem, um substitui o outro.
+          tag: etiquetaDoAviso(e),
           data: { url: destinoDoAviso(e) },
         });
       }
