@@ -147,12 +147,20 @@ export async function garantirPerfilDoProvedor(): Promise<string | null> {
 
   const { data: existente } = await c
     .from("profiles")
-    .select("nome")
+    .select("nome, avatar_url")
     .eq("id", usuario.id)
     .maybeSingle();
-  if (existente?.nome) return existente.nome;
 
   const meta = usuario.user_metadata ?? {};
+  // O Supabase normaliza a maioria dos provedores para `avatar_url`; o Google
+  // manda `picture` na resposta crua, que ele às vezes preserva por baixo.
+  const foto = (meta.avatar_url as string) || (meta.picture as string) || null;
+  if (foto && !existente?.avatar_url) {
+    const { error } = await c.rpc("definir_avatar_url", { p_avatar_url: foto });
+    if (error) console.warn("definir_avatar_url:", error.message);
+  }
+
+  if (existente?.nome) return existente.nome;
   const nomeCompostoDoGoogle = [meta.given_name, meta.family_name]
     .filter((parte): parte is string => Boolean(parte && String(parte).trim()))
     .join(" ");

@@ -304,7 +304,7 @@ function LinhaDoMembro({ membro: m, grupoId }: { membro: ProgressoDoMembro; grup
 
   return (
     <li className="flex items-center gap-3 px-4 py-3">
-      <Avatar nome={m.nome} valor={p?.percentual ?? 0} />
+      <Avatar nome={m.nome} avatarUrl={m.avatarUrl} valor={p?.percentual ?? 0} />
 
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1.5">

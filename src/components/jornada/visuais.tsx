@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 /** Anel de progresso, de 0 a 100, com o que vier no meio. */
 export function AnelDeProgresso({
@@ -60,40 +60,59 @@ export function corDoNome(nome: string) {
 }
 
 /** Inicial do nome dentro de um anel com o progresso da pessoa no plano. */
+/**
+ * A foto do Google quando existe; senão, a inicial colorida de sempre. Como
+ * é uma URL de fora (lh3.googleusercontent.com), o `<img>` pode falhar — o
+ * `onError` troca para a inicial na hora, em vez de deixar um ícone quebrado.
+ */
 export function Avatar({
   nome,
+  avatarUrl,
   valor,
   tamanho = 44,
 }: {
   nome: string;
+  avatarUrl?: string | null;
   valor?: number;
   tamanho?: number;
 }) {
+  const [fotoQuebrou, setFotoQuebrou] = useState(false);
   const cor = corDoNome(nome);
   const inicial = nome.trim().charAt(0).toUpperCase() || "?";
-  if (valor === undefined) {
-    return (
-      <span
-        className="grid shrink-0 place-items-center rounded-full font-display font-bold text-ink-950"
-        style={{ width: tamanho, height: tamanho, background: cor, fontSize: tamanho * 0.42 }}
-      >
-        {inicial}
-      </span>
-    );
-  }
-  return (
-    <AnelDeProgresso valor={valor} tamanho={tamanho} espessura={3.5} cor={cor}>
+  const mostrarFoto = Boolean(avatarUrl) && !fotoQuebrou;
+
+  const miolo = (tamanhoDoMiolo: number) =>
+    mostrarFoto ? (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={avatarUrl!}
+        alt=""
+        width={tamanhoDoMiolo}
+        height={tamanhoDoMiolo}
+        referrerPolicy="no-referrer"
+        onError={() => setFotoQuebrou(true)}
+        className="rounded-full object-cover"
+        style={{ width: tamanhoDoMiolo, height: tamanhoDoMiolo }}
+      />
+    ) : (
       <span
         className="grid place-items-center rounded-full font-display font-bold text-ink-950"
         style={{
-          width: tamanho - 11,
-          height: tamanho - 11,
+          width: tamanhoDoMiolo,
+          height: tamanhoDoMiolo,
           background: cor,
-          fontSize: tamanho * 0.36,
+          fontSize: tamanhoDoMiolo * 0.42,
         }}
       >
         {inicial}
       </span>
+    );
+
+  if (valor === undefined) return <span className="shrink-0">{miolo(tamanho)}</span>;
+
+  return (
+    <AnelDeProgresso valor={valor} tamanho={tamanho} espessura={3.5} cor={cor}>
+      {miolo(tamanho - 11)}
     </AnelDeProgresso>
   );
 }

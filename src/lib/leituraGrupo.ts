@@ -243,6 +243,7 @@ export async function carregarGrupoDoPlano(
 export type ProgressoDoMembro = {
   perfilId: string;
   nome: string;
+  avatarUrl: string | null;
   souEu: boolean;
   lider: boolean;
   /** `null` quando a pessoa está no grupo mas o plano dela ainda não subiu. */
@@ -285,6 +286,7 @@ export async function progressoDoGrupo(
     return {
       perfilId: m.perfil_id,
       nome: m.profiles?.nome ?? "Alguém",
+      avatarUrl: m.profiles?.avatar_url ?? null,
       souEu,
       lider: m.papel === "lider",
       plano: plano ? progressoDoPlano(plano, roteiroDe(plano)) : null,

@@ -109,7 +109,10 @@ export async function POST(req: Request) {
             tag: etiquetaDoAviso({ id: primeiro.evento_id, perfil_id: primeiro.perfil_id, tipo: primeiro.tipo }),
           }),
           // Cutucada de ontem não serve para nada: meio dia de validade basta.
-          { TTL: 60 * 60 * 12, urgency: primeiro.tipo === "cutucada" ? "high" : "normal" },
+          // Urgência alta em todos: é a diferença entre chegar na hora e ficar
+          // represado pela economia de bateria do Android até o celular ser
+          // destravado — o mural já é raro (ninguém cutuca 50x por dia).
+          { TTL: 60 * 60 * 12, urgency: "high" },
         );
         enviados++;
       } catch (e) {

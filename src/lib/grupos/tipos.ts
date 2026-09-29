@@ -1,7 +1,12 @@
 import type { MetodoId, Nivel, Publico } from "./metodos";
 import type { Assunto, Material } from "./conteudo/tipos";
 
-export type Perfil = { id: string; nome: string; criado_em: string };
+export type Perfil = {
+  id: string;
+  nome: string;
+  criado_em: string;
+  avatar_url?: string | null;
+};
 
 export type TipoDeGrupo = "estudo" | "leitura";
 
