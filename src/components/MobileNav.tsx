@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Home, BookOpen, Compass, CircleUser, Users } from "lucide-react";
+import { Home, BookOpen, Compass, CircleUser, BookHeart } from "lucide-react";
 import { ouvirNaoVistos } from "@/lib/grupoEventos";
 
-/** A ordem é a do uso: abrir o app, ler, voltar ao que é seu, estudar junto, conta. */
+/**
+ * A ordem é a do uso: abrir o app, ler, voltar ao que é seu, o devocional do
+ * dia, conta. A aba Grupos (estudos em grupo, `/grupos`) saiu da barra mas a
+ * rota continua no app, guardada para voltar em outro lugar.
+ */
 const ITEMS = [
   { href: "/", label: "Início", icon: Home },
   { href: "/busca", label: "Bíblia", icon: BookOpen },
   { href: "/biblioteca", label: "Jornada", icon: Compass },
-  { href: "/grupos", label: "Grupos", icon: Users },
+  { href: "/devocional", label: "Devocional", icon: BookHeart },
   { href: "/ajustes", label: "Conta", icon: CircleUser },
 ];
 

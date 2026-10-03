@@ -54,8 +54,7 @@ export function ContaCard() {
     return (
       <p className="flex gap-2.5 text-[13px] leading-relaxed text-ink-400">
         <CloudOff size={16} className="mt-0.5 shrink-0" />
-        Sem o Supabase configurado, tudo fica só neste dispositivo. Veja a aba Grupos para
-        os passos.
+        Sem o Supabase configurado, tudo fica só neste dispositivo.
       </p>
     );
   }

@@ -46,7 +46,7 @@ export default function CallbackPage() {
     }
 
     const params = new URLSearchParams(window.location.search);
-    const proximo = params.get("next") || "/grupos";
+    const proximo = params.get("next") || "/";
 
     // O erro volta na query ou no fragmento (#), conforme o fluxo do Supabase.
     const fragmento = new URLSearchParams(window.location.hash.slice(1));
@@ -111,10 +111,10 @@ export default function CallbackPage() {
           <p className="mt-3 font-display text-lg font-bold">Login não concluído</p>
           <p className="mt-1.5 text-sm text-ink-400">{falha}</p>
           <button
-            onClick={() => router.replace("/grupos")}
+            onClick={() => router.replace("/ajustes")}
             className="mt-5 rounded-xl bg-white/10 px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/18"
           >
-            Voltar para Grupos
+            Voltar para Conta
           </button>
         </div>
       ) : (

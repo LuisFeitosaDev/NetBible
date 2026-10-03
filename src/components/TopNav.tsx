@@ -12,7 +12,7 @@ const LINKS = [
   { href: "/", label: "Início" },
   { href: "/busca", label: "Bíblia" },
   { href: "/biblioteca", label: "Jornada" },
-  { href: "/grupos", label: "Grupos" },
+  { href: "/devocional", label: "Devocional" },
   { href: "/ajustes", label: "Conta" },
 ];
 

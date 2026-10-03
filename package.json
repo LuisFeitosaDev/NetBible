@@ -20,7 +20,8 @@
     "prebuild": "npm run fichas",
     "planos:conferir": "node --experimental-strip-types scripts/conferir-planos.mjs",
     "arte:add": "node scripts/adicionar-arte.mjs",
-    "avisos:enviar": "node --env-file=.env.local scripts/avisar-todos.mjs"
+    "avisos:enviar": "node --env-file=.env.local scripts/avisar-todos.mjs",
+    "devocionais:conferir": "node --experimental-strip-types scripts/conferir-devocionais.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.127.0",

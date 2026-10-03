@@ -1,0 +1,359 @@
+/**
+ * 30 dias com Deus: uma jornada de um mês em quatro movimentos.
+ *   Dias 1–7    Quem Deus é
+ *   Dias 8–14   Quem Jesus é
+ *   Dias 15–21  Responder a ele
+ *   Dias 22–30  Viver com ele no dia a dia
+ */
+import type { Devocional } from "./devocionais";
+
+export const TRINTA_DIAS: Devocional = {
+  id: "30-dias-com-deus",
+  titulo: "30 dias com Deus",
+  chamada: "Um mês para conhecer, responder e caminhar",
+  descricao:
+    "Uma jornada de um mês, para quem está começando ou recomeçando. Na primeira semana, quem Deus é. Na segunda, quem Jesus é. Na terceira, como responder a ele. E na última, como viver com ele no dia a dia. Um texto curto por dia, sem pressa.",
+  categoria: "jornada",
+  capa: { slug: "gn", capitulo: 1 },
+  cor: "#d1a24a",
+  selo: "Um mês",
+  dias: [
+    /* ------------------------------------------- Semana 1: quem Deus é --- */
+    {
+      titulo: "No princípio, Deus",
+      leitura: { slug: "gn", capitulo: 1, de: 1, ate: 5 },
+      reflexao: [
+        "A Bíblia começa sem tentar provar que Deus existe. Ela simplesmente começa com ele: \"No princípio criou Deus os céus e a terra.\" Antes de tudo, havia Deus.",
+        "E a primeira coisa que ele faz diante do vazio e das trevas é falar: \"haja luz\". Esta jornada começa com a mesma esperança: onde há caos, Deus ainda fala, e a luz ainda aparece.",
+      ],
+      pergunta: "Que parte da sua vida está \"sem forma e vazia\" esperando Deus falar?",
+      oracao: "Deus, tu estavas antes de tudo. Começo este mês contigo. Fala às minhas trevas: haja luz.",
+      pratica: "Separe um horário fixo para estes 30 dias e escreva-o na agenda.",
+    },
+    {
+      titulo: "O Deus que me vê",
+      leitura: { slug: "gn", capitulo: 16, de: 7, ate: 13 },
+      reflexao: [
+        "Agar era escrava, estrangeira e estava fugindo grávida para o deserto. Ninguém se importava com ela. E é a ela que Deus aparece, chamando-a pelo nome.",
+        "Ela dá a Deus um nome que ninguém tinha dado antes: El-Rói, \"o Deus que me vê\". O Deus da Bíblia não enxerga só reis e heróis. Ele vê quem está fugindo, sozinho, no deserto.",
+      ],
+      pergunta: "Você acredita que Deus te vê, mesmo onde ninguém mais vê?",
+      oracao: "El-Rói, Deus que me vê: obrigado por me enxergares até no meu deserto.",
+      pratica: "Olhe hoje com atenção para alguém que costuma passar despercebido.",
+    },
+    {
+      titulo: "Eu sou o que sou",
+      leitura: { slug: "ex", capitulo: 3, de: 7, ate: 14 },
+      reflexao: [
+        "Deus diz a Moisés: \"tenho visto a aflição do meu povo\", \"tenho ouvido o seu clamor\", \"conheço os seus sofrimentos\", \"e desci para o livrar\". Ele vê, ouve, conhece e desce.",
+        "Quando Moisés pergunta o nome dele, a resposta é misteriosa: \"EU SOU O QUE SOU.\" Deus não depende de nada nem de ninguém. E, ao mesmo tempo, promete: \"Certamente eu serei contigo.\"",
+      ],
+      pergunta: "Qual destes verbos você mais precisa saber que Deus faz por você: ver, ouvir, conhecer ou descer?",
+      oracao: "Eu Sou, tu vês, ouves e conheces o meu sofrimento. Obrigado porque desces para estar comigo.",
+      pratica: "Escreva uma aflição sua e, ao lado, a promessa: \"eu serei contigo\".",
+    },
+    {
+      titulo: "Misericordioso e compassivo",
+      leitura: { slug: "ex", capitulo: 34, de: 5, ate: 7 },
+      reflexao: [
+        "Moisés pediu para ver a glória de Deus. E Deus respondeu dizendo quem ele é: \"Deus misericordioso e compassivo, tardio em irar-se e grande em beneficência e verdade.\"",
+        "Esta descrição é repetida várias vezes ao longo do Antigo Testamento. É como Deus quer ser conhecido. Ele leva o mal a sério, mas a misericórdia vem primeiro, e vai muito mais longe.",
+      ],
+      pergunta: "Como você imagina Deus olhando para você: com braveza ou com compaixão?",
+      oracao: "Senhor, tu és misericordioso e compassivo, tardio em irar-te. Ensina-me a te conhecer assim.",
+      pratica: "Releia o versículo 6 três vezes devagar ao longo do dia.",
+    },
+    {
+      titulo: "Como um pai",
+      leitura: { slug: "sl", capitulo: 103, de: 8, ate: 14 },
+      reflexao: [
+        "Davi usa imagens enormes: tão alto quanto o céu está acima da terra é o amor de Deus; tão longe quanto o oriente está do ocidente ele afasta de nós os nossos pecados.",
+        "E depois uma imagem pequena e próxima: \"Como um pai se compadece de seus filhos.\" Deus \"lembra-se de que somos pó\". Ele não espera de você o que você não é.",
+      ],
+      pergunta: "Você é mais duro consigo mesmo do que Deus é com você?",
+      oracao: "Pai, obrigado por te lembrares de que eu sou pó. Ensina-me a receber a tua compaixão.",
+      pratica: "Quando se cobrar demais hoje, lembre: \"ele conhece a nossa estrutura\".",
+    },
+    {
+      titulo: "Santo, santo, santo",
+      leitura: { slug: "is", capitulo: 6, de: 1, ate: 8 },
+      reflexao: [
+        "Isaías vê o Senhor no trono e os serafins clamando: \"Santo, santo, santo é o Senhor dos exércitos.\" Santo quer dizer separado, diferente de tudo. A reação dele é: \"Ai de mim! pois estou perdido.\"",
+        "Mas a história não termina no medo. Deus purifica os lábios de Isaías e depois pergunta: \"A quem enviarei?\". O encontro com a santidade de Deus quebra, limpa e envia.",
+      ],
+      pergunta: "Você já teve um momento em que percebeu a grandeza de Deus e a sua pequenez?",
+      oracao: "Santo, santo, santo é o Senhor. Purifica-me, e eis-me aqui, envia-me a mim.",
+      pratica: "Passe alguns minutos hoje só adorando a Deus pelo que ele é, sem pedidos.",
+    },
+    {
+      titulo: "Deus é amor",
+      leitura: { slug: "1jo", capitulo: 4, de: 7, ate: 12 },
+      reflexao: [
+        "João resume tudo em três palavras: \"Deus é amor\". Não é só que Deus ama: amar é o que ele é. E esse amor tem endereço: \"Deus enviou seu Filho unigênito ao mundo\".",
+        "\"Nisto está o amor: não em que nós tenhamos amado a Deus, mas em que ele nos amou a nós.\" Esta é a última verdade da primeira semana: o amor começou com ele, não com você.",
+      ],
+      pergunta: "O que muda saber que o amor de Deus começou antes do seu?",
+      oracao: "Deus, tu és amor. Obrigado por me amares primeiro. Ensina-me a amar como fui amado.",
+      pratica: "Escreva em uma frase o que você aprendeu sobre Deus nesta primeira semana.",
+    },
+
+    /* -------------------------------------------- Semana 2: quem Jesus é --- */
+    {
+      titulo: "No princípio era o Verbo",
+      leitura: { slug: "jo", capitulo: 1, de: 1, ate: 5 },
+      reflexao: [
+        "João começa o evangelho ecoando Gênesis: \"No princípio era o Verbo\". Verbo é Palavra. Aquela Palavra que criou a luz no dia 1 agora tem nome.",
+        "\"Todas as coisas foram feitas por intermédio dele.\" Nesta semana, o foco é Jesus. E João já avisa logo no começo: \"a luz resplandece nas trevas, e as trevas não prevaleceram contra ela\".",
+      ],
+      pergunta: "Quem é Jesus para você hoje, com as suas palavras?",
+      oracao: "Jesus, Palavra eterna, quero te conhecer melhor nesta semana. Brilha nas minhas trevas.",
+      pratica: "Responda por escrito: quem é Jesus para mim hoje? Guarde para reler no fim do mês.",
+    },
+    {
+      titulo: "O Verbo se fez carne",
+      leitura: { slug: "jo", capitulo: 1, de: 14, ate: 18 },
+      reflexao: [
+        "\"E o Verbo se fez carne, e habitou entre nós.\" Deus não ficou longe mandando recados. Ele se tornou um de nós, com corpo, fome, cansaço e lágrimas.",
+        "E o versículo 18 diz o motivo: \"Ninguém jamais viu a Deus\", mas Jesus \"o deu a conhecer\". Se você quer saber como Deus é, olhe para Jesus.",
+      ],
+      pergunta: "Em que Jesus mudou a sua imagem de Deus?",
+      oracao: "Obrigado, Jesus, por vires morar entre nós. Mostra-me o Pai através de ti.",
+      pratica: "Leia hoje um capítulo de um dos evangelhos só observando como Jesus trata as pessoas.",
+    },
+    {
+      titulo: "O bom pastor",
+      leitura: { slug: "jo", capitulo: 10, de: 11, ate: 15 },
+      reflexao: [
+        "Jesus contrasta o bom pastor com o mercenário. O mercenário trabalha pelo pagamento e foge quando vem o lobo. O pastor fica, porque as ovelhas são dele.",
+        "\"O bom pastor dá a sua vida pelas ovelhas.\" E diz ainda: \"conheço as minhas ovelhas\". Você é conhecido pelo nome por alguém que deu a vida por você.",
+      ],
+      pergunta: "Você tem seguido Jesus como pastor ou como alguém distante?",
+      oracao: "Bom pastor, obrigado por me conheceres e por dares a vida por mim. Quero ouvir a tua voz.",
+      pratica: "Leia o Salmo 23 hoje pensando em Jesus como o pastor.",
+    },
+    {
+      titulo: "O pão da vida",
+      leitura: { slug: "jo", capitulo: 6, de: 35, ate: 40 },
+      reflexao: [
+        "Um dia depois de multiplicar os pães, Jesus diz: \"Eu sou o pão da vida\". As pessoas queriam mais pão de padaria. Ele oferecia a si mesmo.",
+        "E faz uma promessa linda: \"o que vem a mim de maneira nenhuma o lançarei fora\". Não há fila de reprovados com Jesus. Quem vem, fica.",
+      ],
+      pergunta: "Que fome você tem tentado matar com coisas que não satisfazem?",
+      oracao: "Jesus, tu és o pão da vida. Eu venho a ti, sabendo que não me lançarás fora.",
+      pratica: "Faça hoje um pequeno jejum (de uma refeição, das redes ou de algo) e use o tempo para orar.",
+    },
+    {
+      titulo: "A luz do mundo",
+      leitura: { slug: "jo", capitulo: 8, de: 12 },
+      reflexao: [
+        "\"Eu sou a luz do mundo; quem me segue de modo algum andará em trevas, mas terá a luz da vida.\" Jesus disse isso provavelmente durante a festa dos Tabernáculos, quando o templo era iluminado por grandes candelabros.",
+        "A promessa não é para quem admira a luz de longe, mas para quem segue. Luz não é para ser olhada: é para iluminar o caminho de quem anda.",
+      ],
+      pergunta: "Em que área você tem andado no escuro em vez de seguir a luz?",
+      oracao: "Jesus, luz do mundo, ilumina o meu caminho. Quero te seguir de perto.",
+      pratica: "Traga à luz hoje algo que você vinha mantendo escondido, contando a Deus ou a alguém de confiança.",
+    },
+    {
+      titulo: "O caminho",
+      leitura: { slug: "jo", capitulo: 14, de: 1, ate: 6 },
+      reflexao: [
+        "Os discípulos estão confusos e assustados. Tomé diz: \"não sabemos para onde vais; e como podemos saber o caminho?\". É uma pergunta honesta.",
+        "Jesus não responde com um mapa. Responde com ele mesmo: \"Eu sou o caminho, e a verdade, e a vida\". Quando você não sabe o caminho, pode seguir a pessoa.",
+      ],
+      pergunta: "Você tem procurado um mapa quando Jesus oferece a si mesmo como caminho?",
+      oracao: "Jesus, não sei todo o caminho, mas sei quem é o caminho. Eu sigo a ti.",
+      pratica: "Diante de uma dúvida hoje, pergunte: o que Jesus faria aqui?",
+    },
+    {
+      titulo: "A ressurreição e a vida",
+      leitura: { slug: "jo", capitulo: 11, de: 25, ate: 27 },
+      reflexao: [
+        "Jesus diz isso a Marta, que tinha acabado de perder o irmão: \"Eu sou a ressurreição e a vida\". E pergunta: \"Crês isto?\".",
+        "Marta responde com a confissão mais completa dos evangelhos até ali. No fim desta segunda semana, a mesma pergunta é para você: quem é Jesus, e você crê nisso?",
+      ],
+      pergunta: "Se Jesus te perguntasse hoje \"crês isto?\", o que você responderia?",
+      oracao: "Senhor, eu creio que tu és o Cristo, o Filho de Deus. Tu és a ressurreição e a vida.",
+      pratica: "Releia o que você escreveu no dia 8. Acrescente algo que aprendeu sobre Jesus nesta semana.",
+    },
+
+    /* ------------------------------------------ Semana 3: responder a ele --- */
+    {
+      titulo: "O tempo chegou",
+      leitura: { slug: "mc", capitulo: 1, de: 14, ate: 15 },
+      reflexao: [
+        "As primeiras palavras de Jesus em Marcos são um resumo de tudo: \"O tempo está cumprido, e é chegado o reino de Deus. Arrependei-vos, e crede no evangelho.\"",
+        "Arrepender-se é mudar de direção. Crer é confiar. Nesta terceira semana, o tema é a resposta. Deus já falou e já agiu. Agora é a nossa vez.",
+      ],
+      pergunta: "Em que área da sua vida você precisa mudar de direção?",
+      oracao: "Jesus, eu me arrependo e creio. Quero mudar de direção e confiar em ti.",
+      pratica: "Identifique um hábito que te afasta de Deus e dê hoje um passo concreto para mudá-lo.",
+    },
+    {
+      titulo: "Vinde após mim",
+      leitura: { slug: "mc", capitulo: 1, de: 16, ate: 20 },
+      reflexao: [
+        "Jesus chama pescadores no meio do trabalho: \"Vinde após mim, e eu farei que vos torneis pescadores de homens\". E eles deixam \"imediatamente\" as redes.",
+        "Repare quem faz a transformação: \"eu farei\". Eles só precisavam seguir. Seguir Jesus não é se transformar sozinho para depois ser aceito. É ir com ele e deixar que ele faça.",
+      ],
+      pergunta: "Que \"rede\" você precisaria largar para seguir Jesus mais de perto?",
+      oracao: "Senhor, eu quero seguir-te. Faz de mim o que eu sozinho não consigo ser.",
+      pratica: "Largue hoje, por um dia, algo que costuma ocupar o lugar de Deus.",
+    },
+    {
+      titulo: "Permanecer na videira",
+      leitura: { slug: "jo", capitulo: 15, de: 1, ate: 8 },
+      reflexao: [
+        "A palavra que mais se repete aqui é \"permanecer\". O ramo não se esforça para dar fruto: ele só permanece ligado. O fruto é consequência.",
+        "\"Sem mim nada podeis fazer.\" Não é uma ameaça, é um alívio. Você não precisa produzir a vida cristã na força do braço. Precisa ficar ligado à fonte.",
+      ],
+      pergunta: "O que te ajuda a permanecer ligado a Jesus durante o dia?",
+      oracao: "Jesus, quero permanecer em ti. Sem ti nada posso fazer.",
+      pratica: "Coloque um lembrete no celular para três momentos do dia: \"permanecer\". Ore um minuto em cada um.",
+    },
+    {
+      titulo: "Um sacrifício vivo",
+      leitura: { slug: "rm", capitulo: 12, de: 1, ate: 2 },
+      reflexao: [
+        "Paulo pede que apresentemos o corpo \"como um sacrifício vivo\". No templo, o sacrifício era morto e oferecido uma vez. Aqui, é a vida inteira oferecida todos os dias.",
+        "E isso começa na mente: \"transformai-vos pela renovação da vossa mente\". Mudar o jeito de pensar muda o jeito de viver.",
+      ],
+      pergunta: "Em que área você tem se conformado ao mundo em vez de ser transformado?",
+      oracao: "Deus, eu ofereço a minha vida a ti, hoje. Renova a minha mente.",
+      pratica: "Observe hoje um pensamento automático seu e pergunte: isto vem de Deus ou do mundo?",
+    },
+    {
+      titulo: "Amar de todo o coração",
+      leitura: { slug: "dt", capitulo: 6, de: 4, ate: 9 },
+      reflexao: [
+        "Este é o Shemá, a oração que os judeus repetem até hoje: \"Ouve, ó Israel\". E o centro dela: \"Amarás, pois, ao Senhor teu Deus de todo o teu coração, de toda a tua alma e de todas as tuas forças.\"",
+        "E o texto mostra onde esse amor vive: em casa, no caminho, ao deitar, ao levantar. Não é só no culto. É na rotina.",
+      ],
+      pergunta: "Em que momento da sua rotina Deus está mais ausente?",
+      oracao: "Senhor, quero te amar de todo o coração, de toda a alma e de todas as forças, inclusive na rotina.",
+      pratica: "Ore ao deitar e ao levantar hoje, como o texto ensina.",
+    },
+    {
+      titulo: "Uma lâmpada para os pés",
+      leitura: { slug: "sl", capitulo: 119, de: 105, ate: 112 },
+      reflexao: [
+        "\"Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.\" Uma lâmpada antiga iluminava só alguns passos. Não mostrava a estrada inteira.",
+        "A Palavra de Deus nem sempre mostra o futuro todo. Mostra o próximo passo. E, na maioria das vezes, é isso que basta.",
+      ],
+      pergunta: "Você tem esperado ver o caminho inteiro antes de dar o próximo passo?",
+      oracao: "Senhor, tua palavra é lâmpada para os meus pés. Mostra-me o próximo passo.",
+      pratica: "Releia um versículo que te marcou neste mês e decida um passo concreto a partir dele.",
+    },
+    {
+      titulo: "O sábado foi feito para você",
+      leitura: { slug: "mc", capitulo: 2, de: 23, ate: 28 },
+      reflexao: [
+        "Os fariseus transformaram o descanso em mais uma regra para cumprir. Jesus responde: \"O sábado foi feito por causa do homem, e não o homem por causa do sábado.\"",
+        "O descanso é um presente de Deus, não um prêmio por ter produzido o suficiente. Responder a Deus também é parar.",
+      ],
+      pergunta: "Você descansa de verdade, ou só quando está esgotado?",
+      oracao: "Senhor do sábado, ensina-me a descansar em ti, sem culpa.",
+      pratica: "Separe nesta semana um período de descanso real, sem trabalho e sem tela.",
+    },
+
+    /* -------------------------------- Semana 4: viver com ele no dia a dia --- */
+    {
+      titulo: "Não vos deixarei órfãos",
+      leitura: { slug: "jo", capitulo: 14, de: 15, ate: 18 },
+      reflexao: [
+        "Jesus promete \"outro Ajudador\", o Espírito da verdade, que \"habita convosco, e estará em vós\". E diz: \"Não vos deixarei órfãos.\"",
+        "Na última semana desta jornada, a pergunta é: como viver isso no dia a dia? A resposta começa aqui: você não vive sozinho. Deus mesmo mora em quem crê.",
+      ],
+      pergunta: "Você tem vivido a fé como se estivesse sozinho?",
+      oracao: "Espírito Santo, obrigado por morares em mim. Ajuda-me a viver hoje contigo.",
+      pratica: "Antes de cada tarefa importante hoje, ore: \"Espírito Santo, vem comigo\".",
+    },
+    {
+      titulo: "Juntos",
+      leitura: { slug: "at", capitulo: 2, de: 42, ate: 47 },
+      reflexao: [
+        "Os primeiros cristãos \"perseveravam na doutrina dos apóstolos e na comunhão, no partir do pão e nas orações\". Eles comiam juntos, repartiam, louvavam.",
+        "A fé cristã nunca foi um projeto solo. Ela cresce em comunidade, com todas as dificuldades que as pessoas trazem.",
+      ],
+      pergunta: "Com quem você vive a sua fé de perto?",
+      oracao: "Senhor, obrigado pela tua igreja. Dá-me um coração para estar junto, mesmo quando é difícil.",
+      pratica: "Convide alguém da sua comunidade de fé para uma refeição nesta semana.",
+    },
+    {
+      titulo: "Quem quer ser grande",
+      leitura: { slug: "mc", capitulo: 10, de: 42, ate: 45 },
+      reflexao: [
+        "Os discípulos estavam discutindo quem seria o maior. Jesus vira a lógica de cabeça para baixo: \"qualquer que entre vós quiser tornar-se grande, será esse o que vos sirva\".",
+        "E ele mesmo é o exemplo: \"o Filho do homem não veio para ser servido, mas para servir\". Viver com Deus no dia a dia é viver servindo.",
+      ],
+      pergunta: "Onde você tem esperado ser servido em vez de servir?",
+      oracao: "Jesus, tu vieste para servir. Dá-me um coração de servo.",
+      pratica: "Sirva hoje alguém de casa em algo que normalmente não é tarefa sua.",
+    },
+    {
+      titulo: "Quem dá com alegria",
+      leitura: { slug: "2co", capitulo: 9, de: 6, ate: 8 },
+      reflexao: [
+        "\"Deus ama ao que dá com alegria.\" Não ao que dá muito, nem ao que dá por obrigação: ao que dá com alegria.",
+        "Generosidade é uma das marcas mais claras de quem confia em Deus. Quem acredita que Deus cuida não precisa segurar tudo com força.",
+      ],
+      pergunta: "Você dá com alegria ou com o coração apertado?",
+      oracao: "Deus, tu és generoso comigo. Faz-me generoso com alegria.",
+      pratica: "Faça hoje uma doação, por menor que seja, a quem precisa.",
+    },
+    {
+      titulo: "Sal e luz",
+      leitura: { slug: "mt", capitulo: 5, de: 13, ate: 16 },
+      reflexao: [
+        "\"Vós sois o sal da terra\", \"Vós sois a luz do mundo\". Jesus não diz \"tentem ser\". Ele diz \"vós sois\". É uma identidade antes de ser uma tarefa.",
+        "O sal faz diferença misturado na comida. A luz faz diferença no escuro. A fé não foi feita para ficar escondida debaixo de um balde.",
+      ],
+      pergunta: "Em que lugar Deus te colocou para ser sal e luz?",
+      oracao: "Senhor, que a minha luz brilhe para que as pessoas vejam e glorifiquem a ti.",
+      pratica: "Faça hoje uma boa obra no seu trabalho ou estudo, sem esperar reconhecimento.",
+    },
+    {
+      titulo: "Ide",
+      leitura: { slug: "mt", capitulo: 28, de: 18, ate: 20 },
+      reflexao: [
+        "As últimas palavras de Jesus em Mateus são uma missão: \"ide, fazei discípulos de todas as nações\". E ela começa com uma garantia: \"Foi-me dada toda a autoridade\".",
+        "E termina com uma promessa: \"eis que eu estou convosco todos os dias\". Todos os dias, inclusive os comuns.",
+      ],
+      pergunta: "Quem perto de você ainda não conhece o amor de Deus?",
+      oracao: "Jesus, obrigado por estares comigo todos os dias. Usa-me para que outros te conheçam.",
+      pratica: "Ore hoje por uma pessoa específica que ainda não conhece Jesus.",
+    },
+    {
+      titulo: "O que Deus pede",
+      leitura: { slug: "mq", capitulo: 6, de: 6, ate: 8 },
+      reflexao: [
+        "Miqueias pergunta o que Deus quer: holocaustos? milhares de carneiros? E a resposta é simples e difícil ao mesmo tempo: \"que pratiques a justiça, e ames a benevolência, e andes humildemente com o teu Deus\".",
+        "Não é sobre grandes gestos religiosos. É sobre o jeito de tratar as pessoas e o jeito de caminhar com Deus.",
+      ],
+      pergunta: "Qual dessas três coisas é mais difícil para você?",
+      oracao: "Senhor, ensina-me a praticar a justiça, amar a benevolência e andar humildemente contigo.",
+      pratica: "Faça hoje uma escolha justa, um gesto de bondade e um momento de humildade.",
+    },
+    {
+      titulo: "Correr a carreira",
+      leitura: { slug: "hb", capitulo: 12, de: 1, ate: 3 },
+      reflexao: [
+        "Hebreus compara a fé a uma corrida longa. O conselho: largar o que pesa, correr \"com perseverança\" e manter os olhos fixos em Jesus, \"autor e consumador da nossa fé\".",
+        "Trinta dias não fazem uma vida. Mas podem fazer um começo. O que importa agora é continuar correndo, olhando para ele.",
+      ],
+      pergunta: "O que tem pesado na sua corrida e precisa ser largado?",
+      oracao: "Jesus, autor e consumador da minha fé, fixo os meus olhos em ti. Dá-me perseverança.",
+      pratica: "Decida qual será o seu próximo hábito com Deus depois deste mês.",
+    },
+    {
+      titulo: "Ele vai terminar o que começou",
+      leitura: { slug: "fp", capitulo: 1, de: 3, ate: 6 },
+      reflexao: [
+        "Paulo agradece pelos filipenses com uma certeza: \"aquele que em vós começou a boa obra a aperfeiçoará até o dia de Cristo Jesus\".",
+        "Você chegou ao dia 30. Mas o mais importante não é o que você fez, e sim o que Deus começou em você. E ele não abandona obras pela metade.",
+      ],
+      pergunta: "O que Deus começou em você neste mês?",
+      oracao: "Deus, obrigado por estes 30 dias. Tu começaste uma boa obra em mim, e eu confio que vais completá-la.",
+      pratica: "Releia o que você escreveu nos dias 1, 8 e 14. Agradeça pelo caminho e escolha o próximo devocional.",
+    },
+  ],
+};
