@@ -57,8 +57,11 @@ estudo liberando uma etapa por vez enquanto as respostas aparecem ao vivo.
    [`supabase/schema-planos.sql`](supabase/schema-planos.sql),
    [`supabase/schema-leitura-grupo.sql`](supabase/schema-leitura-grupo.sql),
    [`supabase/schema-plano-personalizado.sql`](supabase/schema-plano-personalizado.sql),
-   [`supabase/schema-grupo-tipo-restrito.sql`](supabase/schema-grupo-tipo-restrito.sql) e
-   [`supabase/schema-leitura-grupo-v2.sql`](supabase/schema-leitura-grupo-v2.sql).
+   [`supabase/schema-grupo-tipo-restrito.sql`](supabase/schema-grupo-tipo-restrito.sql),
+   [`supabase/schema-leitura-grupo-v2.sql`](supabase/schema-leitura-grupo-v2.sql),
+   [`supabase/schema-avisos-push.sql`](supabase/schema-avisos-push.sql),
+   [`supabase/schema-avisos-versiculo.sql`](supabase/schema-avisos-versiculo.sql) e
+   [`supabase/schema-devocionais.sql`](supabase/schema-devocionais.sql).
    Todos são idempotentes; a ordem importa porque cada um depende do anterior.
    **Nunca rode `desativar-rls.sql`**: sem RLS, a chave pública do app dá acesso
    aos dados de todo mundo.
@@ -125,6 +128,42 @@ de devolver a pessoa para onde ela estava.
 Participar de um grupo continua exigindo só o código e um nome. **Criar** exige
 conta (Google ou e-mail), porque o líder é dono do grupo: preso a um aparelho,
 trocar de celular significaria perder o grupo sem nenhuma forma de recuperar.
+
+## Devocionais
+
+46 séries, 333 dias. Cada dia é um roteiro de uns 15 minutos: aquietar, ler, refletir,
+meditar (com anotação), orar em cinco movimentos (adorar, confessar, agradecer, pedir,
+interceder) e um silêncio, encerrar. A página do dia mostra tudo de uma vez; o botão
+"Começar o momento guiado" abre a versão em tela cheia, um passo por vez, com cronômetro
+sugerido, sino no fim do tempo e a tela travada acesa.
+
+**Conteúdo.** Escrito à mão em `src/lib/devocionais.*.ts`, mas o app não importa esses
+arquivos: passam de um megabyte. [`scripts/build-devocionais.mjs`](scripts/build-devocionais.mjs)
+(roda no `prebuild`) gera um índice leve (`devocionais.indice.generated.ts`) e um JSON por
+série em `public/devocionais/`, baixado só quando alguém abre um dia. Depois de editar o
+conteúdo em desenvolvimento, rode `npm run devocionais`.
+
+**Citações na tradução da pessoa.** As reflexões citam a ARA entre aspas retas (aspas
+curvas são para o resto). [`scripts/alinhar-citacoes.mjs`](scripts/alinhar-citacoes.mjs)
+(`npm run devocionais:citacoes`) acha a mesma frase na NVI, na ACF e na Bíblia Livre e
+grava em `src/lib/devocionais.citacoes.json`; o app troca na hora de mostrar. O que não
+dá para alinhar com segurança fica na ARA e sai numa lista de pendentes
+(`-- --pendentes arquivo.json`); entradas resolvidas à mão levam `"revisado": true` e não
+são sobrescritas. KJV e WEB mantêm a ARA, porque a reflexão é em português.
+
+`npm run devocionais:conferir` confere referências, versículo-chave, oração guiada e se
+toda citação em aspas retas existe, literal, na ARA.
+
+**Progresso na conta.** Fica no aparelho primeiro (funciona sem conta) e
+[`sync.ts`](src/lib/sync.ts) leva para `devocional_progresso`: dias feitos e anotações,
+uma linha por série, vence a escrita mais recente. Assim "desfazer" e "recomeçar" também
+chegam ao outro aparelho.
+
+**Lembrete diário.** Opcional, ligado na série ou no fim de um dia, e guardado na conta
+(`lembretes`). A Vercel Cron chama `/api/avisos/devocional` às 23h UTC (20h de Brasília);
+só recebe quem tem o lembrete ligado e não mexeu em devocional nenhum desde a meia-noite.
+O aviso abre direto no momento guiado do próximo dia. Usa o mesmo `CRON_SECRET` e as
+mesmas chaves VAPID do versículo do dia.
 
 ## E-mails
 

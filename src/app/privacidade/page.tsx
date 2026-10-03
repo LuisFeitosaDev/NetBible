@@ -41,6 +41,10 @@ export default function PrivacidadePage() {
             meta foi cumprida.
           </li>
           <li>
+            <strong>Devocionais:</strong> os dias concluídos de cada devocional, o que você
+            escreve no campo de anotação (visível só para você) e se quer o lembrete diário.
+          </li>
+          <li>
             <strong>Grupos:</strong> os grupos de que você participa, suas respostas nos estudos,
             reações e o mural do grupo de leitura (versículos grifados que você compartilha, metas
             batidas, cutucadas e entradas no grupo).

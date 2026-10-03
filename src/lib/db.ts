@@ -283,7 +283,7 @@ let aoMudar: (() => void) | null = null;
 export function registrarSync(fn: () => void) {
   aoMudar = fn;
 }
-function agendarSync() {
+export function agendarSync() {
   aoMudar?.();
 }
 

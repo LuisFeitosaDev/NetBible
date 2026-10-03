@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,24 +11,45 @@ import {
   HandHeart,
   Lightbulb,
   PartyPopper,
+  Play,
   Sprout,
 } from "lucide-react";
 import { CapaDevocional } from "@/components/devocional/CapaDevocional";
-import { devocionalPorId, referencia } from "@/lib/devocionais";
+import { AnotacaoDoDia } from "@/components/devocional/AnotacaoDoDia";
+import { LembreteDevocional } from "@/components/devocional/LembreteDevocional";
+import { MomentoDevocional } from "@/components/devocional/MomentoDevocional";
+import {
+  citacoesNaVersao,
+  devocionalPorId,
+  referencia,
+  type GuiaDeOracao,
+} from "@/lib/devocionais";
+import { useConteudoDaSerie } from "@/lib/devocionalConteudo";
 import { marcarDia, useProgressoDevocional } from "@/lib/devocionalProgresso";
 import { loadBook } from "@/lib/bible";
 import { useBible } from "@/lib/store";
+
+const MOVIMENTOS: { id: keyof GuiaDeOracao; nome: string }[] = [
+  { id: "adorar", nome: "Adorar" },
+  { id: "confessar", nome: "Confessar" },
+  { id: "agradecer", nome: "Agradecer" },
+  { id: "pedir", nome: "Pedir" },
+  { id: "interceder", nome: "Interceder" },
+];
 
 export default function DiaPage() {
   const params = useParams<{ id: string; dia: string }>();
   const d = devocionalPorId(params.id);
   const n = Number(params.dia);
-  const dia = d?.dias[n - 1];
+  const resumo = d?.dias[n - 1];
+  const conteudo = useConteudoDaSerie(params.id);
+  const dia = conteudo?.dias[n - 1];
   const progresso = useProgressoDevocional(params.id);
   const { bySlug, version, index } = useBible();
   const [versiculos, setVersiculos] = useState<{ n: number; texto: string }[] | null>(null);
+  const [momento, setMomento] = useState(false);
 
-  const leitura = dia?.leitura;
+  const leitura = resumo?.leitura;
   useEffect(() => {
     if (!leitura) return;
     let vivo = true;
@@ -54,7 +75,21 @@ export default function DiaPage() {
     window.scrollTo(0, 0);
   }, [n]);
 
-  if (!d || !dia || !leitura) {
+  // O lembrete abre o dia com `?momento=1`: a pessoa cai direto no guiado.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("momento")) setMomento(true);
+  }, [n]);
+
+  const fecharMomento = useCallback(() => {
+    setMomento(false);
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("momento")) {
+      url.searchParams.delete("momento");
+      window.history.replaceState(null, "", url.pathname + url.search);
+    }
+  }, []);
+
+  if (!d || !resumo || !leitura) {
     return (
       <div className="mx-auto max-w-xl px-4 py-24 text-center">
         <h1 className="font-display text-2xl font-bold">Dia não encontrado</h1>
@@ -72,11 +107,13 @@ export default function DiaPage() {
   const traducao = index?.versions.find((v) => v.id === version)?.short;
   const ultimo = n === total;
   const tudoFeito = (progresso?.feitos.length ?? 0) >= total;
+  const chave = dia?.chave;
+  const citar = (t: string) => (conteudo ? citacoesNaVersao(t, version, conteudo.citacoes) : t);
 
   return (
     <div className="-mt-16 pb-16">
       {/* Cabeçalho: a capa da série, mais baixa, com o dia por cima. */}
-      <section className="relative flex h-[42vh] min-h-[300px] items-end overflow-hidden pt-16">
+      <section className="relative flex h-[46vh] min-h-[340px] items-end overflow-hidden pt-16">
         <CapaDevocional
           devocional={d}
           arte={{ slug: leitura.slug, capitulo: leitura.capitulo }}
@@ -98,7 +135,7 @@ export default function DiaPage() {
             Dia {n} de {total}
           </p>
           <h1 className="mt-1 font-display text-3xl font-black leading-tight tracking-tight text-white md:text-5xl">
-            {dia.titulo}
+            {resumo.titulo}
           </h1>
           {/* Os dias como trilha: onde estou e o que já fiz. */}
           <div className="mt-4 flex gap-1">
@@ -114,6 +151,16 @@ export default function DiaPage() {
               />
             ))}
           </div>
+
+          <button
+            onClick={() => setMomento(true)}
+            disabled={!dia}
+            className="mt-5 inline-flex items-center gap-2.5 rounded-lg bg-white py-3 pl-5 pr-4 font-display text-sm font-bold text-ink-950 transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-60"
+          >
+            <Play size={17} className="fill-ink-950" />
+            {feito ? "Fazer o momento de novo" : "Começar o momento guiado"}
+            <span className="rounded-md bg-ink-950/10 px-1.5 py-0.5 text-[11px] font-bold">15 min</span>
+          </button>
         </div>
       </section>
 
@@ -142,7 +189,11 @@ export default function DiaPage() {
               </p>
             ) : (
               versiculos.map((v) => (
-                <span key={v.n}>
+                <span
+                  key={v.n}
+                  className={v.n === chave ? "rounded px-0.5 box-decoration-clone" : undefined}
+                  style={v.n === chave ? { backgroundColor: `${d.cor}26` } : undefined}
+                >
                   <sup className="mr-1 font-sans text-[10px] font-bold text-ink-400">{v.n}</sup>
                   {v.texto}{" "}
                 </span>
@@ -159,29 +210,73 @@ export default function DiaPage() {
           </Link>
         </section>
 
-        {/* Reflexão */}
-        <section className="mt-8">
-          <h2 className="font-display text-[13px] font-bold uppercase tracking-[0.12em] text-ink-400">
-            Reflexão
-          </h2>
-          <div className="mt-3 space-y-4 font-reading text-[17.5px] leading-[1.8] text-ink-100/95">
-            {dia.reflexao.map((p) => (
-              <p key={p}>{p}</p>
+        {conteudo === null ? (
+          <p className="mt-8 rounded-2xl border border-white/8 bg-ink-900 p-5 text-[14px] text-ink-400">
+            Não deu para carregar a reflexão agora. Confira a conexão e tente de novo.
+          </p>
+        ) : !dia ? (
+          <div className="mt-8 space-y-3">
+            {[100, 96, 92, 98, 70].map((w, i) => (
+              <div key={i} className="h-4 animate-pulse rounded bg-white/10" style={{ width: `${w}%` }} />
             ))}
           </div>
-        </section>
+        ) : (
+          <>
+            {/* Reflexão */}
+            <section className="mt-9">
+              <h2 className="font-display text-[13px] font-bold uppercase tracking-[0.12em] text-ink-400">
+                Reflexão
+              </h2>
+              <div
+                className="mt-3 space-y-5 font-reading text-[17.5px] leading-[1.85] text-ink-100/95 [&>p:first-child]:first-letter:float-left [&>p:first-child]:first-letter:mr-2.5 [&>p:first-child]:first-letter:mt-1 [&>p:first-child]:first-letter:font-display [&>p:first-child]:first-letter:text-[3.4rem] [&>p:first-child]:first-letter:font-black [&>p:first-child]:first-letter:leading-[0.85] [&>p:first-child]:first-letter:text-[color:var(--cor)]"
+                style={{ "--cor": d.cor } as React.CSSProperties}
+              >
+                {dia.reflexao.map((p, i) => (
+                  <p key={i}>{citar(p)}</p>
+                ))}
+              </div>
+            </section>
 
-        <div className="mt-8 space-y-3">
-          <Bloco icone={<Lightbulb size={17} />} titulo="Para pensar" cor={d.cor}>
-            <p className="font-reading text-[16.5px] leading-relaxed text-ink-100">{dia.pergunta}</p>
-          </Bloco>
-          <Bloco icone={<HandHeart size={17} />} titulo="Oração" cor={d.cor}>
-            <p className="font-reading text-[16.5px] italic leading-relaxed text-ink-100">{dia.oracao}</p>
-          </Bloco>
-          <Bloco icone={<Sprout size={17} />} titulo="Para hoje" cor={d.cor}>
-            <p className="text-[15px] leading-relaxed text-ink-100">{dia.pratica}</p>
-          </Bloco>
-        </div>
+            <div className="mt-9 space-y-3">
+              <Bloco icone={<Lightbulb size={17} />} titulo="Para pensar" cor={d.cor}>
+                <p className="font-reading text-[16.5px] leading-relaxed text-ink-100">{citar(dia.pergunta)}</p>
+                <AnotacaoDoDia
+                  id={d.id}
+                  dia={n}
+                  inicial={progresso?.anotacoes?.[n]}
+                  className="mt-3"
+                />
+              </Bloco>
+
+              <Bloco icone={<HandHeart size={17} />} titulo="Oração" cor={d.cor}>
+                {dia.guia && (
+                  <ol className="mb-4 mt-2 space-y-3.5 border-l pl-4" style={{ borderColor: `${d.cor}44` }}>
+                    {MOVIMENTOS.map((m) => (
+                      <li key={m.id} className="relative">
+                        <span
+                          aria-hidden
+                          className="absolute -left-[21px] top-[7px] h-2 w-2 rounded-full"
+                          style={{ backgroundColor: d.cor }}
+                        />
+                        <p className="font-display text-[12px] font-bold uppercase tracking-[0.14em]" style={{ color: d.cor }}>
+                          {m.nome}
+                        </p>
+                        <p className="mt-0.5 text-[15px] leading-relaxed text-ink-100/90">
+                          {citar(dia.guia![m.id])}
+                        </p>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+                <p className="font-reading text-[16.5px] italic leading-relaxed text-ink-100">{citar(dia.oracao)}</p>
+              </Bloco>
+
+              <Bloco icone={<Sprout size={17} />} titulo="Para hoje" cor={d.cor}>
+                <p className="text-[15px] leading-relaxed text-ink-100">{citar(dia.pratica)}</p>
+              </Bloco>
+            </div>
+          </>
+        )}
 
         {/* Concluir e seguir */}
         <div className="mt-10">
@@ -223,6 +318,12 @@ export default function DiaPage() {
             </div>
           )}
 
+          {feito && !tudoFeito && (
+            <div className="mt-3">
+              <LembreteDevocional cor={d.cor} soOferecer />
+            </div>
+          )}
+
           <nav className="mt-4 flex items-center justify-between gap-3">
             {n > 1 ? (
               <Link
@@ -249,6 +350,25 @@ export default function DiaPage() {
           </nav>
         </div>
       </article>
+
+      {momento && dia && conteudo && (
+        <MomentoDevocional
+          serie={d}
+          n={n}
+          dia={dia}
+          citacoes={conteudo.citacoes}
+          versao={version}
+          versiculos={versiculos}
+          referencia={ref}
+          nomeDoLivro={livro?.name ?? ""}
+          traducao={traducao}
+          feito={feito}
+          feitos={progresso?.feitos.length ?? 0}
+          anotacao={progresso?.anotacoes?.[n]}
+          aoConcluir={() => marcarDia(d.id, n, true)}
+          aoFechar={fecharMomento}
+        />
+      )}
     </div>
   );
 }

@@ -16,7 +16,7 @@ export const DEVOCIONAIS: Devocional[] = [
     titulo: "Paz na ansiedade",
     chamada: "Sete dias para entregar o que pesa",
     descricao:
-      "A Bíblia não trata a ansiedade como falta de fé, nem promete uma vida sem tempestade. Ela mostra um Deus que convida a gente a trazer o peso até ele. Em sete dias, textos curtos para aprender a soltar o controle, um pouco por vez.",
+      "A Bíblia não trata a ansiedade como falta de fé, nem promete uma vida sem tempestade. Ela mostra um Deus que convida a gente a trazer o peso até ele. Em sete dias, aprender a soltar o controle, um pouco por vez.",
     categoria: "coracao",
     capa: { slug: "mc", capitulo: 4 },
     cor: "#4f86b8",
@@ -605,7 +605,7 @@ export const DEVOCIONAIS: Devocional[] = [
     titulo: "Gratidão",
     chamada: "Cinco dias para enxergar o que já é presente",
     descricao:
-      "A gratidão não é só uma boa educação com Deus. Ela muda como a gente vê a própria vida. Cinco dias curtos para treinar o olhar e voltar para agradecer.",
+      "A gratidão não é só uma boa educação com Deus. Ela muda como a gente vê a própria vida. Cinco dias para treinar o olhar e voltar para agradecer.",
     categoria: "vida-com-deus",
     capa: { slug: "lc", capitulo: 17 },
     cor: "#cfa244",

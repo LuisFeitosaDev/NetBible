@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Check, Play, RotateCcw } from "lucide-react";
 import { CapaDevocional } from "@/components/devocional/CapaDevocional";
+import { LembreteDevocional } from "@/components/devocional/LembreteDevocional";
 import {
   CATEGORIAS,
   concluido,
@@ -77,7 +78,7 @@ export default function SeriePage() {
             <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-300">
               <span>{total} dias</span>
               <span className="text-ink-600">•</span>
-              <span>cerca de 5 minutos por dia</span>
+              <span>15 minutos por dia, com oração guiada</span>
               {feitos.size > 0 && (
                 <>
                   <span className="text-ink-600">•</span>
@@ -114,8 +115,14 @@ export default function SeriePage() {
       </section>
 
       <section className="mx-auto max-w-3xl px-4 py-10 md:px-8">
+        <div className="mb-8">
+          <LembreteDevocional cor={d.cor} />
+        </div>
+
         <h2 className="font-display text-lg font-bold md:text-xl">Os {total} dias</h2>
-        <p className="mb-5 text-[13px] text-ink-400">Uma leitura curta, uma reflexão, uma oração.</p>
+        <p className="mb-5 text-[13px] text-ink-400">
+          Cada dia: aquietar, ler, refletir, meditar e orar em cinco movimentos.
+        </p>
 
         <ol className="space-y-2.5">
           {d.dias.map((dia, i) => {

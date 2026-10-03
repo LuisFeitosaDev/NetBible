@@ -19,7 +19,7 @@ export function CapaDevocional({
   prioridade = false,
   children,
 }: {
-  devocional: Devocional;
+  devocional: Pick<Devocional, "cor" | "capa">;
   /**
    * Outra gravura no lugar da capa da série. Cada dia usa a do capítulo que
    * está sendo lido, no tom da série: 31 dias de Provérbios viram 31 cenas.

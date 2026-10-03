@@ -12,7 +12,7 @@ export const TRINTA_DIAS: Devocional = {
   titulo: "30 dias com Deus",
   chamada: "Um mês para conhecer, responder e caminhar",
   descricao:
-    "Uma jornada de um mês, para quem está começando ou recomeçando. Na primeira semana, quem Deus é. Na segunda, quem Jesus é. Na terceira, como responder a ele. E na última, como viver com ele no dia a dia. Um texto curto por dia, sem pressa.",
+    "Uma jornada de um mês, para quem está começando ou recomeçando. Na primeira semana, quem Deus é. Na segunda, quem Jesus é. Na terceira, como responder a ele. E na última, como viver com ele no dia a dia. Um momento por dia, sem pressa.",
   categoria: "jornada",
   capa: { slug: "gn", capitulo: 1 },
   cor: "#d1a24a",

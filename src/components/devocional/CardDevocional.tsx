@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { CapaDevocional } from "./CapaDevocional";
-import { concluido, proximoDia, type Devocional, type ProgressoDevocional } from "@/lib/devocionais";
+import { concluido, proximoDia, type ProgressoDevocional, type Serie } from "@/lib/devocionais";
 
 /**
  * Card de prateleira: largo, porque a gravura de capítulo é panorâmica e um
@@ -14,7 +14,7 @@ export function CardDevocional({
   progresso,
   grande = false,
 }: {
-  devocional: Devocional;
+  devocional: Serie;
   progresso?: ProgressoDevocional;
   /** Para as jornadas de um mês: card maior, com o número de dias em destaque. */
   grande?: boolean;

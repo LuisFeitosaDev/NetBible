@@ -12,7 +12,7 @@ import {
   concluido,
   destaqueDoDia,
   proximoDia,
-  type Devocional,
+  type Serie,
 } from "@/lib/devocionais";
 import { useProgressosDevocionais } from "@/lib/devocionalProgresso";
 
@@ -81,7 +81,8 @@ export default function DevocionalPage() {
 
       <p className="mx-auto max-w-xl px-6 pb-6 pt-8 text-center text-[12.5px] leading-relaxed text-ink-400">
         {DEVOCIONAIS.length} devocionais, {DEVOCIONAIS.reduce((n, d) => n + d.dias.length, 0)}{" "}
-        dias de leitura. O texto bíblico de cada dia aparece na tradução que você escolheu.
+        dias. Cada um é um momento de uns 15 minutos: aquietar, ler, refletir, meditar e
+        orar. O texto bíblico e as citações aparecem na tradução que você escolheu.
       </p>
     </div>
   );
@@ -94,7 +95,7 @@ function Destaque({
   diaAtual,
   feitos,
 }: {
-  devocional: Devocional;
+  devocional: Serie;
   continuando: boolean;
   diaAtual: number;
   feitos: number;
@@ -126,7 +127,7 @@ function Destaque({
           <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70">
             <span>{total} dias</span>
             <span className="text-white/30">•</span>
-            <span>cerca de 5 minutos por dia</span>
+            <span>15 minutos por dia, com oração guiada</span>
             {feitos > 0 && (
               <>
                 <span className="text-white/30">•</span>

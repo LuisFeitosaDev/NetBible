@@ -9,9 +9,15 @@ import {
   type Favorite,
   type Mark,
   type Note,
+  type Pref,
   type Reading,
 } from "./db";
 import { planoDeLinhaRemota, type PlanoSalvo } from "./planos";
+import {
+  chaveDoProgresso,
+  PREFIXO_DO_PROGRESSO,
+  type ProgressoDevocional,
+} from "./devocionais";
 import type { HighlightColor } from "./catalog";
 import type { VersionId } from "./bible";
 
@@ -119,6 +125,17 @@ const planoParaRemoto = (p: PlanoSalvo, perfil: string) => ({
   atualizado_em: new Date(p.atualizadoEm ?? p.criadoEm).toISOString(),
 });
 
+const devocionalParaRemoto = (linha: Pref, perfil: string) => {
+  const p = linha.value as ProgressoDevocional;
+  return {
+    perfil_id: perfil,
+    devocional_id: linha.key.slice(PREFIXO_DO_PROGRESSO.length),
+    feitos: p.feitos,
+    anotacoes: p.anotacoes ?? {},
+    atualizado_em: new Date(p.atualizadoEm).toISOString(),
+  };
+};
+
 const ms = (iso: string) => new Date(iso).getTime();
 
 /*
@@ -126,23 +143,34 @@ const ms = (iso: string) => new Date(iso).getTime();
  * viraria uma falha muda: o plano simplesmente nunca sincronizaria e nada
  * apareceria em lugar nenhum. Este aviso fecha essa porta.
  */
-let jaAvisouDoSchema = false;
-function conferirTabelaDePlanos(erro: { code?: string; message?: string } | null) {
+const tabelasAvisadas = new Set<string>();
+function conferirTabela(
+  tabela: string,
+  oQue: string,
+  arquivo: string,
+  erro: { code?: string; message?: string } | null,
+) {
   if (!erro) return;
-  console.error("[NetBible Sync Error] Tabela `planos`:", erro);
-  if (jaAvisouDoSchema) return;
+  console.error(`[NetBible Sync Error] Tabela \`${tabela}\`:`, erro);
+  if (tabelasAvisadas.has(tabela)) return;
   const faltando =
     erro.code === "42P01" ||
     erro.code === "PGRST205" ||
-    /planos/i.test(erro.message ?? "");
+    new RegExp(tabela, "i").test(erro.message ?? "");
   if (!faltando) return;
-  jaAvisouDoSchema = true;
+  tabelasAvisadas.add(tabela);
   console.warn(
-    "O plano de leitura não está sincronizando: falta tabela ou coluna em " +
-      "`planos`. Rode supabase/schema-leitura-grupo-v2.sql no SQL Editor do " +
+    `${oQue} não está sincronizando: falta tabela ou coluna em ` +
+      `\`${tabela}\`. Rode supabase/${arquivo} no SQL Editor do ` +
       "Supabase. O resto (marcações, notas, progresso) continua normal.",
   );
 }
+
+const conferirTabelaDePlanos = (erro: { code?: string; message?: string } | null) =>
+  conferirTabela("planos", "O plano de leitura", "schema-leitura-grupo-v2.sql", erro);
+
+const conferirTabelaDeDevocionais = (erro: { code?: string; message?: string } | null) =>
+  conferirTabela("devocional_progresso", "O progresso dos devocionais", "schema-devocionais.sql", erro);
 
 /* ------------------------------ o sincronismo --------------------------- */
 
@@ -224,6 +252,40 @@ async function executar(): Promise<void> {
     planoRemotoParaBaixar = rPlano.data;
   }
 
+  /*
+   * Devocionais: uma linha por série, com os dias feitos e as anotações. São
+   * poucas por pessoa, então compara todas, e não só as da janela: assim o
+   * progresso feito antes de a tabela existir também sobe. Vence a escrita
+   * mais recente da série, local ou remota, porque "desfazer" e "recomeçar"
+   * também precisam chegar ao outro aparelho (somar os dias não deixaria).
+   */
+  const [rDev, locaisDev] = await Promise.all([
+    c
+      .from("devocional_progresso")
+      .select("devocional_id, feitos, anotacoes, atualizado_em")
+      .eq("perfil_id", perfil),
+    db.prefs.where("key").startsWith(PREFIXO_DO_PROGRESSO).toArray(),
+  ]);
+  conferirTabelaDeDevocionais(rDev.error);
+  const devocionaisParaBaixar: NonNullable<typeof rDev.data> = [];
+  if (!rDev.error) {
+    const remotos = new Map((rDev.data ?? []).map((r) => [chaveDoProgresso(r.devocional_id), r]));
+    const subir = locaisDev.filter((l) => {
+      const remoto = remotos.get(l.key);
+      return (l.value as ProgressoDevocional).atualizadoEm > (remoto ? ms(remoto.atualizado_em) : 0);
+    });
+    if (subir.length) {
+      const { error } = await c
+        .from("devocional_progresso")
+        .upsert(subir.map((l) => devocionalParaRemoto(l, perfil)));
+      conferirTabelaDeDevocionais(error);
+    }
+    const locais = new Map(locaisDev.map((l) => [l.key, l.value as ProgressoDevocional]));
+    for (const [chave, r] of remotos) {
+      if ((locais.get(chave)?.atualizadoEm ?? 0) < ms(r.atualizado_em)) devocionaisParaBaixar.push(r);
+    }
+  }
+
   // ---------------------------------------------------------------- PULL --
   const [rMarcas, rNotas, rLeitura, rFav] = await Promise.all([
     c.from("marcacoes").select("*").eq("perfil_id", perfil).gt("atualizado_em", janela),
@@ -236,7 +298,7 @@ async function executar(): Promise<void> {
 
   await db.transaction(
     "rw",
-    [db.marks, db.notes, db.reading, db.favorites, db.planos],
+    [db.marks, db.notes, db.reading, db.favorites, db.planos, db.prefs],
     async () => {
       for (const m of rMarcas.data ?? []) {
         if (apagadas.has(`marks:${m.ref}`)) continue; // apagado aqui vence
@@ -310,6 +372,20 @@ async function executar(): Promise<void> {
         if (!local || (local.atualizadoEm ?? local.criadoEm) < remotoEm) {
           await db.planos.put({ ...planoDeLinhaRemota(p), atualizadoEm: remotoEm });
         }
+      }
+
+      for (const r of devocionaisParaBaixar) {
+        const chave = chaveDoProgresso(r.devocional_id);
+        const local = (await db.prefs.get(chave))?.value as ProgressoDevocional | undefined;
+        const remotoEm = ms(r.atualizado_em);
+        // Mexeu aqui enquanto a sincronização rodava: o local vence e sobe na próxima.
+        if (local && local.atualizadoEm >= remotoEm) continue;
+        const progresso: ProgressoDevocional = {
+          feitos: r.feitos ?? [],
+          anotacoes: r.anotacoes ?? {},
+          atualizadoEm: remotoEm,
+        };
+        await db.prefs.put({ key: chave, value: progresso });
       }
     },
   );

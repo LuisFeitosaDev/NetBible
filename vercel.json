@@ -1,5 +1,6 @@
 {
   "crons": [
-    { "path": "/api/avisos/versiculo", "schedule": "30 10 * * *" }
+    { "path": "/api/avisos/versiculo", "schedule": "30 10 * * *" },
+    { "path": "/api/avisos/devocional", "schedule": "0 23 * * *" }
   ]
 }
