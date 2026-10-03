@@ -1,6 +1,6 @@
 /**
  * Cache offline do Lumen.
- * O texto bíblico é imutável, então vale cache-first e para sempre.
+ * O texto bíblico é imutável dentro de cada revisão, então vale cache-first.
  * O resto usa network-first com fallback, para o app atualizar sozinho.
  */
 const BIBLE_CACHE = "lumen-biblia-v1";
@@ -177,13 +177,30 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  /*
+   * Livro da Bíblia: cache-first. O endereço traz a revisão da tradução
+   * (?v=, ver src/lib/bible.ts), então texto corrigido é endereço novo: a
+   * revisão nova substitui a antiga do mesmo livro, e a antiga ainda serve
+   * de reserva para quem abre o livro sem rede.
+   */
   if (url.pathname.startsWith("/biblia/")) {
     event.respondWith(
       caches.open(BIBLE_CACHE).then(async (cache) => {
         const hit = await cache.match(request);
         if (hit) return hit;
-        const response = await fetch(request);
-        if (response.ok) cache.put(request, response.clone());
+        let response;
+        try {
+          response = await fetch(request);
+        } catch (erro) {
+          const anterior = await cache.match(request, { ignoreSearch: true });
+          if (anterior) return anterior;
+          throw erro;
+        }
+        if (response.ok) {
+          const antigas = (await cache.keys()).filter((k) => new URL(k.url).pathname === url.pathname);
+          await Promise.all(antigas.map((k) => cache.delete(k)));
+          await cache.put(request, response.clone());
+        }
         return response;
       }),
     );

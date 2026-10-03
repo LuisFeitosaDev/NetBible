@@ -8,9 +8,11 @@
  *
  * Rode com:  npm run bible
  */
+import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile, access } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { COLCHETES, REPETIDOS, FALTANDO, CORRECOES } from "./lib/correcoes-ara.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCES = join(ROOT, "sources");
@@ -29,6 +31,8 @@ const VERSIONS = [
     note: "Domínio público",
     idioma: "pt",
     fonte: { tipo: "bodruk", arquivo: "aa.json" },
+    // A fonte chega com defeitos de coleta; ver scripts/lib/correcoes-ara.mjs.
+    corrigir: corrigirAra,
   },
   {
     id: "nvi",
@@ -145,6 +149,100 @@ const ADAPTADORES = {
   },
 };
 
+/* ------------------------------ tratamento ------------------------------ */
+
+const ENTIDADES = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " " };
+
+/** A fonte da ARA traz entidades HTML no texto: "d&#x27;água". */
+const decodificar = (texto) =>
+  texto.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (inteira, e) => {
+    if (e[0] !== "#") return ENTIDADES[e.toLowerCase()] ?? inteira;
+    return String.fromCodePoint(e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : Number(e.slice(1)));
+  });
+
+/**
+ * Espaços e sinais que a coleta deixou fora do lugar. Só tipografia: o que
+ * exige decidir se o sinal fica ou sai está na tabela de correções.
+ */
+const arrumarEspacos = (texto) =>
+  texto
+    .replace(/\s+/g, " ")
+    .trim()
+    // "na terra ,da sua possessão": vírgula solta, grudada na palavra seguinte.
+    .replace(/ ,(?=\p{L})/gu, " ")
+    // "Que é que tens ?", "Jerusalém , que é Jebus"
+    .replace(/\s+([,;:.!?])(?=\s|$)/g, "$1")
+    // "terra do Egito. :", "como um pau. ." (reticências ficam)
+    .replace(/(?<!\.)([.;:!?,])[,.:;]$/, "$1");
+
+/**
+ * Ordem: primeiro o que muda a numeração (versículos repetidos e perdidos),
+ * para todo o resto usar a numeração certa; depois as chaves e os espaços;
+ * por último a tabela, que procura o texto já nesse formato.
+ */
+function corrigirAra(livros) {
+  const porSlug = new Map(livros.map((l) => [SLUG_FIX[l.abbrev] ?? l.abbrev, l]));
+  const capitulo = (slug, cap) => {
+    const versos = porSlug.get(slug)?.chapters[cap - 1];
+    if (!versos) throw new Error(`correção da ARA aponta para ${slug} ${cap}, que não existe`);
+    return versos;
+  };
+  const local = (ref) => {
+    const [, slug, cap, ver] = ref.match(/^(\S+) (\d+):(\d+)$/);
+    return { versos: capitulo(slug, Number(cap)), i: Number(ver) - 1 };
+  };
+
+  // Do fim para o começo, para uma remoção não mudar o número da próxima.
+  const repetidos = [...REPETIDOS].sort((a, b) => b[2] - a[2]);
+  for (const [slug, cap, ver] of repetidos) {
+    const versos = capitulo(slug, cap);
+    if (versos[ver - 1] !== versos[ver]) {
+      throw new Error(`${slug} ${cap}:${ver} não é mais cópia do seguinte; tire de REPETIDOS em correcoes-ara.mjs`);
+    }
+    versos.splice(ver - 1, 1);
+  }
+
+  // Em ordem crescente, para cada inserção já contar com as anteriores.
+  const faltando = [...FALTANDO].sort((a, b) => a[2] - b[2]);
+  for (const [slug, cap, ver, texto] of faltando) {
+    const versos = capitulo(slug, cap);
+    if (versos.includes(texto)) {
+      throw new Error(`a fonte já tem ${slug} ${cap}:${ver}; tire de FALTANDO em correcoes-ara.mjs`);
+    }
+    versos.splice(ver - 1, 0, texto);
+  }
+
+  // O leitor, o compartilhamento e a busca mostram o texto como está, então
+  // a marca vai no próprio texto: parênteses, ou colchetes onde as cópias os usam.
+  const colchetes = new Set(COLCHETES);
+  for (const ref of colchetes) {
+    const { versos, i } = local(ref);
+    if (!/[{}]/.test(versos[i] ?? "")) throw new Error(`${ref} não tem chaves na fonte; tire de COLCHETES`);
+  }
+  for (const [slug, livro] of porSlug) {
+    livro.chapters = livro.chapters.map((cap, c) =>
+      cap.map((v, i) => {
+        const [abre, fecha] = colchetes.has(`${slug} ${c + 1}:${i + 1}`) ? "[]" : "()";
+        return arrumarEspacos(v.replace(/\{/g, abre).replace(/\}/g, fecha));
+      }),
+    );
+  }
+
+  const problemas = [];
+  for (const [ref, de, para] of CORRECOES) {
+    const { versos, i } = local(ref);
+    const partes = versos[i]?.split(de) ?? [];
+    if (partes.length !== 2) {
+      problemas.push(`${ref}: "${de}" aparece ${Math.max(partes.length - 1, 0)} vez(es) em "${versos[i]}"`);
+      continue;
+    }
+    versos[i] = partes.join(para);
+  }
+  if (problemas.length) {
+    throw new Error(`correções da ARA que não se aplicam mais:\n  ${problemas.join("\n  ")}`);
+  }
+}
+
 async function carregar(version) {
   const adaptador = ADAPTADORES[version.fonte.tipo];
   if (!adaptador) throw new Error(`fonte desconhecida: ${version.fonte.tipo}`);
@@ -152,6 +250,8 @@ async function carregar(version) {
   if (livros.length !== 66) {
     throw new Error(`${version.id} trouxe ${livros.length} livros, esperava 66`);
   }
+  for (const livro of livros) livro.chapters = livro.chapters.map((cap) => cap.map(decodificar));
+  version.corrigir?.(livros);
   return livros;
 }
 
@@ -209,23 +309,31 @@ async function main() {
   });
 
   let arquivos = 0;
+  /**
+   * Os livros são servidos como imutáveis (next.config.mjs, public/sw.js). A
+   * revisão de cada tradução vai no índice, que é sempre revalidado, e o app a
+   * põe no endereço do livro: corrigir o texto muda o endereço, e quem já tinha
+   * o livro em cache baixa de novo.
+   */
+  const revisoes = {};
   for (const { version, livros } of carregadas) {
     const dir = join(OUT, version.id);
     await mkdir(dir, { recursive: true });
+    const hash = createHash("sha1");
     for (let i = 0; i < livros.length; i++) {
       const meta = index[i];
-      await writeFile(
-        join(dir, `${meta.slug}.json`),
-        JSON.stringify({
-          slug: meta.slug,
-          // Nome no idioma da tradução: "Genesis" na KJV, "Gênesis" na ARA.
-          name: livros[i].name,
-          version: version.id,
-          chapters: livros[i].chapters,
-        }),
-      );
+      const json = JSON.stringify({
+        slug: meta.slug,
+        // Nome no idioma da tradução: "Genesis" na KJV, "Gênesis" na ARA.
+        name: livros[i].name,
+        version: version.id,
+        chapters: livros[i].chapters,
+      });
+      hash.update(json);
+      await writeFile(join(dir, `${meta.slug}.json`), json);
       arquivos++;
     }
+    revisoes[version.id] = hash.digest("hex").slice(0, 8);
   }
 
   await writeFile(
@@ -237,6 +345,7 @@ async function main() {
         short,
         note,
         idioma,
+        rev: revisoes[id],
       })),
       groups: GROUPS.map(({ id, label, testament }) => ({ id, label, testament })),
       books: index,

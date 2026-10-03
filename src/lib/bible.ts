@@ -8,6 +8,8 @@ export type BibleVersion = {
   short: string;
   note: string;
   idioma: "pt" | "en";
+  /** Muda quando o texto da tradução muda (scripts/build-bible.mjs). */
+  rev?: string;
 };
 
 export type BookMeta = {
@@ -63,7 +65,11 @@ export function loadBook(version: VersionId, slug: string): Promise<BookContent>
   const key = `${version}/${slug}`;
   let pending = bookCache.get(key);
   if (!pending) {
-    pending = grab<BookContent>(`/biblia/${key}.json`);
+    // O livro é cacheado como imutável; a revisão no endereço é o que faz uma
+    // correção no texto chegar a quem já o tinha. Sem índice, vai sem ela.
+    pending = loadIndex()
+      .then((indice) => indice.versions.find((v) => v.id === version)?.rev, () => undefined)
+      .then((rev) => grab<BookContent>(`/biblia/${key}.json${rev ? `?v=${rev}` : ""}`));
     bookCache.set(key, pending);
   }
   return pending;

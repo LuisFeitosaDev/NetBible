@@ -38,6 +38,14 @@ Cada tradução declara a fonte de onde vem, e o script tem um adaptador por tip
 (`bodruk` para o JSON único do GitHub, `getbible` para a API do getbible.net). Acrescentar
 uma tradução nova é acrescentar uma entrada em `VERSIONS`.
 
+A fonte da ARA chega com defeitos de coleta: versículos perdidos ou repetidos, trechos
+colados de outro lugar, erros de digitação. O script os corrige com a tabela de
+[scripts/lib/correcoes-ara.mjs](scripts/lib/correcoes-ara.mjs), que diz de onde veio cada
+correção e lista o que ainda falta confirmar. Não edite o JSON gerado à mão: o próximo
+`npm run bible` desfaz. Os livros são cacheados como imutáveis, então o índice leva uma
+revisão de cada tradução (`rev`), que o app põe no endereço do livro; é ela que faz uma
+correção chegar a quem já tinha o livro em cache.
+
 > **NVT, NTLH e NAA não entraram.** Não existe fonte pública legítima para elas: são
 > traduções modernas sob direito autoral fechado (Mundo Cristão e Sociedade Bíblica do
 > Brasil), sem API aberta nem dataset licenciado. O que circula em repositórios são cópias

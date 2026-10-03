@@ -11,8 +11,9 @@ const nextConfig = {
         headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
       },
       {
-        // Já o texto de cada livro é imutável: o conteúdo está amarrado ao id da
-        // tradução, então pode cachear para sempre.
+        // Já o texto de cada livro é imutável dentro de uma revisão: o app pede
+        // /biblia/<versao>/<livro>.json?v=<revisão>, e a revisão (no índice) muda
+        // quando o texto é corrigido. Por isso pode cachear para sempre.
         // `+` e não `*`: com `*` este padrão também casava com /biblia/index.json
         // e, por vir depois, sobrescrevia a regra de revalidação acima.
         source: "/biblia/:versao/:livro+",
