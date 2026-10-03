@@ -180,13 +180,38 @@ async function traduzirTrecho(trecho, local, versao) {
 
   let k = dentro[0][1];
   let l = dentro[dentro.length - 1][1];
-  // Ponta que não casou ("e está seguro" ~ "e estará em alto retiro") não dá
-  // para recortar com segurança: adivinhar o tamanho cortava frase no meio.
-  // Vai para a revisão à mão. Palavrinha de ligação ("e", "o", "que") sobrando
-  // na ponta não conta: ela só fica de fora do recorte.
+  // Ponta que não casou ("porque ele tem cuidado de vós" ~ "...cuida de
+  // vocês"): só estende se a citação da ARA ia até o fim (ou desde o começo)
+  // da oração, e se o que sobra da oração na outra tradução tem quase o mesmo
+  // número de palavras. Fora disso ("e está seguro" ~ "e estará em alto
+  // retiro"), adivinhar o tamanho cortava frase no meio: vai para revisão.
+  // Palavrinha de ligação ("e", "o", "que") sobrando na ponta não conta.
   const soltas = (de, ate) => ara.slice(de, ate).filter((t) => !LIGACAO.has(t.norm)).length;
-  if (soltas(local.i, dentro[0][0]) || soltas(dentro[dentro.length - 1][0] + 1, local.j + 1)) {
-    return { erro: "ponta sem correspondência" };
+  const textoAra = await textoDosVersos("ara", local.slug, local.cap, local.de, local.ate);
+  const fimDeOracao = (texto, toks, idx) =>
+    idx === toks.length - 1 || /[.;:!?,]/.test(texto.slice(toks[idx].fim, toks[idx + 1].ini));
+  const comecoDeOracao = (texto, toks, idx) =>
+    idx === 0 || /[.;:!?,]/.test(texto.slice(toks[idx - 1].fim, toks[idx].ini));
+
+  const sobraFim = soltas(dentro[dentro.length - 1][0] + 1, local.j + 1);
+  if (sobraFim) {
+    let fim = l;
+    while (!fimDeOracao(textoAlvo, alvo, fim) && fim - l <= sobraFim + 1) fim++;
+    const casaComAra = fimDeOracao(textoAra, ara, local.j);
+    if (!casaComAra || !fimDeOracao(textoAlvo, alvo, fim) || Math.abs(fim - l - sobraFim) > 1) {
+      return { erro: "ponta sem correspondência" };
+    }
+    l = fim;
+  }
+  const sobraIni = soltas(local.i, dentro[0][0]);
+  if (sobraIni) {
+    let ini = k;
+    while (!comecoDeOracao(textoAlvo, alvo, ini) && k - ini <= sobraIni + 1) ini--;
+    const casaComAra = comecoDeOracao(textoAra, ara, local.i);
+    if (!casaComAra || !comecoDeOracao(textoAlvo, alvo, ini) || Math.abs(k - ini - sobraIni) > 1) {
+      return { erro: "ponta sem correspondência" };
+    }
+    k = ini;
   }
   // Pronome colado por hífen ("livrá-lo", "disse-lhe") vai inteiro.
   while (l + 1 < alvo.length && textoAlvo.slice(alvo[l].fim, alvo[l + 1].ini) === "-") l++;

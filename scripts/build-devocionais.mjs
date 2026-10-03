@@ -71,6 +71,10 @@ async function main() {
   for (const d of DEVOCIONAIS) {
     const citacoes = {};
     for (const c of d.dias.flatMap(citacoesDoDia)) {
+      // Citação de uma ou duas palavras fica na ARA: quase sempre a reflexão
+      // está comentando a própria palavra ("o verbo “conheço”"), e trocar
+      // por "sei" deixaria a frase dizendo uma coisa e mostrando outra.
+      if (c.split(/\s+/).filter(Boolean).length < 3) continue;
       // Só as formas: `ref` e `revisado` servem à manutenção, não ao app.
       const { nvi, acf, blivre } = todas[c] ?? {};
       if (nvi || acf || blivre) citacoes[c] = { nvi, acf, blivre };

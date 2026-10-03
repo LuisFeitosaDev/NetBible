@@ -149,7 +149,9 @@ curvas são para o resto). [`scripts/alinhar-citacoes.mjs`](scripts/alinhar-cita
 grava em `src/lib/devocionais.citacoes.json`; o app troca na hora de mostrar. O que não
 dá para alinhar com segurança fica na ARA e sai numa lista de pendentes
 (`-- --pendentes arquivo.json`); entradas resolvidas à mão levam `"revisado": true` e não
-são sobrescritas. KJV e WEB mantêm a ARA, porque a reflexão é em português.
+são sobrescritas. KJV e WEB mantêm a ARA, porque a reflexão é em português. Citação de
+uma ou duas palavras também fica na ARA: em geral a reflexão está comentando a própria
+palavra, e trocá-la desmontaria a frase.
 
 `npm run devocionais:conferir` confere referências, versículo-chave, oração guiada e se
 toda citação em aspas retas existe, literal, na ARA.
