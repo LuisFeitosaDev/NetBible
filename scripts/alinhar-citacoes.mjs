@@ -32,8 +32,10 @@ import { PROVERBIOS_31 } from "../src/lib/devocionais.proverbios.ts";
 import { TRINTA_DIAS } from "../src/lib/devocionais.30dias.ts";
 import { MAIS } from "../src/lib/devocionais.mais.ts";
 import { PERSONAGENS, RELACOES } from "../src/lib/devocionais.personagens.ts";
+import { NOVOS } from "../src/lib/devocionais.novos.ts";
+import { JORNADAS } from "../src/lib/devocionais.jornadas.ts";
 
-const DEVOCIONAIS = [TRINTA_DIAS, PROVERBIOS_31, ...CURTAS, ...TEMAS, ...MAIS, ...PERSONAGENS, ...RELACOES];
+const DEVOCIONAIS = [TRINTA_DIAS, PROVERBIOS_31, ...JORNADAS, ...NOVOS, ...CURTAS, ...TEMAS, ...MAIS, ...PERSONAGENS, ...RELACOES];
 const VERSOES = ["nvi", "acf", "blivre"];
 /** Fração mínima das palavras da citação que precisam casar. A NVI reescreve mais. */
 const LIMITE = { nvi: 0.6, acf: 0.75, blivre: 0.7 };

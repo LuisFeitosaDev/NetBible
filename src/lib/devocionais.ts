@@ -57,6 +57,7 @@ export type CategoriaId =
   | "coracao"
   | "vida-com-deus"
   | "jesus"
+  | "teologia"
   | "personagens"
   | "relacoes"
   | "carater";
@@ -99,6 +100,7 @@ export const CATEGORIAS: { id: CategoriaId; titulo: string; subtitulo: string }[
   { id: "coracao", titulo: "Para o coração", subtitulo: "Ansiedade, medo, dor e esperança" },
   { id: "vida-com-deus", titulo: "Vida com Deus", subtitulo: "Oração, graça e gratidão" },
   { id: "jesus", titulo: "Caminhando com Jesus", subtitulo: "Do Natal à ressurreição" },
+  { id: "teologia", titulo: "Temas teológicos", subtitulo: "As grandes verdades da fé, sem complicar" },
   { id: "personagens", titulo: "Gente da Bíblia", subtitulo: "Histórias de fé, queda e recomeço" },
   { id: "relacoes", titulo: "Família e amizades", subtitulo: "Amar quem está perto" },
   { id: "carater", titulo: "Caráter e sabedoria", subtitulo: "O que Deus forma em nós" },

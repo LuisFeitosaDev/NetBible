@@ -31,9 +31,11 @@ import { PROVERBIOS_31 } from "../src/lib/devocionais.proverbios.ts";
 import { TRINTA_DIAS } from "../src/lib/devocionais.30dias.ts";
 import { MAIS } from "../src/lib/devocionais.mais.ts";
 import { PERSONAGENS, RELACOES } from "../src/lib/devocionais.personagens.ts";
+import { NOVOS } from "../src/lib/devocionais.novos.ts";
+import { JORNADAS } from "../src/lib/devocionais.jornadas.ts";
 
 /** A ordem das prateleiras. `scripts/conferir-devocionais.mjs` usa a mesma. */
-const DEVOCIONAIS = [TRINTA_DIAS, PROVERBIOS_31, ...CURTAS, ...TEMAS, ...MAIS, ...PERSONAGENS, ...RELACOES];
+const DEVOCIONAIS = [TRINTA_DIAS, PROVERBIOS_31, ...JORNADAS, ...NOVOS, ...CURTAS, ...TEMAS, ...MAIS, ...PERSONAGENS, ...RELACOES];
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public", "devocionais");
