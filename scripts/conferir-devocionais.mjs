@@ -26,8 +26,9 @@ import { MAIS } from "../src/lib/devocionais.mais.ts";
 import { PERSONAGENS, RELACOES } from "../src/lib/devocionais.personagens.ts";
 import { NOVOS } from "../src/lib/devocionais.novos.ts";
 import { JORNADAS } from "../src/lib/devocionais.jornadas.ts";
+import { COLECAO } from "../src/lib/devocionais.colecao.ts";
 
-const DEVOCIONAIS = [TRINTA_DIAS, PROVERBIOS_31, ...JORNADAS, ...NOVOS, ...CURTAS, ...TEMAS, ...MAIS, ...PERSONAGENS, ...RELACOES];
+const DEVOCIONAIS = [TRINTA_DIAS, PROVERBIOS_31, ...JORNADAS, ...NOVOS, ...COLECAO, ...CURTAS, ...TEMAS, ...MAIS, ...PERSONAGENS, ...RELACOES];
 
 /** Para comparar citação e texto: sem acento, sem pontuação, sem caixa. */
 const normalizar = (s) =>

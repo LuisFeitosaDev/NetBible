@@ -246,7 +246,7 @@ export function MomentoDevocional({
   const chave = dia.chave ?? dia.leitura.de;
   const versiculoChave = versiculos?.find((v) => v.n === chave);
   // Mais da gravura onde há pouco texto; mais escuro onde a leitura pede.
-  const escuro = etapaAtual === "aquietar" || celebrando ? 0.62 : 0.86;
+  const escuro = etapaAtual === "aquietar" || celebrando ? 0.72 : 0.9;
 
   return (
     <div
@@ -266,7 +266,7 @@ export function MomentoDevocional({
       <div aria-hidden className="absolute inset-0">
         <div
           className="momento-anima absolute inset-0"
-          style={{ animation: "momento-zoom 48s ease-in-out infinite alternate" }}
+          style={{ animation: "momento-zoom 48s ease-in-out infinite alternate", filter: "saturate(0.6) brightness(0.62) contrast(1.08)" }}
         >
           <CapaDevocional
             devocional={serie}
@@ -282,8 +282,11 @@ export function MomentoDevocional({
         />
         <div
           className="absolute inset-0"
-          style={{ background: `radial-gradient(90% 60% at 50% 0%, ${serie.cor}26 0%, transparent 70%)` }}
+          style={{ background: `radial-gradient(90% 55% at 50% 0%, ${serie.cor}1f 0%, transparent 70%)` }}
         />
+        {/* Vinheta e degradês de topo e base: o olhar vai para o centro, como numa sala escura. */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 85% 75% at 50% 45%, transparent 40%, rgb(0 0 0 / 0.8) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgb(0 0 0 / 0.65), transparent 16%, transparent 78%, rgb(0 0 0 / 0.85))" }} />
       </div>
 
       {/* Topo: fechar, as seis etapas e o som. */}
@@ -292,18 +295,18 @@ export function MomentoDevocional({
           <button
             onClick={aoFechar}
             aria-label="Fechar o momento devocional"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-white/80 backdrop-blur transition-colors hover:bg-white/20 hover:text-white"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-black/30 text-white/80 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
           >
             <X size={17} />
           </button>
           <div className="flex flex-1 gap-1.5" aria-hidden>
             {ETAPAS.map((e) => (
-              <span key={e.id} className="h-1 flex-1 overflow-hidden rounded-full bg-white/15">
+              <span key={e.id} className="h-[2px] flex-1 overflow-hidden rounded-full bg-white/20">
                 <span
                   className="block h-full rounded-full transition-[width] duration-500"
                   style={{
                     width: `${celebrando ? 100 : preenchimento(e.id, indice) * 100}%`,
-                    backgroundColor: serie.cor,
+                    backgroundColor: "rgb(255 255 255 / 0.92)",
                   }}
                 />
               </span>
@@ -312,17 +315,22 @@ export function MomentoDevocional({
           <button
             onClick={alternarSom}
             aria-label={som ? "Desligar o sino" : "Ligar o sino"}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-white/80 backdrop-blur transition-colors hover:bg-white/20 hover:text-white"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-black/30 text-white/80 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
           >
             {som ? <Volume2 size={16} /> : <VolumeX size={16} />}
           </button>
         </div>
-        <p className="mx-auto mt-3 max-w-2xl text-center font-display text-[11px] font-bold uppercase tracking-[0.22em] text-white/55">
+        <p className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-3 font-display text-[10.5px] font-semibold uppercase tracking-[0.32em] text-white/50">
+          <span className="h-px w-8 bg-gradient-to-r from-transparent to-white/30" />
           {ETAPAS.find((e) => e.id === etapaAtual)?.nome} · Dia {n} de {total}
+          <span className="h-px w-8 bg-gradient-to-l from-transparent to-white/30" />
         </p>
       </header>
 
-      <div ref={rolagem} className="relative z-10 flex-1 overflow-y-auto overscroll-contain">
+      <div
+        ref={rolagem}
+        className="relative z-10 flex-1 overflow-y-auto overscroll-contain [scrollbar-color:rgb(255_255_255/0.15)_transparent] [scrollbar-width:thin]"
+      >
         <div
           key={celebrando ? "fim" : indice}
           className="mx-auto flex min-h-full max-w-2xl animate-[rise_0.55s_cubic-bezier(0.16,1,0.3,1)] flex-col justify-center px-6 py-8"
@@ -337,7 +345,7 @@ export function MomentoDevocional({
           ) : passo.etapa === "aquietar" ? (
             <div className="text-center">
               <Respiracao cor={serie.cor} />
-              <h2 className="mt-8 font-display text-3xl font-black tracking-tight md:text-4xl">
+              <h2 className="mt-8 font-reading text-4xl font-semibold tracking-tight md:text-5xl">
                 Chegue devagar
               </h2>
               <p className="mx-auto mt-3 max-w-md text-[15.5px] leading-relaxed text-white/75">
@@ -352,7 +360,7 @@ export function MomentoDevocional({
           ) : passo.etapa === "ler" ? (
             <div>
               <Rotulo cor={serie.cor}>Leia devagar</Rotulo>
-              <h2 className="mt-2 flex flex-wrap items-baseline gap-x-3 font-display text-3xl font-black tracking-tight">
+              <h2 className="mt-3 flex flex-wrap items-baseline gap-x-3 font-reading text-4xl font-semibold tracking-tight">
                 {referencia}
                 {traducao && <span className="text-[13px] font-semibold text-white/50">{traducao}</span>}
               </h2>
@@ -379,7 +387,7 @@ export function MomentoDevocional({
           ) : passo.etapa === "refletir" ? (
             <div>
               <Rotulo cor={serie.cor}>Refletir</Rotulo>
-              <h2 className="mt-2 font-display text-3xl font-black leading-tight tracking-tight md:text-4xl">
+              <h2 className="mt-3 font-reading text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
                 {dia.titulo}
               </h2>
               <div className="mt-6 space-y-5 font-reading text-[18.5px] leading-[1.85] text-white/90">
@@ -391,7 +399,7 @@ export function MomentoDevocional({
           ) : passo.etapa === "meditar" ? (
             <div>
               <Rotulo cor={serie.cor}>Meditar</Rotulo>
-              <p className="mt-3 font-display text-[26px] font-bold leading-snug tracking-tight md:text-3xl">
+              <p className="mt-4 font-reading text-[28px] font-medium italic leading-snug md:text-[34px]">
                 {citar(dia.pergunta)}
               </p>
               <p className="mt-3 text-[14px] leading-relaxed text-white/60">
@@ -456,14 +464,14 @@ export function MomentoDevocional({
               onClick={() => ir(indice - 1)}
               disabled={indice === 0}
               aria-label="Passo anterior"
-              className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 disabled:opacity-30"
+              className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-white/15 bg-black/30 text-white backdrop-blur-md transition-colors hover:bg-white/10 disabled:opacity-25"
             >
               <ArrowLeft size={18} />
             </button>
             {ultimo ? (
               <button
                 onClick={() => void concluir()}
-                className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl font-display text-[15px] font-bold text-ink-950 transition-transform active:scale-[0.98]"
+                className="flex h-14 flex-1 items-center justify-center gap-2 rounded-full font-display text-[15px] font-bold tracking-wide text-ink-950 shadow-[0_10px_40px_-10px_rgb(0_0_0/0.8)] transition-transform active:scale-[0.98]"
                 style={{ backgroundColor: serie.cor }}
               >
                 <Check size={18} strokeWidth={3} />
@@ -472,7 +480,7 @@ export function MomentoDevocional({
             ) : (
               <button
                 onClick={() => ir(indice + 1)}
-                className={`flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-white font-display text-[15px] font-bold text-ink-950 transition-all active:scale-[0.98] ${
+                className={`flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-white font-display text-[15px] font-bold tracking-wide text-ink-950 shadow-[0_10px_40px_-10px_rgb(0_0_0/0.8)] transition-all active:scale-[0.98] ${
                   tempoAcabou ? "shadow-[0_0_0_4px_rgb(255_255_255/0.18)]" : ""
                 }`}
               >
@@ -506,7 +514,8 @@ function rotuloDoProximo(indice: number) {
 
 function Rotulo({ cor, children }: { cor: string; children: React.ReactNode }) {
   return (
-    <p className="font-display text-[12px] font-bold uppercase tracking-[0.2em]" style={{ color: cor }}>
+    <p className="flex items-center gap-3 font-display text-[11px] font-semibold uppercase tracking-[0.3em]" style={{ color: cor }}>
+      <span className="h-px w-8" style={{ backgroundColor: cor }} />
       {children}
     </p>
   );
@@ -551,7 +560,7 @@ function MovimentoDeOracao({
           />
         ))}
       </div>
-      <h2 className="mt-6 font-display text-5xl font-black tracking-tight md:text-6xl">{m.nome}</h2>
+      <h2 className="mt-7 font-reading text-6xl font-semibold italic tracking-tight md:text-7xl">{m.nome}</h2>
       <p className="mt-2 font-display text-[13px] font-bold uppercase tracking-[0.18em]" style={{ color: cor }}>
         {m.subtitulo}
       </p>
@@ -635,7 +644,7 @@ function Cronometro({
           } else setRodando((r) => !r);
         }}
         aria-label={terminou ? "Recomeçar o tempo" : rodando ? "Pausar o tempo" : "Continuar o tempo"}
-        className="inline-flex items-center gap-2.5 rounded-full bg-white/10 py-1.5 pl-1.5 pr-4 text-[13px] font-semibold text-white/85 backdrop-blur transition-colors hover:bg-white/20"
+        className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-black/25 py-1.5 pl-1.5 pr-4 text-[13px] font-medium tabular-nums tracking-wide text-white/80 backdrop-blur-md transition-colors hover:bg-white/10"
       >
         <span className="relative grid h-9 w-9 place-items-center">
           <svg viewBox="0 0 36 36" className="absolute inset-0 -rotate-90">
@@ -689,7 +698,7 @@ function Celebracao({
       >
         <Check size={38} strokeWidth={3} />
       </span>
-      <h2 className="mt-6 font-display text-3xl font-black tracking-tight md:text-4xl">
+      <h2 className="mt-7 font-reading text-4xl font-semibold tracking-tight md:text-5xl">
         {acabou ? `Você concluiu “${serie.titulo}”` : `Dia ${n} concluído`}
       </h2>
       <p className="mt-2 text-[15px] text-white/70">

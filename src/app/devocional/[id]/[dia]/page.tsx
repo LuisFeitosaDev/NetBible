@@ -155,11 +155,20 @@ export default function DiaPage() {
           <button
             onClick={() => setMomento(true)}
             disabled={!dia}
-            className="mt-5 inline-flex items-center gap-2.5 rounded-lg bg-white py-3 pl-5 pr-4 font-display text-sm font-bold text-ink-950 transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-60"
+            className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-white py-4 pl-4 pr-6 font-display text-base font-bold text-ink-950 shadow-2xl shadow-black/40 transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-60 md:text-lg"
           >
-            <Play size={17} className="fill-ink-950" />
-            {feito ? "Fazer o momento de novo" : "Começar o momento guiado"}
-            <span className="rounded-md bg-ink-950/10 px-1.5 py-0.5 text-[11px] font-bold">15 min</span>
+            <span
+              className="grid h-11 w-11 place-items-center rounded-full"
+              style={{ backgroundColor: d.cor }}
+            >
+              <Play size={22} className="ml-0.5 fill-ink-950" />
+            </span>
+            <span className="text-left leading-tight">
+              {feito ? "Fazer o momento de novo" : "Começar o momento guiado"}
+              <span className="block text-[12px] font-semibold text-ink-950/55">
+                15 minutos · ler, refletir e orar
+              </span>
+            </span>
           </button>
         </div>
       </section>
