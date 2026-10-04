@@ -186,7 +186,8 @@ export function MomentoDevocional({
 
   const fimDoTempo = useCallback(() => {
     setTempoAcabou(true);
-    navigator.vibrate?.(60);
+    // Vibrar antes do primeiro toque na página é bloqueado pelo navegador (e gera erro no console).
+    if (navigator.userActivation?.hasBeenActive) navigator.vibrate?.(60);
     if (som && audio.current?.state === "running") tocarSino(audio.current);
   }, [som]);
 
@@ -345,7 +346,7 @@ export function MomentoDevocional({
           ) : passo.etapa === "aquietar" ? (
             <div className="text-center">
               <Respiracao cor={serie.cor} />
-              <h2 className="mt-8 font-reading text-4xl font-semibold tracking-tight md:text-5xl">
+              <h2 className="mt-8 font-reading text-4xl font-semibold tracking-tight md:text-[calc(18.5px*var(--fs,1))]xl">
                 Chegue devagar
               </h2>
               <p className="mx-auto mt-3 max-w-md text-[15.5px] leading-relaxed text-white/75">
@@ -387,7 +388,7 @@ export function MomentoDevocional({
           ) : passo.etapa === "refletir" ? (
             <div>
               <Rotulo cor={serie.cor}>Refletir</Rotulo>
-              <h2 className="mt-3 font-reading text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
+              <h2 className="mt-3 font-reading text-4xl font-semibold leading-tight tracking-tight md:text-[calc(18.5px*var(--fs,1))]xl">
                 {dia.titulo}
               </h2>
               <div className="mt-6 space-y-5 font-reading text-[18.5px] leading-[1.85] text-white/90">
@@ -698,7 +699,7 @@ function Celebracao({
       >
         <Check size={38} strokeWidth={3} />
       </span>
-      <h2 className="mt-7 font-reading text-4xl font-semibold tracking-tight md:text-5xl">
+      <h2 className="mt-7 font-reading text-4xl font-semibold tracking-tight md:text-[calc(18.5px*var(--fs,1))]xl">
         {acabou ? `Você concluiu “${serie.titulo}”` : `Dia ${n} concluído`}
       </h2>
       <p className="mt-2 text-[15px] text-white/70">

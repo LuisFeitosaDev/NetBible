@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Play, ListOrdered } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, ListOrdered } from "lucide-react";
 import { Shelf } from "@/components/Shelf";
 import { CapaDevocional } from "@/components/devocional/CapaDevocional";
 import { CardDevocional } from "@/components/devocional/CardDevocional";
@@ -45,7 +45,7 @@ export default function DevocionalPage() {
     .slice(0, Math.max(6, emAndamento.length + 3));
 
   return (
-    <div className="-mt-16">
+    <div className="-mt-[calc(4rem+env(safe-area-inset-top))]">
       {/* Espera o progresso antes de montar a vitrine: sem isto, o topo
           mostrava o destaque do dia e trocava para o devocional em andamento
           meio segundo depois. */}
@@ -116,7 +116,9 @@ function Vitrine({ slides }: { slides: Slide[] }) {
   const [atual, setAtual] = useState(0);
   const [pausado, setPausado] = useState(false);
   const [semMovimento, setSemMovimento] = useState(false);
-  const toque = useRef<number | null>(null);
+  // Arrastar com o dedo: o conteúdo acompanha, e ao soltar passa para a próxima ou volta.
+  const toque = useRef<{ x: number; y: number; horizontal: boolean | null } | null>(null);
+  const [arrasto, setArrasto] = useState(0);
   const total = slides.length;
   const i = Math.min(atual, total - 1);
 
@@ -141,15 +143,34 @@ function Vitrine({ slides }: { slides: Slide[] }) {
 
   return (
     <section
-      className="relative flex h-[66vh] min-h-[460px] items-end overflow-hidden md:h-[72vh]"
+      className="group/vitrine relative flex min-h-[66vh] items-end overflow-hidden pt-[calc(6rem+env(safe-area-inset-top))] md:min-h-[72vh]"
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
-      onPointerDown={(e) => (toque.current = e.clientX)}
-      onPointerUp={(e) => {
-        if (toque.current === null) return;
-        const dx = e.clientX - toque.current;
+      style={{ touchAction: "pan-y" }}
+      onTouchStart={(e) => {
+        toque.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, horizontal: null };
+        setPausado(true);
+      }}
+      onTouchMove={(e) => {
+        const t = toque.current;
+        if (!t) return;
+        const dx = e.touches[0].clientX - t.x;
+        const dy = e.touches[0].clientY - t.y;
+        // Decide no primeiro movimento: de lado é da vitrine, de cima a baixo é rolagem.
+        t.horizontal ??= Math.abs(dx) > Math.abs(dy);
+        if (t.horizontal) setArrasto(dx);
+      }}
+      onTouchEnd={() => {
+        const t = toque.current;
         toque.current = null;
-        if (Math.abs(dx) > 50) ir(i + (dx < 0 ? 1 : -1));
+        setPausado(false);
+        if (t?.horizontal && Math.abs(arrasto) > 50) ir(i + (arrasto < 0 ? 1 : -1));
+        setArrasto(0);
+      }}
+      onTouchCancel={() => {
+        toque.current = null;
+        setPausado(false);
+        setArrasto(0);
       }}
     >
       <style>{`
@@ -175,9 +196,31 @@ function Vitrine({ slides }: { slides: Slide[] }) {
       ))}
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/45 to-ink-950/10" />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/25 to-transparent" />
+      {total > 1 && (
+        <>
+      <button
+        onClick={() => ir(i - 1)}
+        aria-label="Devocional anterior"
+        className="absolute left-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/35 text-white opacity-0 backdrop-blur-md transition-opacity hover:bg-black/55 group-hover/vitrine:opacity-100 md:grid"
+      >
+        <ChevronLeft size={22} />
+      </button>
+      <button
+        onClick={() => ir(i + 1)}
+        aria-label="Próximo devocional"
+        className="absolute right-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/35 text-white opacity-0 backdrop-blur-md transition-opacity hover:bg-black/55 group-hover/vitrine:opacity-100 md:grid"
+      >
+        <ChevronRight size={22} />
+      </button>
+        </>
+      )}
 
       <div className="relative mx-auto w-full max-w-[1500px] px-4 pb-16 md:px-8 md:pb-24">
-        <div key={d.id} className="max-w-2xl animate-[rise_0.6s_cubic-bezier(0.16,1,0.3,1)]">
+        <div
+          key={d.id}
+          className="max-w-2xl animate-[rise_0.6s_cubic-bezier(0.16,1,0.3,1)]"
+          style={arrasto ? { transform: `translateX(${arrasto * 0.6}px)`, opacity: 1 - Math.min(Math.abs(arrasto) / 400, 0.5) } : undefined}
+        >
           <span
             className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em]"
             style={{ borderColor: `${d.cor}66`, backgroundColor: `${d.cor}22`, color: "#fff" }}

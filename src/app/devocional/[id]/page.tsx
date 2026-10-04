@@ -39,8 +39,8 @@ export default function SeriePage() {
   const categoria = CATEGORIAS.find((c) => c.id === d.categoria);
 
   return (
-    <div className="-mt-16">
-      <section className="relative flex min-h-[60vh] items-end overflow-hidden pt-16">
+    <div className="-mt-[calc(4rem+env(safe-area-inset-top))]">
+      <section className="relative flex min-h-[60vh] items-end overflow-hidden pt-[calc(4rem+env(safe-area-inset-top))]">
         <CapaDevocional devocional={d} prioridade tom={0.3} className="absolute inset-0" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/55 to-ink-950/10" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-ink-950/80 via-ink-950/20 to-transparent" />

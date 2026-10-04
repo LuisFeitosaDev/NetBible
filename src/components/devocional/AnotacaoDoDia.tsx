@@ -61,9 +61,9 @@ export function AnotacaoDoDia({
         onBlur={() => (focado.current = false)}
         rows={4}
         placeholder="Escreva o que vier. Uma frase basta."
-        className="w-full resize-y rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 font-reading text-[16px] leading-relaxed text-white outline-none placeholder:text-white/35 focus:border-white/30"
+        className="w-full resize-y rounded-xl border border-[color:var(--rl-borda-2)] bg-[color:var(--rl-sutil-1)] px-4 py-3 font-reading text-[calc(16px*var(--fs,1))] leading-relaxed text-[color:var(--rl-texto)] outline-none placeholder:text-[color:var(--rl-texto-mudo)] focus:border-[color:var(--rl-borda-4)]"
       />
-      <p className="mt-1.5 text-[11.5px] text-white/45">
+      <p className="mt-1.5 text-[11.5px] text-[color:var(--rl-texto-mudo)]">
         {salvo ? "Guardado no seu devocional." : "Salvando…"}
       </p>
     </div>

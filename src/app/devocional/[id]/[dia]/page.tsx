@@ -25,6 +25,8 @@ import {
   type GuiaDeOracao,
 } from "@/lib/devocionais";
 import { useConteudoDaSerie } from "@/lib/devocionalConteudo";
+import { useLeituraDevocional } from "@/lib/devocionalLeitura";
+import { AjustesDeLeitura } from "@/components/devocional/AjustesDeLeitura";
 import { marcarDia, useProgressoDevocional } from "@/lib/devocionalProgresso";
 import { loadBook } from "@/lib/bible";
 import { useBible } from "@/lib/store";
@@ -48,6 +50,7 @@ export default function DiaPage() {
   const { bySlug, version, index } = useBible();
   const [versiculos, setVersiculos] = useState<{ n: number; texto: string }[] | null>(null);
   const [momento, setMomento] = useState(false);
+  const { leitura: preferencias, estilo } = useLeituraDevocional();
 
   const leitura = resumo?.leitura;
   useEffect(() => {
@@ -111,9 +114,9 @@ export default function DiaPage() {
   const citar = (t: string) => (conteudo ? citacoesNaVersao(t, version, conteudo.citacoes) : t);
 
   return (
-    <div className="-mt-16 pb-16">
+    <div className="-mt-[calc(4rem+env(safe-area-inset-top))]" style={estilo}>
       {/* Cabeçalho: a capa da série, mais baixa, com o dia por cima. */}
-      <section className="relative flex h-[46vh] min-h-[340px] items-end overflow-hidden pt-16">
+      <section className="relative flex min-h-[46vh] items-end overflow-hidden pt-[calc(4rem+env(safe-area-inset-top))]">
         <CapaDevocional
           devocional={d}
           arte={{ slug: leitura.slug, capitulo: leitura.capitulo }}
@@ -173,9 +176,15 @@ export default function DiaPage() {
         </div>
       </section>
 
+      {/* A área de leitura veste o fundo escolhido (escuro, claro ou papel), como o leitor da Bíblia. */}
+      <div
+        data-tema-leitura={preferencias.tema}
+        className="relative -mt-4 rounded-t-3xl pb-28 pt-2 text-[color:var(--rl-texto)] transition-colors duration-300"
+        style={{ backgroundColor: "var(--rl-canvas)" }}
+      >
       <article className="mx-auto max-w-2xl px-4 md:px-6">
         {/* Leitura */}
-        <section className="mt-6 rounded-2xl border border-white/8 bg-ink-900 p-5">
+        <section className="mt-6 rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-900 p-5">
           <div className="flex items-center justify-between gap-3">
             <p className="flex items-center gap-2 font-display text-[13px] font-bold uppercase tracking-[0.12em]" style={{ color: d.cor }}>
               <BookOpen size={15} />
@@ -185,7 +194,7 @@ export default function DiaPage() {
           </div>
           <p className="mt-1 font-display text-lg font-bold">{ref}</p>
 
-          <div className="mt-3 font-reading text-[17px] leading-[1.75] text-ink-100">
+          <div className="mt-3 font-reading text-[calc(17px*var(--fs,1))] leading-[1.75] text-ink-100">
             {versiculos === null ? (
               <div className="space-y-2">
                 <div className="h-4 w-full animate-pulse rounded bg-white/10" />
@@ -212,7 +221,7 @@ export default function DiaPage() {
 
           <Link
             href={`/livro/${leitura.slug}/${leitura.capitulo}?v=${leitura.de}`}
-            className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink-300 transition-colors hover:text-white"
+            className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink-300 transition-colors hover:text-[color:var(--rl-texto)]"
           >
             Ler o capítulo inteiro
             <ArrowRight size={14} />
@@ -220,7 +229,7 @@ export default function DiaPage() {
         </section>
 
         {conteudo === null ? (
-          <p className="mt-8 rounded-2xl border border-white/8 bg-ink-900 p-5 text-[14px] text-ink-400">
+          <p className="mt-8 rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-900 p-5 text-[14px] text-ink-400">
             Não deu para carregar a reflexão agora. Confira a conexão e tente de novo.
           </p>
         ) : !dia ? (
@@ -237,7 +246,7 @@ export default function DiaPage() {
                 Reflexão
               </h2>
               <div
-                className="mt-3 space-y-5 font-reading text-[17.5px] leading-[1.85] text-ink-100/95 [&>p:first-child]:first-letter:float-left [&>p:first-child]:first-letter:mr-2.5 [&>p:first-child]:first-letter:mt-1 [&>p:first-child]:first-letter:font-display [&>p:first-child]:first-letter:text-[3.4rem] [&>p:first-child]:first-letter:font-black [&>p:first-child]:first-letter:leading-[0.85] [&>p:first-child]:first-letter:text-[color:var(--cor)]"
+                className="mt-3 space-y-5 font-reading text-[calc(17.5px*var(--fs,1))] leading-[1.85] text-ink-100/95 [&>p:first-child]:first-letter:float-left [&>p:first-child]:first-letter:mr-2.5 [&>p:first-child]:first-letter:mt-1 [&>p:first-child]:first-letter:font-display [&>p:first-child]:first-letter:text-[3.4rem] [&>p:first-child]:first-letter:font-black [&>p:first-child]:first-letter:leading-[0.85] [&>p:first-child]:first-letter:text-[color:var(--cor)]"
                 style={{ "--cor": d.cor } as React.CSSProperties}
               >
                 {dia.reflexao.map((p, i) => (
@@ -248,7 +257,7 @@ export default function DiaPage() {
 
             <div className="mt-9 space-y-3">
               <Bloco icone={<Lightbulb size={17} />} titulo="Para pensar" cor={d.cor}>
-                <p className="font-reading text-[16.5px] leading-relaxed text-ink-100">{citar(dia.pergunta)}</p>
+                <p className="font-reading text-[calc(16.5px*var(--fs,1))] leading-relaxed text-ink-100">{citar(dia.pergunta)}</p>
                 <AnotacaoDoDia
                   id={d.id}
                   dia={n}
@@ -270,18 +279,18 @@ export default function DiaPage() {
                         <p className="font-display text-[12px] font-bold uppercase tracking-[0.14em]" style={{ color: d.cor }}>
                           {m.nome}
                         </p>
-                        <p className="mt-0.5 text-[15px] leading-relaxed text-ink-100/90">
+                        <p className="mt-0.5 text-[calc(15px*var(--fs,1))] leading-relaxed text-ink-100/90">
                           {citar(dia.guia![m.id])}
                         </p>
                       </li>
                     ))}
                   </ol>
                 )}
-                <p className="font-reading text-[16.5px] italic leading-relaxed text-ink-100">{citar(dia.oracao)}</p>
+                <p className="font-reading text-[calc(16.5px*var(--fs,1))] italic leading-relaxed text-ink-100">{citar(dia.oracao)}</p>
               </Bloco>
 
               <Bloco icone={<Sprout size={17} />} titulo="Para hoje" cor={d.cor}>
-                <p className="text-[15px] leading-relaxed text-ink-100">{citar(dia.pratica)}</p>
+                <p className="text-[calc(15px*var(--fs,1))] leading-relaxed text-ink-100">{citar(dia.pratica)}</p>
               </Bloco>
             </div>
           </>
@@ -313,14 +322,14 @@ export default function DiaPage() {
               </Link>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-white/8 bg-ink-900 p-3 pl-4">
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-[color:var(--rl-borda-2)] bg-ink-900 p-3 pl-4">
               <span className="flex items-center gap-2 text-[14px] font-semibold text-emerald-400">
                 <Check size={17} strokeWidth={3} />
                 Dia concluído
               </span>
               <button
                 onClick={() => void marcarDia(d.id, n, false)}
-                className="text-[12.5px] text-ink-400 transition-colors hover:text-white"
+                className="text-[12.5px] text-ink-400 transition-colors hover:text-[color:var(--rl-texto)]"
               >
                 Desfazer
               </button>
@@ -337,7 +346,7 @@ export default function DiaPage() {
             {n > 1 ? (
               <Link
                 href={`/devocional/${d.id}/${n - 1}`}
-                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-[13.5px] font-semibold text-ink-300 transition-colors hover:bg-white/8 hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-[13.5px] font-semibold text-ink-300 transition-colors hover:bg-[color:var(--rl-sutil-2)] hover:text-[color:var(--rl-texto)]"
               >
                 <ArrowLeft size={15} />
                 Dia {n - 1}
@@ -349,7 +358,7 @@ export default function DiaPage() {
               <Link
                 href={`/devocional/${d.id}/${n + 1}`}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-[13.5px] font-bold transition-colors ${
-                  feito ? "bg-white text-ink-950 hover:bg-white/90" : "text-ink-300 hover:bg-white/8 hover:text-white"
+                  feito ? "bg-white text-ink-950 hover:bg-white/90" : "text-ink-300 hover:bg-[color:var(--rl-sutil-2)] hover:text-[color:var(--rl-texto)]"
                 }`}
               >
                 Dia {n + 1}
@@ -359,6 +368,8 @@ export default function DiaPage() {
           </nav>
         </div>
       </article>
+      </div>
+      <AjustesDeLeitura cor={d.cor} />
 
       {momento && dia && conteudo && (
         <MomentoDevocional
@@ -394,7 +405,7 @@ function Bloco({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex gap-3.5 rounded-2xl border border-white/8 bg-ink-900 p-4">
+    <section className="flex gap-3.5 rounded-2xl border border-[color:var(--rl-borda-2)] bg-ink-900 p-4">
       <span
         className="grid h-9 w-9 shrink-0 place-items-center rounded-xl"
         style={{ backgroundColor: `${cor}22`, color: cor }}
