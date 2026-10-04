@@ -1,5 +1,5 @@
 /**
- * Envia a arte de capítulo para o Supabase Storage.
+ * Envia a arte de capítulo e as capas em alta dos devocionais para o Supabase Storage.
  *
  *   npm run arte:subir           envia só o que mudou
  *   npm run arte:subir -- --tudo reenvia tudo
@@ -26,7 +26,9 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const LOCAL = join(ROOT, "public", "capas", "capitulo");
+const CAPAS = join(ROOT, "public", "capas");
+/** Pastas enviadas, com o mesmo nome dentro do bucket: a arte de capítulo e as capas em alta dos devocionais. */
+const PASTAS = ["capitulo", "devocional"];
 const REGISTRO = join(ROOT, "sources", "arte-enviada.json");
 
 const BUCKET = "arte";
@@ -151,7 +153,11 @@ async function garantirBucket() {
 async function main() {
   conferirAmbiente();
 
-  const nomes = (await readdir(LOCAL)).filter((n) => /\.(avif|webp)$/.test(n));
+  const nomes = [];
+  for (const pasta of PASTAS) {
+    const arquivos = await readdir(join(CAPAS, pasta)).catch(() => []);
+    nomes.push(...arquivos.filter((n) => /\.(avif|webp)$/.test(n)).map((n) => `${pasta}/${n}`));
+  }
   if (!nomes.length) {
     console.log("Nada em public/capas/capitulo. Rode `npm run capitulos` antes.");
     return;
@@ -175,9 +181,9 @@ async function main() {
   console.log(`${nomes.length} arquivos locais. Bucket "${BUCKET}".`);
 
   for (const nome of nomes) {
-    const bytes = await readFile(join(LOCAL, nome));
+    const bytes = await readFile(join(CAPAS, nome));
     const h = hash(bytes);
-    const caminho = `capitulo/${nome}`;
+    const caminho = nome;
 
     if (registro[caminho] === h) {
       pulados++;

@@ -16,6 +16,7 @@
  */
 
 import { versaoDaArte } from "./capitulos.generated";
+import { CAPAS_DEVOCIONAL } from "./devocionalArte.generated";
 
 /** Base pública da arte, sem barra no fim. */
 const BASE = (process.env.NEXT_PUBLIC_ARTE_CDN ?? "/capas").replace(/\/+$/, "");
@@ -41,3 +42,15 @@ export function arteDeCapitulo(slug: string, capitulo: number): FontesDaArte {
 
 /** Verdadeiro quando a arte está vindo do Storage, e não de `public/`. */
 export const arteRemota = BASE.startsWith("http");
+
+/**
+ * Capa em alta resolução do devocional (ver scripts/build-capas-devocional.mjs):
+ * uma larga, para telas deitadas, e uma alta, para celular em pé. `null` quando
+ * o capítulo não tem, e aí quem chama usa a arte de capítulo normal.
+ */
+export function capaDeDevocional(slug: string, capitulo: number) {
+  const versao = CAPAS_DEVOCIONAL[`${slug}-${capitulo}`];
+  if (!versao) return null;
+  const nome = `${BASE}/devocional/${slug}-${capitulo}`;
+  return { largo: `${nome}-largo.avif?v=${versao}`, alto: `${nome}-alto.avif?v=${versao}` };
+}

@@ -14,3 +14,7 @@ Thumbs.db
 
 # Baixados por `npm run bible`; os arquivos gerados em public/biblia são versionados.
 /sources/
+
+# Capas em alta dos devocionais (~180 MB): geradas por `npm run devocionais:capas` e servidas
+# pelo Supabase Storage (`npm run arte:subir`). Sem elas, o app usa a arte de capítulo.
+/public/capas/devocional/

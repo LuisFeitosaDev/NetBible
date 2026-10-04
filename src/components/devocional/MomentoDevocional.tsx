@@ -12,7 +12,9 @@ import {
   Volume2,
   VolumeX,
   X,
+  Music,
 } from "lucide-react";
+import { tocarAmbiente, type Ambiente, type Trilha } from "@/lib/ambiente";
 import { CapaDevocional } from "./CapaDevocional";
 import { AnotacaoDoDia } from "./AnotacaoDoDia";
 import { LembreteDevocional } from "./LembreteDevocional";
@@ -111,6 +113,7 @@ const PASSOS: Passo[] = [
 ];
 
 const CHAVE_SOM = "devocional.som";
+const CHAVE_MUSICA = "devocional.musica";
 
 export function MomentoDevocional({
   serie,
@@ -180,14 +183,57 @@ export function MomentoDevocional({
 
   // O navegador só deixa tocar som depois de um toque da pessoa; o contexto
   // nasce (ou acorda) no primeiro toque dentro do momento.
-  const prepararAudio = () => {
+  const garantirAudio = () => {
     const Ctx =
       window.AudioContext ??
       (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Ctx) return;
+    if (!Ctx) return null;
     audio.current ??= new Ctx();
-    if (audio.current.state === "suspended") void audio.current.resume();
+    return audio.current;
   };
+  const prepararAudio = () => {
+    const ctx = garantirAudio();
+    if (ctx?.state === "suspended") void ctx.resume();
+  };
+
+  /*
+   * Fundo musical, se a pessoa quiser. A escolha fica no aparelho. Se o
+   * navegador ainda não deixar tocar (falta um toque na tela), a trilha
+   * já fica montada e começa no primeiro toque, com o resume acima.
+   */
+  const [musica, setMusica] = useState<{ tipo: Ambiente; volume: number }>({ tipo: "silencio", volume: 0.6 });
+  const [menuMusica, setMenuMusica] = useState(false);
+  const trilha = useRef<Trilha | null>(null);
+  useEffect(() => {
+    try {
+      const salvo = JSON.parse(localStorage.getItem(CHAVE_MUSICA) ?? "null");
+      if (salvo?.tipo) setMusica(salvo);
+    } catch {
+      /* fica em silêncio */
+    }
+  }, []);
+  const escolherMusica = (m: { tipo: Ambiente; volume: number }) => {
+    setMusica(m);
+    prepararAudio(); // este clique é o toque que o navegador pede
+    try {
+      localStorage.setItem(CHAVE_MUSICA, JSON.stringify(m));
+    } catch {
+      /* vale só nesta visita */
+    }
+  };
+  useEffect(() => {
+    trilha.current?.parar();
+    trilha.current = null;
+    if (musica.tipo === "silencio") return;
+    const ctx = garantirAudio();
+    if (ctx) trilha.current = tocarAmbiente(ctx, musica.tipo, musica.volume);
+    // Volume muda sem reiniciar a trilha (ver o efeito abaixo).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [musica.tipo]);
+  useEffect(() => {
+    trilha.current?.volume(musica.volume);
+  }, [musica.volume]);
+  useEffect(() => () => trilha.current?.parar(), []);
 
   const fimDoTempo = useCallback(() => {
     setTempoAcabou(true);
@@ -285,7 +331,7 @@ export function MomentoDevocional({
           className="momento-anima absolute inset-0"
           style={{ animation: "momento-zoom 48s ease-in-out infinite alternate", filter: "saturate(0.6) brightness(0.62) contrast(1.08)" }}
         >
-          <CapaDevocional
+          <CapaDevocional alta
             devocional={serie}
             arte={{ slug: dia.leitura.slug, capitulo: dia.leitura.capitulo }}
             tom={0.45}
@@ -333,6 +379,63 @@ export function MomentoDevocional({
               </span>
             ))}
           </div>
+          <div className="relative">
+            <button
+              onClick={() => setMenuMusica((a) => !a)}
+              aria-label="Fundo musical"
+              aria-expanded={menuMusica}
+              className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-black/30 text-white/80 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <Music size={16} />
+              {musica.tipo !== "silencio" && (
+                <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: serie.cor }} />
+              )}
+            </button>
+            {menuMusica && (
+              <div className="absolute right-0 top-12 z-20 w-[240px] animate-[rise_0.25s_cubic-bezier(0.16,1,0.3,1)] rounded-2xl border border-white/10 bg-ink-850/95 p-3 text-white shadow-2xl shadow-black/60 backdrop-blur-xl">
+                <p className="px-1 pb-2 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-ink-400">
+                  Fundo musical
+                </p>
+                {(
+                  [
+                    ["silencio", "Silêncio", "Só você e o texto"],
+                    ["ambiente", "Ambiente", "Acordes suaves e sinos"],
+                    ["chuva", "Chuva", "Chuva fina ao fundo"],
+                  ] as const
+                ).map(([tipo, nome, sub]) => (
+                  <button
+                    key={tipo}
+                    onClick={() => escolherMusica({ ...musica, tipo })}
+                    aria-pressed={musica.tipo === tipo}
+                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-colors ${
+                      musica.tipo === tipo ? "bg-white/10" : "hover:bg-white/5"
+                    }`}
+                  >
+                    <span>
+                      <span className="block text-[14px] font-semibold">{nome}</span>
+                      <span className="block text-[11.5px] text-ink-400">{sub}</span>
+                    </span>
+                    {musica.tipo === tipo && <span className="h-2 w-2 rounded-full" style={{ backgroundColor: serie.cor }} />}
+                  </button>
+                ))}
+                {musica.tipo !== "silencio" && (
+                  <label className="mt-2 flex items-center gap-3 px-2 pb-1 text-[11.5px] text-ink-400">
+                    Volume
+                    <input
+                      type="range"
+                      min={0.05}
+                      max={1}
+                      step={0.05}
+                      value={musica.volume}
+                      onChange={(e) => escolherMusica({ ...musica, volume: Number(e.target.value) })}
+                      className="flex-1"
+                      style={{ accentColor: serie.cor }}
+                    />
+                  </label>
+                )}
+              </div>
+            )}
+          </div>
           <AjustesDeLeitura cor={serie.cor} embutido />
           <button
             onClick={alternarSom}
@@ -367,14 +470,14 @@ export function MomentoDevocional({
           ) : passo.etapa === "aquietar" ? (
             <div className="text-center">
               <Respiracao cor={serie.cor} />
-              <h2 className="mt-8 font-reading text-4xl font-semibold tracking-tight md:text-[calc(18.5px*var(--fs,1))]xl">
+              <h2 className="mt-8 font-reading text-[calc(36px*var(--fs,1))] font-semibold tracking-tight md:text-[calc(48px*var(--fs,1))]">
                 Chegue devagar
               </h2>
-              <p className="mx-auto mt-3 max-w-md text-[15.5px] leading-relaxed text-white/75">
+              <p className="mx-auto mt-3 max-w-md font-reading text-[calc(16.5px*var(--fs,1))] leading-relaxed text-white/75">
                 Silencie o celular, ajeite o corpo e respire fundo algumas vezes. Você não
                 precisa estar pronto. Só presente.
               </p>
-              <p className="mt-5 font-reading text-[18px] italic text-white/85">
+              <p className="mt-5 font-reading text-[calc(18px*var(--fs,1))] italic text-white/85">
                 “Fala, Senhor. Estou aqui para ouvir.”
               </p>
               <Cronometro key={indice} segundos={passo.segundos} cor={serie.cor} aoTerminar={fimDoTempo} />
@@ -382,14 +485,14 @@ export function MomentoDevocional({
           ) : passo.etapa === "ler" ? (
             <div>
               <Rotulo cor={serie.cor}>Leia devagar</Rotulo>
-              <h2 className="mt-3 flex flex-wrap items-baseline gap-x-3 font-reading text-4xl font-semibold tracking-tight">
+              <h2 className="mt-3 flex flex-wrap items-baseline gap-x-3 font-reading text-[calc(36px*var(--fs,1))] font-semibold tracking-tight">
                 {referencia}
                 {traducao && <span className="text-[13px] font-semibold text-white/50">{traducao}</span>}
               </h2>
-              <p className="mt-2 text-[14px] leading-relaxed text-white/60">
+              <p className="mt-2 font-reading text-[calc(14.5px*var(--fs,1))] leading-relaxed text-white/60">
                 Se puder, em voz alta. Depois leia de novo e pare no versículo destacado.
               </p>
-              <div className="mt-6 font-reading text-[19px] leading-[1.85] text-white/95">
+              <div className="mt-6 font-reading text-[calc(19px*var(--fs,1))] leading-[1.85] text-white/95">
                 {versiculos === null ? (
                   <Esqueleto linhas={5} />
                 ) : (
@@ -409,10 +512,10 @@ export function MomentoDevocional({
           ) : passo.etapa === "refletir" ? (
             <div>
               <Rotulo cor={serie.cor}>Refletir</Rotulo>
-              <h2 className="mt-3 font-reading text-4xl font-semibold leading-tight tracking-tight md:text-[calc(18.5px*var(--fs,1))]xl">
+              <h2 className="mt-3 font-reading text-[calc(36px*var(--fs,1))] font-semibold leading-tight tracking-tight md:text-[calc(48px*var(--fs,1))]">
                 {dia.titulo}
               </h2>
-              <div className="mt-6 space-y-5 font-reading text-[18.5px] leading-[1.85] text-white/90">
+              <div className="mt-6 space-y-5 font-reading text-[calc(18.5px*var(--fs,1))] leading-[1.85] text-white/90">
                 {dia.reflexao.map((p, i) => (
                   <p key={i}>{citar(p)}</p>
                 ))}
@@ -421,10 +524,10 @@ export function MomentoDevocional({
           ) : passo.etapa === "meditar" ? (
             <div>
               <Rotulo cor={serie.cor}>Meditar</Rotulo>
-              <p className="mt-4 font-reading text-[28px] font-medium italic leading-snug md:text-[34px]">
+              <p className="mt-4 font-reading text-[calc(28px*var(--fs,1))] font-medium italic leading-snug md:text-[calc(34px*var(--fs,1))]">
                 {citar(dia.pergunta)}
               </p>
-              <p className="mt-3 text-[14px] leading-relaxed text-white/60">
+              <p className="mt-3 font-reading text-[calc(14.5px*var(--fs,1))] leading-relaxed text-white/60">
                 Fique com a pergunta, sem pressa de responder certo. Se escrever ajudar, escreva.
               </p>
               <AnotacaoDoDia id={serie.id} dia={n} inicial={anotacao} className="mt-5" />
@@ -442,7 +545,7 @@ export function MomentoDevocional({
           ) : (
             <div>
               <Rotulo cor={serie.cor}>Ore junto</Rotulo>
-              <p className="mt-3 font-reading text-[20px] italic leading-[1.75] text-white/95">
+              <p className="mt-3 font-reading text-[calc(20px*var(--fs,1))] italic leading-[1.75] text-white/95">
                 {citar(dia.oracao)}
               </p>
 
@@ -454,7 +557,7 @@ export function MomentoDevocional({
                   <figcaption className="font-display text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: serie.cor }}>
                     Para levar hoje
                   </figcaption>
-                  <blockquote className="mt-2 font-reading text-[18px] leading-relaxed text-white">
+                  <blockquote className="mt-2 font-reading text-[calc(18px*var(--fs,1))] leading-relaxed text-white">
                     {/* O versículo sozinho, sem a vírgula ou o ponto e vírgula que o ligava ao seguinte. */}
                     “{versiculoChave.texto.replace(/[\s;,:]+$/, "")}”
                   </blockquote>
@@ -468,10 +571,10 @@ export function MomentoDevocional({
                 <p className="font-display text-[11px] font-bold uppercase tracking-[0.18em] text-white/55">
                   Para hoje
                 </p>
-                <p className="mt-1.5 text-[15.5px] leading-relaxed text-white/90">{citar(dia.pratica)}</p>
+                <p className="mt-1.5 font-reading text-[calc(16.5px*var(--fs,1))] leading-relaxed text-white/90">{citar(dia.pratica)}</p>
               </div>
 
-              <p className="mt-8 text-center font-reading text-[16px] italic text-white/70">
+              <p className="mt-8 text-center font-reading text-[calc(16px*var(--fs,1))] italic text-white/70">
                 Vá em paz. Que o Senhor te abençoe e te guarde hoje.
               </p>
             </div>
@@ -582,11 +685,11 @@ function MovimentoDeOracao({
           />
         ))}
       </div>
-      <h2 className="mt-7 font-reading text-6xl font-semibold italic tracking-tight md:text-7xl">{m.nome}</h2>
+      <h2 className="mt-7 font-reading text-[calc(60px*var(--fs,1))] font-semibold italic tracking-tight md:text-[calc(72px*var(--fs,1))]">{m.nome}</h2>
       <p className="mt-2 font-display text-[13px] font-bold uppercase tracking-[0.18em]" style={{ color: cor }}>
         {m.subtitulo}
       </p>
-      <p className="mx-auto mt-6 max-w-lg font-reading text-[19px] leading-[1.75] text-white/90">
+      <p className="mx-auto mt-6 max-w-lg font-reading text-[calc(19px*var(--fs,1))] leading-[1.75] text-white/90">
         {citar(convite ?? m.generico)}
       </p>
       {children}
@@ -720,17 +823,17 @@ function Celebracao({
       >
         <Check size={38} strokeWidth={3} />
       </span>
-      <h2 className="mt-7 font-reading text-4xl font-semibold tracking-tight md:text-[calc(18.5px*var(--fs,1))]xl">
+      <h2 className="mt-7 font-reading text-[calc(36px*var(--fs,1))] font-semibold tracking-tight md:text-[calc(48px*var(--fs,1))]">
         {acabou ? `Você concluiu “${serie.titulo}”` : `Dia ${n} concluído`}
       </h2>
-      <p className="mt-2 text-[15px] text-white/70">
+      <p className="mt-2 font-reading text-[calc(16px*var(--fs,1))] text-white/70">
         {acabou
           ? `${total} dias com a Palavra. Que tal começar outro?`
           : `${feitos} de ${total} dias feitos. Um dia de cada vez.`}
       </p>
 
       {!acabou && proximo && (
-        <p className="mx-auto mt-6 max-w-sm rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 text-[14px] text-white/80">
+        <p className="mx-auto mt-6 max-w-sm rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 font-reading text-[calc(14.5px*var(--fs,1))] text-white/80">
           <span className="block font-display text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">
             Amanhã
           </span>

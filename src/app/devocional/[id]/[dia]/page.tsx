@@ -117,7 +117,7 @@ export default function DiaPage() {
     <div className="-mt-[calc(4rem+env(safe-area-inset-top))]" style={estilo}>
       {/* Cabeçalho: a capa da série, mais baixa, com o dia por cima. */}
       <section className="relative flex min-h-[46vh] items-end overflow-hidden pt-[calc(4rem+env(safe-area-inset-top))]">
-        <CapaDevocional
+        <CapaDevocional alta
           devocional={d}
           arte={{ slug: leitura.slug, capitulo: leitura.capitulo }}
           prioridade

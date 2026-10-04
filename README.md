@@ -156,6 +156,17 @@ palavra, e trocá-la desmontaria a frase.
 `npm run devocionais:conferir` confere referências, versículo-chave, oração guiada e se
 toda citação em aspas retas existe, literal, na ARA.
 
+**Capas em alta.** As telas grandes (vitrine, topo da série e do dia, momento guiado)
+usam capas próprias, geradas dos originais do Commons por
+[`scripts/build-capas-devocional.mjs`](scripts/build-capas-devocional.mjs)
+(`npm run devocionais:capas`): uma larga (2000×1100) e uma vertical para celular em pé
+(1200×1800). Ficam fora do git (~180 MB) e vão para o Storage com `npm run arte:subir`.
+Se uma não carregar, a capa volta sozinha para a arte de capítulo de 1000×434.
+
+**Fundo musical.** No momento guiado, opcional: Ambiente (acordes e sinos) ou Chuva,
+gerados na hora com Web Audio em [`src/lib/ambiente.ts`](src/lib/ambiente.ts). Não há
+arquivo de áudio nem música de terceiros.
+
 **Progresso na conta.** Fica no aparelho primeiro (funciona sem conta) e
 [`sync.ts`](src/lib/sync.ts) leva para `devocional_progresso`: dias feitos e anotações,
 uma linha por série, vence a escrita mais recente. Assim "desfazer" e "recomeçar" também

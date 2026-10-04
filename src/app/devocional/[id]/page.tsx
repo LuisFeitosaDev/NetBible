@@ -41,7 +41,7 @@ export default function SeriePage() {
   return (
     <div className="-mt-[calc(4rem+env(safe-area-inset-top))]">
       <section className="relative flex min-h-[60vh] items-end overflow-hidden pt-[calc(4rem+env(safe-area-inset-top))]">
-        <CapaDevocional devocional={d} prioridade tom={0.3} className="absolute inset-0" />
+        <CapaDevocional alta devocional={d} prioridade tom={0.3} className="absolute inset-0" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/55 to-ink-950/10" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-ink-950/80 via-ink-950/20 to-transparent" />
 

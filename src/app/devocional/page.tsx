@@ -188,7 +188,7 @@ function Vitrine({ slides }: { slides: Slide[] }) {
             className="absolute inset-0"
             style={n === i && !semMovimento ? { animation: `vitrine-zoom ${DURACAO + 1500}ms ease-out forwards` } : undefined}
           >
-            <CapaDevocional devocional={s.devocional} prioridade={n === 0} tom={0.3} className="absolute inset-0" />
+            <CapaDevocional alta devocional={s.devocional} prioridade={n === 0} tom={0.3} className="absolute inset-0" />
           </div>
         </div>
       ))}

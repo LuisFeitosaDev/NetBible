@@ -1,6 +1,7 @@
 "use client";
 
-import { arteDeCapitulo } from "@/lib/arte";
+import { useState } from "react";
+import { arteDeCapitulo, capaDeDevocional } from "@/lib/arte";
 import type { Devocional } from "@/lib/devocionais";
 
 /**
@@ -17,6 +18,7 @@ export function CapaDevocional({
   /** Força do tom da série por cima do sépia. */
   tom = 0.42,
   prioridade = false,
+  alta = false,
   children,
 }: {
   devocional: Pick<Devocional, "cor" | "capa">;
@@ -28,11 +30,19 @@ export function CapaDevocional({
   className?: string;
   tom?: number;
   prioridade?: boolean;
+  /**
+   * Telas grandes (vitrine, topo, momento guiado): usa a capa em alta, vertical
+   * no celular em pé e larga no resto. Se ela não carregar (ainda não enviada
+   * ao Storage, navegador sem AVIF), volta para a arte de capítulo.
+   */
+  alta?: boolean;
   children?: React.ReactNode;
 }) {
   const { cor } = devocional;
   const capa = arte ?? devocional.capa;
   const fontes = arteDeCapitulo(capa.slug, capa.capitulo);
+  const [falhou, setFalhou] = useState(false);
+  const grande = alta && !falhou ? capaDeDevocional(capa.slug, capa.capitulo) : null;
 
   return (
     <div
@@ -42,11 +52,19 @@ export function CapaDevocional({
         backgroundImage: `radial-gradient(120% 100% at 70% 20%, ${cor}cc 0%, #14121a 70%)`,
       }}
     >
-      <picture>
-        <source srcSet={fontes.avif} type="image/avif" />
+      <picture key={grande ? "alta" : "base"}>
+        {grande ? (
+          <>
+            <source media="(orientation: portrait)" srcSet={grande.alto} type="image/avif" />
+            <source srcSet={grande.largo} type="image/avif" />
+          </>
+        ) : (
+          <source srcSet={fontes.avif} type="image/avif" />
+        )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={fontes.webp}
+          src={grande ? grande.largo : fontes.webp}
+          onError={grande ? () => setFalhou(true) : undefined}
           alt=""
           aria-hidden
           loading={prioridade ? "eager" : "lazy"}
