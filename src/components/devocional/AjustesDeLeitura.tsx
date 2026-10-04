@@ -15,7 +15,14 @@ const TEMAS: { id: TemaLeitura; rotulo: string; fundo: string; texto: string }[]
  * O botão "Aa" da página do dia: fundo claro ou escuro, tamanho do texto e
  * fonte. As escolhas ficam guardadas e valem para todos os devocionais.
  */
-export function AjustesDeLeitura({ cor }: { cor: string }) {
+export function AjustesDeLeitura({
+  cor,
+  /** Dentro do momento guiado: botão na barra do topo, painel abrindo para baixo. */
+  embutido = false,
+}: {
+  cor: string;
+  embutido?: boolean;
+}) {
   const { leitura, mudar } = useLeituraDevocional();
   const [aberto, setAberto] = useState(false);
   const caixa = useRef<HTMLDivElement>(null);
@@ -25,7 +32,12 @@ export function AjustesDeLeitura({ cor }: { cor: string }) {
     const fora = (e: PointerEvent) => {
       if (!caixa.current?.contains(e.target as Node)) setAberto(false);
     };
-    const esc = (e: KeyboardEvent) => e.key === "Escape" && setAberto(false);
+    // Esc fecha só o painel: sem o stopPropagation, fechava também o momento guiado.
+    const esc = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.stopPropagation();
+      setAberto(false);
+    };
     document.addEventListener("pointerdown", fora);
     document.addEventListener("keydown", esc);
     return () => {
@@ -37,13 +49,17 @@ export function AjustesDeLeitura({ cor }: { cor: string }) {
   return (
     <div
       ref={caixa}
-      className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-4 z-40 md:bottom-8 md:right-8"
+      className={
+        embutido
+          ? "relative"
+          : "fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-4 z-40 md:bottom-8 md:right-8"
+      }
     >
       {aberto && (
         <div
           role="dialog"
           aria-label="Ajustes de leitura"
-          className="absolute bottom-16 right-0 w-[290px] animate-[rise_0.25s_cubic-bezier(0.16,1,0.3,1)] rounded-2xl border border-white/10 bg-ink-850/95 p-4 text-white shadow-2xl shadow-black/60 backdrop-blur-xl"
+          className={`absolute right-0 z-20 w-[290px] ${embutido ? "top-12" : "bottom-16"} animate-[rise_0.25s_cubic-bezier(0.16,1,0.3,1)] rounded-2xl border border-white/10 bg-ink-850/95 p-4 text-white shadow-2xl shadow-black/60 backdrop-blur-xl`}
         >
           <div className="flex items-center justify-between">
             <p className="font-display text-[13px] font-bold">Leitura</p>
@@ -147,9 +163,13 @@ export function AjustesDeLeitura({ cor }: { cor: string }) {
         onClick={() => setAberto((a) => !a)}
         aria-label="Ajustes de leitura"
         aria-expanded={aberto}
-        className="grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-ink-850/90 text-white shadow-xl shadow-black/50 backdrop-blur-md transition-transform hover:scale-105"
+        className={
+          embutido
+            ? "grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-black/30 text-white/80 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+            : "grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-ink-850/90 text-white shadow-xl shadow-black/50 backdrop-blur-md transition-transform hover:scale-105"
+        }
       >
-        <Type size={19} />
+        <Type size={embutido ? 16 : 19} />
       </button>
     </div>
   );

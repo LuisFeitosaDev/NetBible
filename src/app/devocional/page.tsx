@@ -138,8 +138,6 @@ function Vitrine({ slides }: { slides: Slide[] }) {
   }, [i, pausado, semMovimento, total, ir]);
 
   if (!total) return null;
-  const { devocional: d, continuando, diaAtual, feitos } = slides[i];
-  const dias = d.dias.length;
 
   return (
     <section
@@ -216,56 +214,21 @@ function Vitrine({ slides }: { slides: Slide[] }) {
       )}
 
       <div className="relative mx-auto w-full max-w-[1500px] px-4 pb-16 md:px-8 md:pb-24">
-        <div
-          key={d.id}
-          className="max-w-2xl animate-[rise_0.6s_cubic-bezier(0.16,1,0.3,1)]"
-          style={arrasto ? { transform: `translateX(${arrasto * 0.6}px)`, opacity: 1 - Math.min(Math.abs(arrasto) / 400, 0.5) } : undefined}
-        >
-          <span
-            className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em]"
-            style={{ borderColor: `${d.cor}66`, backgroundColor: `${d.cor}22`, color: "#fff" }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: d.cor }} />
-            {continuando ? "Seu devocional" : d.selo === "Novo" ? "Novo no app" : "Devocional em destaque"}
-          </span>
-
-          <h1 className="mt-4 font-display text-[2.6rem] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg md:text-7xl">
-            {d.titulo}
-          </h1>
-          <p className="mt-3 max-w-xl font-reading text-lg leading-snug text-white/85 md:text-xl">
-            {d.chamada}
-          </p>
-
-          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70">
-            <span>{dias} dias</span>
-            <span className="text-white/30">•</span>
-            <span>15 minutos por dia, com oração guiada</span>
-            {feitos > 0 && (
-              <>
-                <span className="text-white/30">•</span>
-                <span className="font-semibold" style={{ color: d.cor }}>
-                  {feitos} de {dias} feitos
-                </span>
-              </>
-            )}
-          </p>
-
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <Link
-              href={`/devocional/${d.id}/${diaAtual}`}
-              className="inline-flex items-center gap-2.5 rounded-xl bg-white px-7 py-3.5 font-display text-base font-bold text-ink-950 shadow-xl shadow-black/30 transition-transform hover:scale-[1.03] active:scale-95"
+        {/* Todas as séries empilhadas na mesma célula, só a da vez visível: a vitrine
+            fica sempre com a altura da maior, e nada embaixo pula quando troca. */}
+        <div className="grid">
+          {slides.map((s, n) => (
+            <div
+              key={n === i ? `${s.devocional.id}-ativo` : s.devocional.id}
+              aria-hidden={n !== i}
+              className={`col-start-1 row-start-1 max-w-2xl self-end ${
+                n === i ? "animate-[rise_0.6s_cubic-bezier(0.16,1,0.3,1)]" : "pointer-events-none invisible"
+              }`}
+              style={n === i && arrasto ? { transform: `translateX(${arrasto * 0.6}px)`, opacity: 1 - Math.min(Math.abs(arrasto) / 400, 0.5) } : undefined}
             >
-              <Play size={22} className="fill-ink-950" />
-              {feitos > 0 ? `Continuar · Dia ${diaAtual}` : "Começar o dia 1"}
-            </Link>
-            <Link
-              href={`/devocional/${d.id}`}
-              className="inline-flex items-center gap-2 rounded-xl bg-white/15 px-5 py-3.5 font-display text-sm font-bold text-white backdrop-blur transition-colors hover:bg-white/25"
-            >
-              <ListOrdered size={18} />
-              Ver os {dias} dias
-            </Link>
-          </div>
+              <ConteudoDoSlide slide={s} />
+            </div>
+          ))}
         </div>
 
         {/* As barrinhas dos stories: a da vez enche no tempo da troca; tocar leva àquela. */}
@@ -304,5 +267,60 @@ function Vitrine({ slides }: { slides: Slide[] }) {
         )}
       </div>
     </section>
+  );
+}
+
+/** O texto e os botões de uma série da vitrine. */
+function ConteudoDoSlide({ slide }: { slide: Slide }) {
+  const { devocional: d, continuando, diaAtual, feitos } = slide;
+  const dias = d.dias.length;
+  return (
+    <>
+      <span
+        className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em]"
+        style={{ borderColor: `${d.cor}66`, backgroundColor: `${d.cor}22`, color: "#fff" }}
+      >
+        <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: d.cor }} />
+        {continuando ? "Seu devocional" : d.selo === "Novo" ? "Novo no app" : "Devocional em destaque"}
+      </span>
+
+      <h1 className="mt-4 font-display text-[2.6rem] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg md:text-7xl">
+        {d.titulo}
+      </h1>
+      <p className="mt-3 max-w-xl font-reading text-lg leading-snug text-white/85 md:text-xl">
+        {d.chamada}
+      </p>
+
+      <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70">
+        <span>{dias} dias</span>
+        <span className="text-white/30">•</span>
+        <span>15 minutos por dia, com oração guiada</span>
+        {feitos > 0 && (
+          <>
+            <span className="text-white/30">•</span>
+            <span className="font-semibold" style={{ color: d.cor }}>
+              {feitos} de {dias} feitos
+            </span>
+          </>
+        )}
+      </p>
+
+      <div className="mt-7 flex flex-wrap items-center gap-3">
+        <Link
+          href={`/devocional/${d.id}/${diaAtual}`}
+          className="inline-flex items-center gap-2.5 rounded-xl bg-white px-7 py-3.5 font-display text-base font-bold text-ink-950 shadow-xl shadow-black/30 transition-transform hover:scale-[1.03] active:scale-95"
+        >
+          <Play size={22} className="fill-ink-950" />
+          {feitos > 0 ? `Continuar · Dia ${diaAtual}` : "Começar o dia 1"}
+        </Link>
+        <Link
+          href={`/devocional/${d.id}`}
+          className="inline-flex items-center gap-2 rounded-xl bg-white/15 px-5 py-3.5 font-display text-sm font-bold text-white backdrop-blur transition-colors hover:bg-white/25"
+        >
+          <ListOrdered size={18} />
+          Ver os {dias} dias
+        </Link>
+      </div>
+    </>
   );
 }

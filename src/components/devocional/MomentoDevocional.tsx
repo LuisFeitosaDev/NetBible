@@ -16,6 +16,8 @@ import {
 import { CapaDevocional } from "./CapaDevocional";
 import { AnotacaoDoDia } from "./AnotacaoDoDia";
 import { LembreteDevocional } from "./LembreteDevocional";
+import { AjustesDeLeitura } from "./AjustesDeLeitura";
+import { useLeituraDevocional } from "@/lib/devocionalLeitura";
 import {
   citacoesNaVersao,
   type Citacoes,
@@ -143,6 +145,9 @@ export function MomentoDevocional({
   aoFechar: () => void;
 }) {
   const [indice, setIndice] = useState(0);
+  // Os mesmos ajustes de leitura da página: fundo, tamanho e fonte.
+  const { leitura: preferencias } = useLeituraDevocional();
+  const claro = preferencias.tema !== "escuro";
   const [celebrando, setCelebrando] = useState(false);
   const [tempoAcabou, setTempoAcabou] = useState(false);
   const [som, setSom] = useState(true);
@@ -255,12 +260,23 @@ export function MomentoDevocional({
       aria-modal="true"
       aria-label={`Momento devocional: ${dia.titulo}`}
       onPointerDown={prepararAudio}
-      className="fixed inset-0 z-[80] flex flex-col overflow-hidden bg-ink-950 text-white"
+      data-tema-leitura={preferencias.tema}
+      className={`fixed inset-0 z-[80] flex flex-col overflow-hidden bg-ink-950 ${claro ? "momento-claro" : ""}`}
+      style={{ color: "var(--rl-texto)" }}
     >
       <style>{`
         @keyframes momento-respira { 0%, 100% { transform: scale(.55) } 40% { transform: scale(1) } }
         @keyframes momento-zoom { from { transform: scale(1.04) } to { transform: scale(1.16) } }
         @media (prefers-reduced-motion: reduce) { .momento-anima { animation: none !important } }
+        /* Fundo claro ou papel: o mesmo momento, com papel por cima da gravura. As
+           classes brancas do modo escuro passam a usar as cores do tema de leitura. */
+        .momento-claro [class*="text-white"] { color: var(--rl-texto) !important }
+        .momento-claro [class*="text-white/4"], .momento-claro [class*="text-white/5"], .momento-claro [class*="text-white/6"] { color: var(--rl-texto-mudo) !important }
+        .momento-claro [class*="border-white"] { border-color: var(--rl-borda-3) !important }
+        .momento-claro [class*="bg-black/"], .momento-claro [class*="bg-white/"] { background-color: var(--rl-sutil-2) !important }
+        .momento-claro .fill-white { fill: var(--rl-texto) }
+        .momento-claro footer .bg-white { background-color: var(--rl-texto) !important; color: var(--rl-canvas) !important }
+        .momento-claro footer .bg-white * { color: var(--rl-canvas) !important }
       `}</style>
 
       {/* A gravura do capítulo do dia, respirando devagar atrás de tudo. */}
@@ -278,20 +294,24 @@ export function MomentoDevocional({
           />
         </div>
         <div
-          className="absolute inset-0 bg-ink-950 transition-opacity duration-700"
-          style={{ opacity: escuro }}
+          className="absolute inset-0 transition-opacity duration-700"
+          style={{ backgroundColor: claro ? "var(--rl-canvas)" : "#08080b", opacity: claro ? 0.93 : escuro }}
         />
         <div
           className="absolute inset-0"
           style={{ background: `radial-gradient(90% 55% at 50% 0%, ${serie.cor}1f 0%, transparent 70%)` }}
         />
         {/* Vinheta e degradês de topo e base: o olhar vai para o centro, como numa sala escura. */}
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 85% 75% at 50% 45%, transparent 40%, rgb(0 0 0 / 0.8) 100%)" }} />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgb(0 0 0 / 0.65), transparent 16%, transparent 78%, rgb(0 0 0 / 0.85))" }} />
+        {!claro && (
+          <>
+            <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 85% 75% at 50% 45%, transparent 40%, rgb(0 0 0 / 0.8) 100%)" }} />
+            <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgb(0 0 0 / 0.65), transparent 16%, transparent 78%, rgb(0 0 0 / 0.85))" }} />
+          </>
+        )}
       </div>
 
       {/* Topo: fechar, as seis etapas e o som. */}
-      <header className="relative z-10 px-4 pt-[max(env(safe-area-inset-top),14px)]">
+      <header className="relative z-30 px-4 pt-[max(env(safe-area-inset-top),14px)]">
         <div className="mx-auto flex max-w-2xl items-center gap-3">
           <button
             onClick={aoFechar}
@@ -307,12 +327,13 @@ export function MomentoDevocional({
                   className="block h-full rounded-full transition-[width] duration-500"
                   style={{
                     width: `${celebrando ? 100 : preenchimento(e.id, indice) * 100}%`,
-                    backgroundColor: "rgb(255 255 255 / 0.92)",
+                    backgroundColor: claro ? "var(--rl-texto)" : "rgb(255 255 255 / 0.92)",
                   }}
                 />
               </span>
             ))}
           </div>
+          <AjustesDeLeitura cor={serie.cor} embutido />
           <button
             onClick={alternarSom}
             aria-label={som ? "Desligar o sino" : "Ligar o sino"}
