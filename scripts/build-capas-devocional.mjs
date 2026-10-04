@@ -21,6 +21,10 @@
  * não abrir AVIF ou se o arquivo ainda não estiver no Storage.
  *
  * Depois de gerar, envie com `npm run arte:subir` (que também envia esta pasta).
+ *
+ * É retomável: pula o que já foi gerado. O Commons limita downloads seguidos;
+ * se ele bloquear, rode de novo mais tarde. Com `-- --sem-baixar`, só regrava a
+ * lista com o que já existe em disco, sem baixar nada.
  */
 import { mkdir, readFile, writeFile, access } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -46,6 +50,7 @@ const CACHE = join(ROOT, "sources", "devocional");
 const CACHE_LEITOR = join(ROOT, "sources", "capitulos");
 const GERADO = join(ROOT, "src", "lib", "devocionalArte.generated.ts");
 const API = "https://commons.wikimedia.org/w/api.php";
+const SEM_BAIXAR = process.argv.includes("--sem-baixar");
 const UA = "GenipseBible/1.0 (projeto pessoal; arte de domínio público)";
 
 const FORMATOS = {
@@ -70,7 +75,10 @@ async function original(chave, pagina) {
   });
   for (let tentativa = 1; tentativa <= 4; tentativa++) {
     try {
-      const info = await fetch(`${API}?${q}`, { headers: { "User-Agent": UA } }).then((r) => r.json());
+      const resposta = await fetch(`${API}?${q}`, { headers: { "User-Agent": UA } }).then((r) => r.text());
+      // Limite de taxa do Commons vem como texto ("You are making too many requests").
+      if (!resposta.startsWith("{")) throw new Error("429");
+      const info = JSON.parse(resposta);
       const ii = Object.values(info.query.pages)[0]?.imageinfo?.[0];
       const url = ii?.thumburl ?? ii?.url;
       if (!url) throw new Error("sem imageinfo");
@@ -83,7 +91,8 @@ async function original(chave, pagina) {
       return buf;
     } catch (e) {
       if (tentativa === 4) throw e;
-      await espera(2000 * tentativa);
+      // No limite de taxa, espera de verdade antes de tentar de novo.
+      await espera(e.message === "429" ? 20000 * tentativa : 2000 * tentativa);
     }
   }
 }
@@ -137,12 +146,13 @@ async function main() {
   const trabalhador = async () => {
     for (let chave = fila.shift(); chave; chave = fila.shift()) await processar(chave);
   };
-  await Promise.all(Array.from({ length: 4 }, trabalhador));
+  await Promise.all(Array.from({ length: Number(process.env.CONCORRENCIA ?? 4) }, trabalhador));
 
   async function processar(chave) {
     n++;
     const pronto = await Promise.all(Object.keys(FORMATOS).map((f) => existe(join(OUT, `${chave}-${f}.avif`))));
     try {
+      if (!pronto.every(Boolean) && SEM_BAIXAR) return;
       if (!pronto.every(Boolean)) {
         const pagina = creditos[chave]?.page;
         if (!pagina) throw new Error("sem crédito");
